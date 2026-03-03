@@ -1,0 +1,24 @@
+<h1><strong>Circle:</strong> <%= booth.circle.name %></h1>
+<div>
+  <h2 class="d-inline-block">
+    <strong>Event:</strong> <%= event.name %>
+  </h2>
+    <div class="d-flex justify-content-end">
+      <div class="btn border">
+      <% if booth.favorites.find_by(user:current_user) %>
+      Priority: <%= booth.favorites.find_by(user:current_user).priority %>
+      <% else %>
+      No Priority
+      <% end %>
+      </div>
+    </div>
+  <div class="d-flex justify-content-between">
+    <div>
+      <strong>Day: </strong> <%= booth.booth_day %>,
+      <strong>Booth: </strong> <%= booth.booth_space %>
+    </div>
+    <div>
+      <strong>Section: </strong> <%= booth.genre %>
+    </div>
+  </div>
+</div>
