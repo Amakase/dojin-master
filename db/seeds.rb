@@ -119,7 +119,7 @@ end
 puts "...#{User.count} users created"
 puts "...#{Collection.count} collections created"
 puts "...#{CollectionWork.count} collection works created"
-puts "Creating Events, Bookmarked Events, Booths, Notifications, and Booth Works..."
+puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and Booth Works..."
 
 10.times do
   event = Event.create!(
@@ -145,6 +145,13 @@ puts "Creating Events, Bookmarked Events, Booths, Notifications, and Booth Works
     booth.event = event
     booth.circle = sample_arr[i]
     booth.save!
+    favorite = Favorite.new(
+      priority: [nil, rand(1..9)].sample,
+      notes: Faker::Lorem.paragraph
+    )
+    favorite.booth = booth
+    favorite.user = User.all.sample
+    favorite.save!
     rand(3..5).times do
       notification = Notification.new(
         source: Faker::Bank.name,
@@ -175,5 +182,6 @@ end
 puts "...#{Event.count} events created"
 puts "...#{BookmarkedEvent.count} bookmarked events created"
 puts "...#{Booth.count} booths created"
+puts "...#{Favorite.count} favorites created"
 puts "...#{Notification.count} notifications created"
 puts "...#{BoothWork.count} booth works created"
