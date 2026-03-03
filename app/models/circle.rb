@@ -9,6 +9,6 @@ class Circle < ApplicationRecord
   has_one_attached :image
 
   validates :name, presence: true
-  validates :name_reading, presence: true, format: { with: /^[ァ-ヿ]+$/, message: "must be full-width katakana" }
+  validates :name_reading, presence: true, format: { with: /\A[ァ-ヿ]+\z/, message: "must be full-width katakana" }
   # validates :description, presence: true, allow_blank: true
 end

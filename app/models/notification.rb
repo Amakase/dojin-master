@@ -5,7 +5,7 @@ class Notification < ApplicationRecord
   validates :content, presence: true
   validates :url,
             format: {
-              with: %r{^https?://(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$},
+              with: URI::DEFAULT_PARSER.make_regexp,
               message: "must be a URL"
             }
   validates :read, inclusion: { in: [true, false] }

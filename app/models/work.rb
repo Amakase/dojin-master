@@ -7,7 +7,7 @@ class Work < ApplicationRecord
   has_one_attached :image
 
   validates :title, presence: true
-  validates :title_reading, format: { with: /^[ァ-ヿ]+$/, message: "must be full-width katakana" }
+  validates :title_reading, format: { with: /\A[ァ-ヿ]+\z/, message: "must be full-width katakana" }
   # validates :version, presence: true, allow_blank: true
   # validates :description, presence: true, allow_blank: true
   validates :published_on, presence: true
@@ -19,10 +19,10 @@ class Work < ApplicationRecord
   validates :adult, inclusion: { in: [true, false] }
 
   def digital?
-    return digital
+    digital
   end
 
   def adult?
-    return adult
+    adult
   end
 end

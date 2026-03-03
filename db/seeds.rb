@@ -7,6 +7,8 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+Faker::Config.locale = 'ja'
+
 TITLES = ["縫子", "鵺", "抜打ち獅子兵衛", "ヌキのいない旅", "抜髪", "脱殻", "ヌスビトト　コヒツヂ", "盗まれた手紙", "盗まれた手紙の話", "窃む女"]
 NAMES = ["宮本 A", "小川 B", "今野 C", "若山 D", "森川 E", "徳田 F", "槙村 G", "萩原 H", "高浜 I", "高浜 J"]
 KATAKANA = ["ブレーキ", "アップル", "ヱヴァンゲリオン", "ビックカメラ", "エクスプロージョン", "プラスアルファ", "イッセキニチョウ", "ガンダム", "メグロ", "アオイトリ"]
@@ -48,6 +50,8 @@ TEXTS = [
   ここまで来ると、この家やの細君の顔ではない。それはもっと愛嬌あいきょうがあって、これはそれよりも品が優る。",
 ]
 
+puts "Clearing Circle DB..."
+Circle.destroy_all
 puts "Clearing User DB..."
 User.destroy_all
 puts "Clearing Works DB..."
@@ -58,9 +62,9 @@ Event.destroy_all
 puts "Creating Circles..."
 50.times do
   Circle.create!(
-    name: Faker::Creature::Animal.name,
+    name: [NAMES.sample, Faker::Creature::Animal.name].sample,
     name_reading: KATAKANA.sample,
-    description: Faker::Lorem.paragraph
+    description: TEXTS.sample
   )
 end
 
@@ -73,8 +77,8 @@ puts "Creating Works and Circle Works..."
   work = Work.new(
     title: [TITLES.sample, Faker::FunnyName.name].sample,
     title_reading: KATAKANA.sample,
-    version: ["", (1..3).to_s].sample,
-    description: Faker::Lorem.paragraph,
+    version: ["", rand(1..3).to_s].sample,
+    description: TEXTS.sample,
     published_on: Date.today,
     orig_published_on: Date.today - 1,
     medium: medium,
@@ -96,7 +100,7 @@ puts "Creating Users, Collections, and Collection Works..."
 
 5.times do |i|
   user = User.create!(
-    username: Faker::Name.first_name,
+    username: Faker::Internet.unique.username,
     email: "email#{i}@domain.com",
     password: "123456",
     date_of_birth: Date.today
@@ -124,9 +128,9 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
 
 10.times do
   event = Event.create!(
-    name: Faker::FunnyName.name,
+    name: Faker::FunnyName.unique.name,
     venue: Faker::Company.name,
-    description: Faker::Lorem.paragraph,
+    description: TEXTS.sample,
     start_date: Date.today,
     end_date: Date.today + 1
   )
@@ -141,7 +145,7 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
       booth_day: [event.start_date, event.end_date].sample,
       booth_space: (i + 1).to_s,
       genre: Faker::Book.genre,
-      description: Faker::Lorem.paragraph
+      description: TEXTS.sample
     )
     booth.event = event
     booth.circle = sample_arr[i]
@@ -165,7 +169,7 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
     end
     rand(1..5).times do
       booth_work = BoothWork.new(
-        title: TITLES.sample,
+        title: [TITLES.sample, Faker::FunnyName.name].sample,
         circle: booth.circle.name,
         price: rand(1..15) * 100,
         new: [true, false].sample,

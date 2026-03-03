@@ -12,6 +12,6 @@ class User < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :booths, through: :favorites
 
-  validates :username, presence: true
+  validates :username, presence: true, uniqueness: true
   validates :date_of_birth, presence: true
 end
