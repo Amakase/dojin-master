@@ -1,5 +1,6 @@
 class BoothWork < ApplicationRecord
   belongs_to :booth
+  has_one_attached :image
 
   validates :title, presence: true
   # validates :circle
