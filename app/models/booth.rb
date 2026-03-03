@@ -4,7 +4,7 @@ class Booth < ApplicationRecord
   has_many :booth_works, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :notifications, dependent: :destroy
-  has_one_attached :image
+  # has_one_attached :image
 
   validates :booth_day, presence: true
   validates :booth_space, presence: true

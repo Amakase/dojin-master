@@ -3,30 +3,30 @@
   <h2 class="d-inline-block">
     <strong>Event:</strong> <%= event.name %>
   </h2>
-    <div class="d-flex justify-content-end">
-        <% if booth.favorites.find_by(user:current_user) %>
-          <%= link_to favorites_path(booth.favorites.find_by(user:current_user))
-                      data: { turbo_method: :patch } do %>
-            <div class="btn border">
-              Priority: <%= booth.favorites.find_by(user:current_user).priority raise %>
-            </div>
-          <% end %>
-        <% else %>
-        <%= link_to booth_favorites, data: { turbo_method: :post } do %>
-          <div class="btn border">
-            No Priority
-          </div>
-        <% end %>
+  <div class="d-flex justify-content-end">
+    <% if booth.favorites.find_by(user:current_user) %>
+      <%= link_to favorite_path(booth.favorites.find_by(user:current_user)),
+                  data: { turbo_method: :patch } do %>
+        <div class="btn border">
+          Priority: <%= booth.favorites.find_by(user:current_user).priority %>
+        </div>
       <% end %>
-      </div>
-    </div>
-  <div class="d-flex justify-content-between">
-    <div>
-      <strong>Day: </strong> <%= booth.booth_day %>,
-      <strong>Booth: </strong> <%= booth.booth_space %>
-    </div>
-    <div>
-      <strong>Section: </strong> <%= booth.genre %>
-    </div>
+    <% else %>
+      <%= link_to booth_favorites_path(booth),
+                        data: { turbo_method: :post } do %>
+        <div class="btn border">
+          No Priority
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+<div class="d-flex justify-content-between">
+  <div>
+    <strong>Day: </strong> <%= booth.booth_day %>,
+    <strong>Booth: </strong> <%= booth.booth_space %>
+  </div>
+  <div>
+    <strong>Section: </strong> <%= booth.genre %>
   </div>
 </div>
