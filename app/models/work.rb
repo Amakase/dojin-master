@@ -7,12 +7,22 @@ class Work < ApplicationRecord
   has_one_attached :image
 
   validates :title, presence: true
-  validates :title_reading, presence: true
-  # validates :version, presence: true
-  # validates :description, allow_blank: true
+  validates :title_reading, format: { with: /^[ァ-ヿ]+$/, message: "must be full-width katakana" }
+  # validates :version, presence: true, allow_blank: true
+  # validates :description, presence: true, allow_blank: true
   validates :published_on, presence: true
-  # validates :orig_published_on, presence: true
-  # validates :medium, presence: true
-  # validates :size, presence: true
-  # validates :download_source, presence: { scope: :digital }
+  # validates :orig_published_on
+  validates :medium, presence: true
+  # validates :size, presence: true, unless: :digital?
+  validates :download_source, presence: true, if: :digital?
+  validates :digital, inclusion: { in: [true, false] }
+  validates :adult, inclusion: { in: [true, false] }
+
+  def digital?
+    return digital
+  end
+
+  def adult?
+    return adult
+  end
 end

@@ -9,6 +9,7 @@
 #   end
 TITLES = ["縫子", "鵺", "抜打ち獅子兵衛", "ヌキのいない旅", "抜髪", "脱殻", "ヌスビトト　コヒツヂ", "盗まれた手紙", "盗まれた手紙の話", "窃む女"]
 NAMES = ["宮本 A", "小川 B", "今野 C", "若山 D", "森川 E", "徳田 F", "槙村 G", "萩原 H", "高浜 I", "高浜 J"]
+KATAKANA = ["ブレーキ", "アップル", "ヱヴァンゲリオン", "ビックカメラ", "エクスプロージョン", "プラスアルファ", "イッセキニチョウ", "ガンダム", "メグロ", "アオイトリ"]
 PHRASES = [
   "私が沼津に越して来ていつか七年経つた。",
   "生長するに従って、その眼も、慾望も変化し進歩しているのだ。",
@@ -58,7 +59,7 @@ puts "Creating Circles..."
 50.times do
   Circle.create!(
     name: Faker::Creature::Animal.name,
-    name_reading: Faker::Creature::Animal.name,
+    name_reading: KATAKANA.sample,
     description: Faker::Lorem.paragraph
   )
 end
@@ -71,7 +72,7 @@ puts "Creating Works and Circle Works..."
   digital = [true, false].sample
   work = Work.new(
     title: [TITLES.sample, Faker::FunnyName.name].sample,
-    title_reading: Faker::Creature::Animal.name,
+    title_reading: KATAKANA.sample,
     version: ["", (1..3).to_s].sample,
     description: Faker::Lorem.paragraph,
     published_on: Date.today,
