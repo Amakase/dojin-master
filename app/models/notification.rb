@@ -5,8 +5,8 @@ class Notification < ApplicationRecord
   validates :content, presence: true
   validates :url,
             format: {
-              with: URI::DEFAULT_PARSER.make_regexp,
-              message: "must be a URL"
+              with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+              message: "must be an HTTP/HTTPS URL"
             }
   validates :read, inclusion: { in: [true, false] }
 
