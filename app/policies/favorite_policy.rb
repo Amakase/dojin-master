@@ -25,7 +25,7 @@ class FavoritePolicy < ApplicationPolicy
     #   scope.all
     # end
     def resolve
-      scope.where(user: user)
+      scope.all
     end
   end
 end

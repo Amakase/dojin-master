@@ -2,10 +2,12 @@
 
 <div class="card-category"
      style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
-     url(<%= image_path(circle.image_filename.presence || "default_circle.jpg") %>);">
+     url(<%= image_path("default_circle.jpg") %>);">
+
+<%# url(<%= image_path(circle.image_filename.presence || "default_circle.jpg")  %>
 
   <%= link_to circle.name,
-              circle_path(circle),
+              "circle_path(circle)",
               class: "text-decoration-none text-white" %>
   <%= favorite.priority %>
   <%= favorite.notes %>
