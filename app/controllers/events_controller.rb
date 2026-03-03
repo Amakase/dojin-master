@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   end
 
   def show
-    @event = Event.find_by(id: params[:id])
-    @booths = @event.booths.where(params[:event_id])
+    @event = Event.find(params[:id])
+    @booths = @event.booths
   end
 end
