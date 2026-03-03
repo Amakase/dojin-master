@@ -1,0 +1,2 @@
+class BoothsController < ApplicationController
+end
