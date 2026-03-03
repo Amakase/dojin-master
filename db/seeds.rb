@@ -50,9 +50,9 @@ TEXTS = [
 puts "Clearing User DB..."
 User.destroy_all
 puts "Clearing Works DB..."
-Works.destroy_all
+Work.destroy_all
 puts "Clearing Events DB..."
-Events.destroy_all
+Event.destroy_all
 
 puts "Creating Circles..."
 50.times do
@@ -74,8 +74,8 @@ puts "Creating Works and Circle Works..."
     title_reading: Faker::Creature::Animal.name,
     version: ["", (1..3).to_s].sample,
     description: Faker::Lorem.paragraph,
-    published_on: Date.now,
-    orig_published_on: Date.now - 1,
+    published_on: Date.today,
+    orig_published_on: Date.today - 1,
     medium: medium,
     size: medium == "book" ? ["A4", "B5", "A3"].sample : "",
     download_source: digital ? ["DLsite", "Melonbooks", "Toranoana"].sample : "",
@@ -98,7 +98,7 @@ puts "Creating Users, Collections, and Collection Works..."
     username: Faker::Name.first_name,
     email: "email#{i}@domain.com",
     password: "123456",
-    date_of_birth: Date.now
+    date_of_birth: Date.today
   )
   collection = Collection.new(
     name: "Inventory"
@@ -126,15 +126,16 @@ puts "Creating Events, Bookmarked Events, Booths, Notifications, and Booth Works
     name: Faker::FunnyName.name,
     venue: Faker::Company.name,
     description: Faker::Lorem.paragraph,
-    start_date: Date.now,
-    end_date: Date.now + 1
+    start_date: Date.today,
+    end_date: Date.today + 1
   )
   bookmarked_event = BookmarkedEvent.new
   bookmarked_event.user = User.all.sample
   bookmarked_event.event = event
   bookmarked_event.save!
-  sample_arr = Circle.all
-  rand(10..20).times do |i|
+  num = rand(10..20)
+  sample_arr = Circle.all.sample(num)
+  num.times do |i|
     booth = Booth.new(
       booth_day: [event.start_date, event.end_date].sample,
       booth_space: (i + 1).to_s,
@@ -142,7 +143,7 @@ puts "Creating Events, Bookmarked Events, Booths, Notifications, and Booth Works
       description: Faker::Lorem.paragraph
     )
     booth.event = event
-    booth.circle = sample_arr.delete(sample_arr.sample)
+    booth.circle = sample_arr[i]
     booth.save!
     rand(3..5).times do
       notification = Notification.new(

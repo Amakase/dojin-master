@@ -7,5 +7,5 @@ class BoothWork < ApplicationRecord
   # validates :limit
   validates :num_to_buy, presence: true
   # validates :num_bought
-  validates :notes, allow_blank: true
+  # validates :notes, allow_blank: true
 end
