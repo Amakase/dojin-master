@@ -1,0 +1,15 @@
+
+<div class="container">
+  <div>
+    <%= render "booths/info", { event: @event, booth: @booth }%>
+  </div>
+  <div>
+    <%= render "booths/notifications", notifications: @notifications%>
+  </div>
+  <div>
+    <%= render "booths/booth_works", booth_works: @booth_works %>
+  </div>
+  <div>
+    <%= render "booths/user_inventory", { user_inventory: @user_inventory, booth: @booth } %>
+  </div>
+</div>
