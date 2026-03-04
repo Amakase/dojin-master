@@ -1,0 +1,15 @@
+    <h1> <%= @event.name %> </h1>
+    <%= link_to events_path do %>
+    <i class="fa-solid fa-rotate-left fa-xl"></i>
+    <% end %>
+
+
+
+    <% @booths.each do |booth| %>
+    <div>
+      <h2>Circle Name: <%= booth.circle.name %></h2>
+      <h3>Genre: <%= booth.genre %></h3>
+      <p>Booth Space: <%= booth.booth_space %></p>
+      <p>Booth Day: <%= booth.booth_day %></p>
+  </div>
+    <% end %>
