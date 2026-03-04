@@ -12,9 +12,9 @@ class FavoritesController < ApplicationController
     authorize @favorite
 
     if @favorite.save
-      redirect_to booth_path(@booth)
+      redirect_to @booth
     else
-      render :new, status: :unprocessable_entity
+      redirect_to @booth, alert: @favorite.errors.full_messages.to_sentence
     end
   end
 

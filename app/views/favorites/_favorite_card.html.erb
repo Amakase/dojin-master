@@ -1,3 +1,4 @@
+<% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
 <div class="card-category"
@@ -7,8 +8,10 @@
 <%# url(<%= image_path(circle.image_filename.presence || "default_circle.jpg")  %>
 
   <%= link_to circle.name,
-              "circle_path(circle)",
+              booth_path(booth),
               class: "text-decoration-none text-white" %>
+  <%= booth.booth_day %>
+  <%= booth.booth_space %>
   <%= favorite.priority %>
   <%= favorite.notes %>
 
