@@ -1,6 +1,10 @@
 class EventsController < ApplicationController
   def index
-    @events = current_user.events
+    if params[:filter] == "bookmarked"
+      @events = current_user.events
+    else
+      @events = Event.all
+    end
   end
 
   def show

@@ -1,6 +1,7 @@
 
   <h1>Event List: </h1>
-
+<%= link_to "All Events", events_path %>
+<%= link_to "Bookmarked Events", events_path(filter: "bookmarked") %>
   <% @events.each do |event| %>
   <%= link_to event_path(event.id), class: "text-decoration-none" do %>
     <div>
