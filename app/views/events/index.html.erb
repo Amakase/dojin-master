@@ -1,3 +1,17 @@
+<div class="row justify-content-center">
+  <div class="col-sm-8 my-3">
+    <%= form_with url: events_path, method: :get, class: "d-flex" do %>
+      <%= label_tag :query, "Search Events", class: "visually-hidden" %>
+      <%= text_field_tag :query,
+            params[:query],
+            class: "form-control",
+            placeholder: "Type a keyword"
+        %>
+      <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
 
   <h1>Event List: </h1>
 <%= link_to "All Events", events_path %>
@@ -6,9 +20,16 @@
   <%= link_to event_path(event.id), class: "text-decoration-none" do %>
     <div>
       <h2><%= event.name %></h2>
+      <h5> <%= event.venue %></h5>
       <p>Description: <%= event.description %></p>
       <p>Start Date: <%= event.start_date %></p>
       <p>End Date: <%= event.end_date %></p>
     </div>
     <% end %>
   <% end %>
+
+
+<%# plz igrone %>
+<%# if policy(@event).destroy? %>
+  <%#= link_to "Delete", event_path(@event), method: :delete %>
+<%# end %>
