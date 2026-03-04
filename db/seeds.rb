@@ -150,13 +150,15 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
     booth.event = event
     booth.circle = sample_arr[i]
     booth.save!
-    favorite = Favorite.new(
-      priority: [nil, rand(1..9)].sample,
-      notes: Faker::Lorem.paragraph
-    )
-    favorite.booth = booth
-    favorite.user = User.all.sample
-    favorite.save!
+    if i%3 == 0
+      favorite = Favorite.new(
+        priority: rand(1..9),
+        notes: Faker::Lorem.paragraph
+      )
+      favorite.booth = booth
+      favorite.user = User.all.sample
+      favorite.save!
+    end
     rand(3..5).times do
       notification = Notification.new(
         source: Faker::Bank.name,
