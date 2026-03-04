@@ -1,0 +1,6 @@
+<h3 class="mt-2">Notifications: </h3>
+<ul>
+  <% notifications.each do |notification| %>
+    <li><%= notification.source %>, created at: <%= notification.created_at %></li>
+  <% end %>
+</ul>
