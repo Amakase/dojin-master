@@ -1,38 +1,43 @@
 class FavoritesController < ApplicationController
   before_action :set_favorite, only: [:update]
-  before_action :set_booth, only: %i[create update]
+  before_action :set_booth, only: [:update]
   def index
-    @favorites = policy_scope(Favorite).includes(booth: :circle)
+    @favorites = policy_scope(Favorite).joins(booth: :circle).includes(booth: :circle).order("circles.name ASC")
   end
 
   def create
     @favorite = current_user.favorites.new(favorite_params)
+    @booth = Booth.find(params[:booth_id])
     @favorite.booth = @booth
 
     authorize @favorite
 
     if @favorite.save
-      format.html { redirect_to @booth }
-      format.turbo_stream
+      respond_with_booth
     else
-      format.html { redirect_to @booth, alert: "Already favorited." }
+      redirect_to @booth, alert: "Already favorited."
     end
   end
 
   def update
     if @favorite.update(favorite_params)
-      format.html { redirect_to @booth }
-      format.turbo_stream
+      respond_with_booth
     else
-      format.html { redirect_to @booth, alert: "Already favorited." }
+      redirect_to @booth, alert: "Already favorited."
     end
   end
 
   private
 
+  def respond_with_booth
+    respond_to do |format|
+      format.html { redirect_to @booth }
+      format.turbo_stream
+    end
+  end
+
   def set_booth
-    @booth = Booth.find(params[:booth_id])
-    authorize @booth
+    @booth = @favorite.booth
   end
 
   def set_favorite

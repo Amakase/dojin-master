@@ -12,7 +12,9 @@
               class: "text-decoration-none text-white" %>
   <%= booth.booth_day %>
   <%= booth.booth_space %>
-  <%= favorite.priority %>
+  <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+    <%= render "shared/favorite_button", booth: booth %>
+  <% end %>
   <%= favorite.notes %>
 
 </div>

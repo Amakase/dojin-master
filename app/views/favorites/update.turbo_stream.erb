@@ -1,3 +1,7 @@
+<%# the dom_id is inserted 2 otherwise it would not persist after the 2nd update %>
+
 <%= turbo_stream.replace dom_id(@booth, :favorite) do %>
-  <%= render "shared/favorite_button", booth: @booth %>
+  <%= turbo_frame_tag dom_id(@booth, :favorite) do %>
+    <%= render "shared/favorite_button", booth: @booth %>
+  <% end %>
 <% end %>
