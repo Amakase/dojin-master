@@ -31,13 +31,13 @@ bin/rails db:seed                        # Re-seed development data
 **Core entity hierarchy:**
 ```
 Event → Booth → Circle (vendor/publisher)
-              → BoothWork → Work (doujinshi publication)
+              → BoothWork (denormalized; title/circle/price stored directly)
 User  → Favorite → Booth
       → Collection → Work
 ```
 
-**Key join models with payloads** (not plain join tables):
-- `BoothWork` — work listed at a booth, stores price/quantity/purchase info
+**Key models with payloads** (not plain join tables):
+- `BoothWork` — belongs to `Booth` only (no `work_id`); stores denormalized title, circle, price, quantity, purchase info
 - `Favorite` — user's bookmarked booth, stores priority (1-9) and notes
 - `CollectionWork`, `CircleWork`, `IncludedWork`, `BookmarkedEvent` — plain join tables
 
