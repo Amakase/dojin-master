@@ -23,7 +23,7 @@
     <div class="card-product-infos">
     <%= link_to booth_path(booth.id) do%>
       <div>
-        <h2>Circle Name: <%= booth.circle.name %></h2>
+        <h2>Circle Name: <%= booth.circle.name %> (Day: <%= ( booth.booth_day - @event.end_date + 2).to_i %>)</h2>
         <h2>Genre: <%= booth.genre %></h2>
         <p>Booth Space: <%= booth.booth_space %></p>
         <p>Booth Day: <%= booth.booth_day %></p>
