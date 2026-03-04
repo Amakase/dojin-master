@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_04_060805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "bookmarked_events", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -25,11 +53,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
 
   create_table "booth_works", force: :cascade do |t|
     t.bigint "booth_id", null: false
-    t.string "circle"
+    t.string "circle", default: ""
     t.datetime "created_at", null: false
     t.integer "limit"
     t.boolean "new"
-    t.text "notes"
+    t.text "notes", default: ""
     t.integer "num_bought"
     t.integer "num_to_buy"
     t.integer "price"
@@ -45,7 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
     t.datetime "created_at", null: false
     t.text "description"
     t.bigint "event_id", null: false
-    t.string "genre"
+    t.string "genre", default: ""
     t.datetime "updated_at", null: false
     t.index ["circle_id"], name: "index_booths_on_circle_id"
     t.index ["event_id"], name: "index_booths_on_event_id"
@@ -62,7 +90,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
 
   create_table "circles", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "description"
+    t.text "description", default: ""
     t.string "name"
     t.string "name_reading"
     t.datetime "updated_at", null: false
@@ -71,7 +99,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
   create_table "collection_works", force: :cascade do |t|
     t.bigint "collection_id", null: false
     t.datetime "created_at", null: false
-    t.text "notes"
+    t.text "notes", default: ""
     t.datetime "updated_at", null: false
     t.bigint "work_id", null: false
     t.index ["collection_id"], name: "index_collection_works_on_collection_id"
@@ -88,7 +116,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
 
   create_table "events", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "description"
+    t.text "description", default: ""
     t.date "end_date"
     t.string "name"
     t.date "start_date"
@@ -99,7 +127,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
   create_table "favorites", force: :cascade do |t|
     t.bigint "booth_id", null: false
     t.datetime "created_at", null: false
-    t.text "notes"
+    t.text "notes", default: ""
     t.integer "priority"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -119,7 +147,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
     t.bigint "booth_id", null: false
     t.string "content"
     t.datetime "created_at", null: false
-    t.boolean "read"
+    t.boolean "read", default: false
     t.string "source"
     t.datetime "updated_at", null: false
     t.string "url"
@@ -143,7 +171,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
   create_table "works", force: :cascade do |t|
     t.boolean "adult"
     t.datetime "created_at", null: false
-    t.text "description"
+    t.text "description", default: ""
     t.boolean "digital"
     t.string "download_source"
     t.string "medium"
@@ -153,9 +181,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_022947) do
     t.string "title"
     t.string "title_reading"
     t.datetime "updated_at", null: false
-    t.string "version"
+    t.string "version", default: ""
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bookmarked_events", "events"
   add_foreign_key "bookmarked_events", "users"
   add_foreign_key "booth_works", "booths"

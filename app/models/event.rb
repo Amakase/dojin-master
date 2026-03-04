@@ -7,9 +7,9 @@ class Event < ApplicationRecord
   # has_many :notifications, through: :booths
   has_one_attached :image
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: true
   validates :venue, presence: true
-  # validates :description, allow_blank: true
+  validates :description, presence: true, allow_blank: true
   validates :start_date, presence: true
   validates :end_date, presence: true
 end

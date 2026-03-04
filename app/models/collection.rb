@@ -3,5 +3,5 @@ class Collection < ApplicationRecord
   has_many :collection_works, dependent: :destroy
   has_many :works, through: :collection_works
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: { scope: :user }
 end

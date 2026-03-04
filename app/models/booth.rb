@@ -8,5 +8,5 @@ class Booth < ApplicationRecord
 
   validates :booth_day, presence: true
   validates :booth_space, presence: true
-  # validates :genre, allow_blank: true
+  validates :genre, presence: true, allow_blank: true
 end

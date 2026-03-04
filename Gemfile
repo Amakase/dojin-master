@@ -54,6 +54,7 @@ gem "cloudinary"
 gem "kramdown"
 gem "rouge"
 gem "kramdown-parser-gfm"
+gem "pg_search"
 
 group :development, :test do
   gem "dotenv-rails"
