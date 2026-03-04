@@ -5,7 +5,7 @@ class Event < ApplicationRecord
   has_many :circles, through: :booths
   # has_many :booth_works, through: :booths
   # has_many :notifications, through: :booths
-  # has_one_attached :image
+  has_one_attached :image
 
   validates :name, presence: true
   validates :venue, presence: true

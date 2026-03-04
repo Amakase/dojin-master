@@ -4,7 +4,7 @@ class Work < ApplicationRecord
   has_many :included_works, dependent: :destroy
   has_many :circle_works, dependent: :destroy
   has_many :circles, through: :circle_works
-  # has_one_attached :image
+  has_one_attached :image
 
   validates :title, presence: true
   validates :title_reading, presence: true
