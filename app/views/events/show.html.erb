@@ -1,21 +1,17 @@
-<div class="background">
-  <div class="title-container">
     <h1> <%= @event.name %> </h1>
     <%= link_to events_path do %>
-   <i class="fa-solid fa-rotate-left fa-xl"></i>
+    <i class="fa-solid fa-rotate-left fa-xl"></i>
     <% end %>
-  </div>
 
-  <div class="booths-container">
+
+
     <% @booths.each do |booth| %>
-    <div class="border-only booth-container">
+    <div>
       <h2>Circle Name: <%= booth.circle.name %></h2>
       <h3>Genre: <%= booth.genre %></h3>
       <p>Booth Space: <%= booth.booth_space %></p>
       <p>Booth Day: <%= booth.booth_day %></p>
       <p>-----------------------------------</p>
       <p>Description: <%= booth.description %></p>
-    </div>
-    <% end %>
   </div>
-</div>
+    <% end %>
