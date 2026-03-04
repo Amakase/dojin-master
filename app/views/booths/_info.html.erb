@@ -1,9 +1,15 @@
-<h1><strong>Circle:</strong> <%= booth.circle.name %></h1>
-<div>
-  <h2 class="d-inline-block">
-    <strong>Event:</strong> <%= event.name %>
-  </h2>
-  <div class="d-flex justify-content-end">
+<div class="d-flex justify-content-between align-items-center">
+  <div>
+    <div class="fs-1">
+      <span class="fw-bold">Circle: </span>
+      <%= booth.circle.name %>
+    </div>
+      <div class="fs-2">
+        <span class="fw-bold">Event:</span>
+        <%= event.name %>
+      </div>
+  </div>
+  <div>
     <% if booth.favorites.find_by(user:current_user) %>
       <%= link_to favorite_path(booth.favorites.find_by(user:current_user)),
                   data: { turbo_method: :patch } do %>
