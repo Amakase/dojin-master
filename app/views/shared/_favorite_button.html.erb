@@ -1,1 +1,34 @@
-<%# to be updated %>
+<% favorite = current_user.favorites.find_by(booth: booth) %>
+
+<div class="dropdown">
+  <button class="btn priority-btn-<%= favorite&.priority %>"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+
+    <% if favorite.present? %>
+      <%= favorite.priority %>
+    <% else %>
+      Add favorite
+    <% end %>
+
+  </button>
+
+  <ul class="dropdown-menu">
+    <% (1..9).each do |level| %>
+      <li class="priority-item priority-<%= level %>">
+        <% if favorite.present? %>
+          <%= link_to level,
+                      favorite_path(favorite, favorite: { priority: level }),
+                      data: { turbo_method: :patch },
+                      class: "dropdown-item" %>
+        <% else %>
+          <%= link_to level,
+                      booth_favorites_path(booth, favorite: { priority: level }),
+                      data: { turbo_method: :post },
+                      class: "dropdown-item" %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>
