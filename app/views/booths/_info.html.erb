@@ -4,11 +4,12 @@
     <strong>Event:</strong> <%= event.name %>
   </h2>
   <div class="d-flex justify-content-end">
-    <% if booth.favorites.find_by(user:current_user) %>
-      <%= link_to favorite_path(booth.favorites.find_by(user:current_user)),
+    <% favorite = booth.favorites.find_by(user:current_user) %>
+    <% if favorite %>
+      <%= link_to favorite_path(favorite),
                   data: { turbo_method: :patch } do %>
         <div class="btn border">
-          Priority: <%= booth.favorites.find_by(user:current_user).priority %>
+          Priority: <%= favorite.priority %>
         </div>
       <% end %>
     <% else %>
