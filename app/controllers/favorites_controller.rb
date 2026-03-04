@@ -12,17 +12,19 @@ class FavoritesController < ApplicationController
     authorize @favorite
 
     if @favorite.save
-      redirect_to @booth
+      format.html { redirect_to @booth }
+      format.turbo_stream
     else
-      redirect_to @booth, alert: @favorite.errors.full_messages.to_sentence
+      format.html { redirect_to @booth, alert: "Already favorited." }
     end
   end
 
   def update
     if @favorite.update(favorite_params)
-      redirect_to booth_path(@booth)
+      format.html { redirect_to @booth }
+      format.turbo_stream
     else
-      render :edit, status: :unprocessable_entity
+      format.html { redirect_to @booth, alert: "Already favorited." }
     end
   end
 

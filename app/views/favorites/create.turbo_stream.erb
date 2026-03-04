@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@booth, :favorite) do %>
+  <%= render "shared/favorite_button", booth: @booth %>
+<% end %>
