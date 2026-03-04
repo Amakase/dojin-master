@@ -18,8 +18,8 @@
   <% end %>
 
     <% @booths.each do |booth| %>
-  <div class="card-product mx-auto">
-    <img src="https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/skateboard.jpg" />
+  <div class="card-product mx-auto card-product-event">
+    <img src='https://picsum.photos/id/<%= booth.id  * 4%>/200' />
     <div class="card-product-infos">
     <%= link_to booth_path(booth.id) do%>
       <div>

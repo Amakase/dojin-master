@@ -20,7 +20,7 @@
 <%= link_to "Bookmarked Events", events_path(filter: "bookmarked") %>
   <% @events.each do |event| %>
   <div class="card-product mx-auto">
-    <img src="https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/skateboard.jpg" />
+    <img src='https://picsum.photos/id/<%= event.id * 4 %>/200' />
     <div class="card-product-infos">
       <%= link_to event_path(event.id), class: "text-decoration-none" do %>
       <div>
