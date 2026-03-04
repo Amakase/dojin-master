@@ -1,8 +1,6 @@
 <h3 class="mt-2">My Inventory: </h3>
 <ul>
-  <% user_inventory.select do |item|
-    item.work.circle_works.find_by(circle: booth.circle)
-  end.each do |item| %>
+  <% user_inventory.each do |item| %>
     <li id="test"><%= item.work.title %></li>
   <% end %>
 </ul>
