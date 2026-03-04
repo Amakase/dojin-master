@@ -1,10 +1,4 @@
 class EventsController < ApplicationController
-  before_action :authenticate_user!
-  include Pundit::Authorization
-
-  # Pundit: allow-list approach
-  after_action :verify_authorized, except: %i[index], unless: :skip_pundit?
-  after_action :verify_policy_scoped, only: %i[index], unless: :skip_pundit?
   def index
     if params[:filter] == "bookmarked"
       @events = policy_scope(current_user.events)
