@@ -15,8 +15,8 @@
   <%= turbo_frame_tag dom_id(booth, :favorite) do %>
     <%= render "shared/favorite_button", booth: booth %>
   <% end %>
-  <%= simple_form_for @favorite do |f| %>
-    <%= f.input :favorite.notes %>
+  <%= simple_form_for favorite do |f| %>
+    <%= f.input :notes %>
     <%= f.button :submit %>
   <% end %>
 
