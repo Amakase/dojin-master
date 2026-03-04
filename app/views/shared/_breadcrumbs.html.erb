@@ -1,0 +1,7 @@
+<%= link_to "Events", events_path %>
+<% if event %>
+  > <%= link_to event.name, event_path(event) %>
+<% end %>
+<% if booth %>
+  > <%= link_to booth.circle.name, booth_path(booth) %>
+<% end %>
