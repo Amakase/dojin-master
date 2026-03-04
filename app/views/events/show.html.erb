@@ -6,10 +6,13 @@
 
 
     <% @booths.each do |booth| %>
+    <%= link_to booth_path(booth.id) do%>
     <div>
       <h2>Circle Name: <%= booth.circle.name %></h2>
       <h3>Genre: <%= booth.genre %></h3>
       <p>Booth Space: <%= booth.booth_space %></p>
       <p>Booth Day: <%= booth.booth_day %></p>
+      <br><br>
   </div>
+    <% end %>
     <% end %>

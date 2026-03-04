@@ -1,14 +1,21 @@
 class EventsController < ApplicationController
   def index
     if params[:filter] == "bookmarked"
-      @events = current_user.events
+      @events = policy_scope(current_user.events)
     else
-      @events = Event.all
+      @events = policy_scope(Event)
     end
   end
 
   def show
-    @event = Event.find(params[:id])
+    @event = policy_scope(Event).find(params[:id])
     @booths = @event.booths
+    authorize @event, :show?
+  end
+
+  private
+
+  def skip_pundit?
+    devise_controller? || params[:controller] =~ /(^(rails_)?admin)|(^pages$)/
   end
 end
