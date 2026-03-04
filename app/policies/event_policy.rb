@@ -15,7 +15,7 @@ class EventPolicy < ApplicationPolicy
   end
 
   def create?
-    true
+    false
   end
 
   def new?
@@ -23,7 +23,7 @@ class EventPolicy < ApplicationPolicy
   end
 
   def update?
-    true
+    false
   end
 
   def edit?
@@ -31,7 +31,7 @@ class EventPolicy < ApplicationPolicy
   end
 
   def destroy?
-    true
+    false
   end
 
   class Scope < ApplicationPolicy::Scope
