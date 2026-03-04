@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_04_032600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,11 +53,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
 
   create_table "booth_works", force: :cascade do |t|
     t.bigint "booth_id", null: false
-    t.string "circle"
+    t.string "circle", default: ""
     t.datetime "created_at", null: false
     t.integer "limit"
     t.boolean "new"
-    t.text "notes"
+    t.text "notes", default: ""
     t.integer "num_bought"
     t.integer "num_to_buy"
     t.integer "price"
@@ -73,7 +73,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
     t.datetime "created_at", null: false
     t.text "description"
     t.bigint "event_id", null: false
-    t.string "genre"
+    t.string "genre", default: ""
     t.datetime "updated_at", null: false
     t.index ["circle_id"], name: "index_booths_on_circle_id"
     t.index ["event_id"], name: "index_booths_on_event_id"
@@ -90,7 +90,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
 
   create_table "circles", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "description"
+    t.text "description", default: ""
     t.string "name"
     t.string "name_reading"
     t.datetime "updated_at", null: false
@@ -99,7 +99,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
   create_table "collection_works", force: :cascade do |t|
     t.bigint "collection_id", null: false
     t.datetime "created_at", null: false
-    t.text "notes"
+    t.text "notes", default: ""
     t.datetime "updated_at", null: false
     t.bigint "work_id", null: false
     t.index ["collection_id"], name: "index_collection_works_on_collection_id"
@@ -116,7 +116,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
 
   create_table "events", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.text "description"
+    t.text "description", default: ""
     t.date "end_date"
     t.string "name"
     t.date "start_date"
@@ -127,7 +127,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
   create_table "favorites", force: :cascade do |t|
     t.bigint "booth_id", null: false
     t.datetime "created_at", null: false
-    t.text "notes"
+    t.text "notes", default: ""
     t.integer "priority"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -171,7 +171,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_03_092439) do
   create_table "works", force: :cascade do |t|
     t.boolean "adult"
     t.datetime "created_at", null: false
-    t.text "description"
+    t.text "description", default: ""
     t.boolean "digital"
     t.string "download_source"
     t.string "medium"
