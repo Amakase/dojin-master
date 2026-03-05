@@ -13,4 +13,8 @@ class Booth < ApplicationRecord
   def favorited_by?(user)
     favorites.exists?(user: user)
   end
+
+  def day_number
+    (booth_day - event.start_date).to_i + 1
+  end
 end
