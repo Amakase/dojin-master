@@ -1,0 +1,155 @@
+.page-search-row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.event-page-title {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 1rem;
+}
+
+.event-search-form {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.event-search-form .form-control {
+  border-radius: 0.65rem;
+  border-color: transparent;
+}
+
+.event-search-form .btn {
+  border-radius: 0.65rem;
+  white-space: nowrap;
+}
+
+.card-product {
+  min-height: 320px;
+  height: auto;
+  width: 60%;
+  background: linear-gradient(160deg, #ffffff, #f7f7f7);
+  border: 1px solid rgba(14, 16, 61, 0.12);
+  box-shadow:
+    0 10px 22px rgba(9, 11, 36, 0.12),
+    0 4px 8px rgba(9, 11, 36, 0.08);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin: 16px;
+  border-radius: 22px;
+  position: relative;
+  transform-origin: center;
+  transition: transform 0.32s ease, box-shadow 0.28s ease, background 0.28s ease;
+
+  &:hover {
+    background: linear-gradient(160deg, #ffffff, #efefef);
+    transform: scale(1.015);
+    box-shadow:
+      0 18px 30px rgba(9, 11, 36, 0.16),
+      0 8px 14px rgba(9, 11, 36, 0.1);
+  }
+}
+
+.card-product img {
+  height: 100%;
+  width: 228px;
+  object-fit: cover;
+  margin-left: 16px;
+  border-radius: 12px;
+  transition: transform 0.32s ease, filter 0.32s ease;
+}
+
+.card-product:hover img {
+  transform: scale(1.02);
+  filter: saturate(1.08) contrast(1.02);
+}
+
+.card-product h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.card-product p {
+  font-size: 16px;
+  line-height: 1.4;
+  opacity: .7;
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+.card-product .card-product-infos {
+  padding: 16px;
+}
+
+.card-product .card-title {
+  margin-bottom: 0.45rem;
+}
+
+.event-bookmark {
+  position: absolute;
+  top: 36px;
+  right: 24px;
+  color: rgba(255, 174, 0, 0.719);
+}
+
+.bookmark_link {
+  text-align: end;
+  margin-right: 20%;
+  margin-bottom: 0.8rem;
+}
+
+.bookmark_link a {
+  display: inline-block;
+  text-decoration: none;
+  padding: 0.35rem 0.7rem;
+  margin-left: 0.3rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: $white;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.bookmark_link a:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+@media (max-width: 767px) {
+  .event-search-form {
+    flex-wrap: wrap;
+  }
+
+  .event-search-form .form-control {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .card-product {
+    width: 92vw;
+    max-width: 34rem;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+  }
+
+  .card-product img {
+    width: calc(100% - 32px);
+    height: 180px;
+    margin-top: 16px;
+  }
+
+  .bookmark_link {
+    margin-right: 0;
+    text-align: center;
+  }
+}

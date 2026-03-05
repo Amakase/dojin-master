@@ -1,13 +1,100 @@
-<div class="banner" style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)), url(https://raw.githubusercontent.com/lewagon/fullstack-images/master/uikit/background.png);">
-  <div class="container">
-    <h1>Le Wagon brings <strong>tech skills</strong> to <strong>creative people</strong>!</h1>
-    <p>Change your life and learn to code at one of our campuses around the world.</p>
-    <% if user_signed_in? %>
-      <%= link_to "Check your events!", events_path, class: "btn btn-primary" %>
-    <% else %>
-      <%= link_to "Sign Up/Login", new_user_session_path, class: "btn btn-primary" %>
-    <% end %>
+<%# ─── Hero ──────────────────────────────────────────────────────────────── %>
+<section class="home-hero">
+  <div class="home-hero__noise"></div>
+  <div class="home-hero__accent-line home-hero__accent-line--left"></div>
+  <div class="home-hero__accent-line home-hero__accent-line--right"></div>
+
+  <div class="container home-hero__inner">
+    <p class="home-hero__eyebrow d-flex align-items-center gap-3">
+      <span class="home-hero__eyebrow-jp">同人マスター</span>
+      <span class="home-hero__eyebrow-divider">|</span>
+      <span class="home-hero__eyebrow-en">Dōjin Master</span>
+    </p>
+
+    <h1 class="home-hero__title">
+      Plan your <span class="home-hero__title-accent">perfect</span><br>
+      convention experience.
+    </h1>
+
+    <p class="home-hero__subtitle">
+      Track every booth, prioritize what matters, and never miss a circle again —
+      built for doujin fans who show up prepared.
+    </p>
+
+    <div class="home-hero__cta d-flex flex-wrap gap-3 align-items-center">
+      <% if user_signed_in? %>
+        <%= link_to events_path, class: "btn home-hero__btn-primary text-decoration-none" do %>
+          <i class="fa-solid fa-calendar-days me-2"></i>Browse Events
+        <% end %>
+      <% else %>
+        <%= link_to new_user_registration_path, class: "btn home-hero__btn-primary text-decoration-none" do %>
+          <i class="fa-solid fa-rocket me-2"></i>Get Started
+        <% end %>
+        <%= link_to new_user_session_path, class: "btn home-hero__btn-ghost text-decoration-none" do %>
+          Sign In
+        <% end %>
+      <% end %>
+    </div>
+
+    <a href="#home-features" class="home-hero__scroll-hint d-flex flex-column align-items-center gap-2" aria-label="Scroll to features">
+      <i class="fa-solid fa-chevron-down"></i>
+    </a>
   </div>
-</div>
-<div class="container">
-</div>
+</section>
+
+<%# ─── Features ──────────────────────────────────────────────────────────── %>
+<section class="home-features" id="home-features">
+  <div class="container">
+    <p class="home-features__label">Everything you need</p>
+    <h2 class="home-features__heading">Built for the convention floor.</h2>
+
+    <p class="home-features__description">
+      Dōjinshi (同人誌) are self-published works — manga, novels, art books, and games — created
+      and sold by independent artists and circles at events like Comiket. Dōjin Master helps you
+      plan every visit so you never leave a favourite circle's table empty-handed.
+    </p>
+
+    <div class="row g-4 mt-2">
+
+      <div class="col-12 col-md-4">
+        <div class="home-feature-card">
+          <div class="home-feature-card__icon-wrap d-inline-flex align-items-center justify-content-center">
+            <i class="fa-solid fa-calendar-days home-feature-card__icon"></i>
+          </div>
+          <h3 class="home-feature-card__title">Browse Events</h3>
+          <p class="home-feature-card__body">
+            Discover upcoming conventions and see every circle participating.
+            Find exactly what you're looking for before the gates open.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="home-feature-card home-feature-card--featured">
+          <div class="home-feature-card__icon-wrap d-inline-flex align-items-center justify-content-center">
+            <i class="fa-solid fa-star home-feature-card__icon"></i>
+          </div>
+          <h3 class="home-feature-card__title">Favorite Booths</h3>
+          <p class="home-feature-card__body">
+            Mark booths with priority 1–9 and add personal notes. Build your
+            battle plan so you hit every must-visit table on day one.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <div class="home-feature-card">
+          <div class="home-feature-card__icon-wrap d-inline-flex align-items-center justify-content-center">
+            <i class="fa-solid fa-book-open home-feature-card__icon"></i>
+          </div>
+          <h3 class="home-feature-card__title">Track Your Collection</h3>
+          <p class="home-feature-card__body">
+            See which works you already own at a glance. Avoid duplicates and
+            discover new titles from circles you love.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
