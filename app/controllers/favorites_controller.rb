@@ -2,7 +2,12 @@ class FavoritesController < ApplicationController
   before_action :set_favorite, only: [:update]
   before_action :set_booth, only: [:update]
   def index
-    @favorites = policy_scope(Favorite).joins(booth: :circle).includes(booth: :circle).order("circles.name ASC")
+    @event = Event.find(params[:event_id])
+    @favorites = policy_scope(Favorite)
+                .joins(booth: :circle)
+                .includes(booth: :circle)
+                .where(booths: { event_id: @event.id })
+                .order("favorites.priority ASC, circles.name_reading ASC")
   end
 
   def create
