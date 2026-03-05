@@ -4,10 +4,10 @@ class FavoritesController < ApplicationController
   def index
     @event = Event.find(params[:event_id])
     @favorites = policy_scope(Favorite)
-                  .joins(booth: [:circle, :event])
-                  .includes(booth: :circle)
-                  .where(events: { id: @event.id })
-                  .order("circles.name ASC")
+                .joins(booth: :circle)
+                .includes(booth: :circle)
+                .where(booths: { event_id: @event.id })
+                .order("favorites.priority ASC, circles.name_reading ASC")
   end
 
   def create
