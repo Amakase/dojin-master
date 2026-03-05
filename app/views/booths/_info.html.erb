@@ -12,17 +12,24 @@
 </div>
   <div class="col-sm-4 border d-flex justify-content-center align-items-center">
     <%# Dimensions: 635px x 903px %>
-    <% if circle.image.attached? %>
+    <% if booth.image.attached? %>
+      <%= image_tag booth.image,
+            id: "circle-image",
+            alt: "Booth Circle-Cut Image",
+            class: "object-fit-contain border",
+            width: 180,
+            height: 256 %>
+    <% elsif circle.image.attached? %>
       <%= image_tag circle.image,
             id: "circle-image",
-            alt: circle.name,
+            alt: "Circle Image",
             class: "object-fit-contain border",
             width: 180,
             height: 256 %>
     <% else %>
-      <%= image_tag circle.image,
+      <%= image_tag File.open(Rails.root.join("app/assets/images/default_circle.jpg")),
             id: "circle-image",
-            alt: File.open(Rails.root.join("app/assets/images/default_circle.jpg")),
+            alt: "Default Image",
             class: "object-fit-contain border",
             width: 180,
             height: 256 %>
