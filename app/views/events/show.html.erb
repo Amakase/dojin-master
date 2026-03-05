@@ -21,14 +21,14 @@
 
 <div class="cards mx-auto">
     <% @booths.each do |booth| %>
-<div class="card" style="width: 15rem;">
+<div class="card card-fixed-width" >
   <div class="card-body bg-white rounded-5">
    <%= link_to booth_path(booth.id), class: "text-decoration-none" do%>
       <div>
-        <img class="card-img-top" src="https://picsum.photos/id/<%= booth.id  * 4%>/200" alt="Card image cap" />
+        <img src='https://picsum.photos/id/<%= booth.id * 4 %>/200' alt="<%= booth.circle.name %>" />
         <h5 class="card-title text-black"><%= booth.circle.name %> </h5>
         <h6 class="card-text text-black">Genre: <%= booth.genre %></h6>
-        <p class="card-text text-black">Booth Space: <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.end_date + 2).to_i %>)</p>
+        <p class="card-text text-black">Booth Space: <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
         <p class="card-text text-black">Booth Day: <%= booth.booth_day %></p>
       </div>
     <% end %>
