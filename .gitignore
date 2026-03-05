@@ -39,9 +39,3 @@
 # Ignore Mac and Linux file system files
 *.swp
 .DS_Store
-
-# Ignore local Claude Code configuration (agents, commands, settings)
-.claude/
-CLAUDE.md
-.playwright-mcp/
-booth-show-*.png
