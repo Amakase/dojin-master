@@ -5,27 +5,31 @@
   </style>
 <% end %>
 
-<div class="row justify-content-center page-search-row">
-  <div class="col-sm-8 my-3">
-    <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>   </div>
-    <%= form_with url: events_path, method: :get, class: "d-flex event-search-form" do %>
-      <%= label_tag :query, "Search Events", class: "visually-hidden" %>
-      <%= hidden_field_tag :filter, @filter, id: "search_filter_field" %>
-      <%= text_field_tag :query,
-            params[:query],
-            class: "form-control bg-white",
-            placeholder: "Type a keyword"
-        %>
-      <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
-    <% end %>
+<div class="text-white mb-2 row justify-content-center page-search-row">
+  <div class="col-sm-8 my-1">
+    <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>
   </div>
 </div>
 
   <h1 class="text-white text-center event-page-title">Event List </h1>
 
-  <%= render "filter_toggle" %>
-
   <%= turbo_frame_tag "events_frame" do %>
+    <div class="row justify-content-center page-search-row">
+      <div class="col-sm-8 my-3">
+        <%= form_with url: events_path, method: :get, class: "d-flex event-search-form" do %>
+          <%= label_tag :query, "Search Events", class: "visually-hidden" %>
+          <%= hidden_field_tag :filter, @filter %>
+          <%= text_field_tag :query,
+                params[:query],
+                class: "form-control bg-white",
+                placeholder: "Type a keyword"
+            %>
+          <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+
+    <%= render "filter_toggle" %>
     <%= render "events_list" %>
   <% end %>
 

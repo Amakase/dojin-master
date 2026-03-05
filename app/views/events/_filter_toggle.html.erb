@@ -9,7 +9,7 @@
         @filter == "bookmarked",
         id: "events_filter_toggle_input",
         class: "toggle-input",
-        onchange: "var v=this.checked?'bookmarked':''; var f=document.getElementById('search_filter_field'); if(f) f.value=v; this.form.requestSubmit();" %>
+        onchange: "this.form.requestSubmit()" %>
 
     <%= label_tag :events_filter_toggle_input, class: "toggle-switch" do %>
       <span class="toggle-label toggle-label-all">All</span>
