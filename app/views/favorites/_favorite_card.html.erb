@@ -1,28 +1,33 @@
 <% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
-<div class="card-category d-flex">
+<div class="card-category d-flex justify-content-between">
+  <div class="circle-details">
   <%= image_tag image_path("default_circle.jpg"), alt: "circle_image", class: "object-fit-cover border rounded", style: "max-width: 50px;" %>
 <%# image_path(circle.image_filename.presence || "default_circle.jpg") %>
 
 <%# url(<%= image_path(circle.image_filename.presence || "default_circle.jpg")  %>
 
-  <div class="circle-details">
     <%= link_to circle.name,
                 booth_path(booth),
                 class: "text-decoration-none text-white" %>
   </div>
 
   <div class="booth-details">
-    <div class="booth-space"><%= booth.booth_day %></div>
-    <div class="booth-day"><%= booth.booth_space %></div>
+    <div class="booth-day">Day: <%= booth.booth_day %></div>
+    <div class="booth-space">Booth: <%= booth.booth_space %></div>
   </div>
-  <div class="d-flex">
-    <%= simple_form_for favorite, class: "favorite-notes d-flex" do |f| %>
-      <%= f.input :notes, as: :text, label: false, input_html: { class: "favorite-notes-input" } %>
-      <%= f.button :submit, value: "Submit", class: "p-0" %>
-    <% end %>
-  </div>
+    <div class="d-flex align-items-start">
+      <%= simple_form_for favorite, html: { class: "d-flex" } do |f| %>
+        <%= f.input :notes,
+          as: :text,
+          label: false,
+          wrapper: false,
+          input_html: { class: "favorite-notes-input" } %>
+
+        <%= f.button :submit, "Submit", class: "p-0 ms-2" %>
+      <% end %>
+    </div>
   <%= turbo_frame_tag dom_id(booth, :favorite) do %>
     <%= render "shared/favorite_button", booth: booth %>
   <% end %>
