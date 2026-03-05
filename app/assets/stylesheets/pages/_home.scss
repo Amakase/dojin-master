@@ -1,1 +1,346 @@
-// Specific CSS for your home-page
+// ─── Home page ────────────────────────────────────────────────────────────────
+// Uses project palette variables: $deep-navy, $burgundy, $light-green, $dark-goldenrod
+// Fonts: Work Sans (body) via $body-font, Nunito (headings) via $headers-font
+
+html {
+  scroll-behavior: smooth; // Enables animated scrolling for all fragment-link anchors
+}
+
+// ── Hero ──────────────────────────────────────────────────────────────────────
+
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+
+  // Layered gradient: base navy + diagonal burgundy shard + radial goldenrod glow
+  background:
+    radial-gradient(ellipse 60% 55% at 72% 40%, rgba($dark-goldenrod, 0.13) 0%, transparent 70%),
+    linear-gradient(135deg, rgba($burgundy, 0.55) 0%, transparent 45%),
+    $deep-navy;
+
+  // Fade the coloured overlay layers into $deep-navy at the bottom so the hero
+  // blends seamlessly into the features section instead of ending with a hard edge.
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 220px;
+    background: linear-gradient(to bottom, transparent 0%, $deep-navy 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &__noise {
+    // placeholder for noise overlay element (currently no styles needed)
+  }
+
+  // Decorative vertical accent lines (geometric / manga panel feel)
+  &__accent-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    opacity: 0.15;
+    background: linear-gradient(to bottom, transparent 0%, $dark-goldenrod 30%, $dark-goldenrod 70%, transparent 100%);
+
+    &--left  { left: 8%; }
+    &--right { right: 8%; }
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    padding-top: 5rem;
+    padding-bottom: 6rem;
+  }
+
+  // ── Eyebrow ─────────────────────────────────────────────────────────────────
+
+  &__eyebrow {
+    margin-bottom: 1.75rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba($dark-goldenrod, 0.85);
+
+    &-jp {
+      font-size: 1rem;
+      letter-spacing: 0.06em;
+      color: $dark-goldenrod;
+      font-weight: 700;
+    }
+
+    &-divider {
+      opacity: 0.4;
+      font-weight: 300;
+    }
+
+    &-en {
+      // inherits eyebrow styles
+    }
+  }
+
+  // ── Headline ────────────────────────────────────────────────────────────────
+
+  &__title {
+    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+
+    &-accent {
+      // Goldenrod text with a subtle underline stroke
+      color: $dark-goldenrod;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0.06em;
+        width: 100%;
+        height: 3px;
+        background: $burgundy;
+        border-radius: 2px;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  // ── Subtitle ────────────────────────────────────────────────────────────────
+
+  &__subtitle {
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    color: rgba(#ffffff, 0.72);
+    max-width: 52ch;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  // ── CTAs ────────────────────────────────────────────────────────────────────
+
+  &__cta {
+    // Layout handled by Bootstrap utilities: d-flex flex-wrap gap-3 align-items-center
+  }
+
+  &__btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: $deep-navy;
+    background: $dark-goldenrod;
+    border: 2px solid $dark-goldenrod;
+    border-radius: 4px;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 18px rgba($dark-goldenrod, 0.25);
+
+    &:hover,
+    &:focus-visible {
+      background: lighten($dark-goldenrod, 8%);
+      border-color: lighten($dark-goldenrod, 8%);
+      color: $deep-navy;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba($dark-goldenrod, 0.38);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.8rem 1.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(#ffffff, 0.82);
+    background: transparent;
+    border: 1px solid rgba(#ffffff, 0.25);
+    border-radius: 4px;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: rgba(#ffffff, 0.6);
+      color: #ffffff;
+      background: rgba(#ffffff, 0.06);
+    }
+  }
+
+  // ── Scroll hint ──────────────────────────────────────────────────────────────
+
+  &__scroll-hint {
+    // Layout handled by Bootstrap utilities: d-flex flex-column align-items-center gap-2
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: $dark-goldenrod;
+    animation: home-scroll-bounce 2s ease-in-out infinite;
+    z-index: 1; // Ensure scroll hint sits above the ::after fade overlay
+    text-decoration: none; // Suppress default <a> underline
+    cursor: pointer;
+
+    i {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba($dark-goldenrod, 0.7);
+      background: rgba($dark-goldenrod, 0.1);
+      color: $dark-goldenrod;
+      font-size: 0.85rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    &:hover i {
+      border-color: rgba($dark-goldenrod, 1);
+      background: rgba($dark-goldenrod, 0.2);
+    }
+  }
+
+}
+
+@keyframes home-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.8; }
+  50%       { transform: translateX(-50%) translateY(6px); opacity: 1; }
+}
+
+// ── Features section ──────────────────────────────────────────────────────────
+
+.home-features {
+  background: $deep-navy;
+  padding: 6rem 0 7rem;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: $dark-goldenrod;
+    margin-bottom: 0.75rem;
+  }
+
+  &__heading {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0;
+    letter-spacing: -0.01em;
+  }
+
+  &__description {
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    max-width: 65ch;
+    font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+    line-height: 1.75;
+    color: rgba(#ffffff, 0.65);
+  }
+}
+
+// ── Feature cards ─────────────────────────────────────────────────────────────
+
+.home-feature-card {
+  height: 100%;
+  padding: 2.25rem 2rem;
+  background: rgba(#ffffff, 0.03);
+  border: 1px solid rgba(#ffffff, 0.08);
+  border-radius: 8px;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    border-color: rgba($dark-goldenrod, 0.4);
+    background: rgba($dark-goldenrod, 0.04);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  }
+
+  // Featured (middle) card has a subtle burgundy accent on the top border
+  &--featured {
+    border-color: rgba($burgundy, 0.5);
+    background: rgba($burgundy, 0.05);
+
+    &:hover {
+      border-color: rgba($burgundy, 0.8);
+      background: rgba($burgundy, 0.09);
+    }
+
+    .home-feature-card__icon-wrap {
+      background: rgba($burgundy, 0.18);
+      border-color: rgba($burgundy, 0.3);
+    }
+
+    .home-feature-card__icon {
+      color: lighten($burgundy, 30%);
+    }
+  }
+
+  &__icon-wrap {
+    // Layout handled by Bootstrap utilities: d-inline-flex align-items-center justify-content-center
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    background: rgba($dark-goldenrod, 0.12);
+    border: 1px solid rgba($dark-goldenrod, 0.22);
+    margin-bottom: 1.5rem;
+  }
+
+  &__icon {
+    font-size: 1.35rem;
+    color: $dark-goldenrod;
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  &__body {
+    font-size: 0.92rem;
+    color: rgba(#ffffff, 0.58);
+    line-height: 1.75;
+    margin-bottom: 0;
+  }
+}
+
+// ── Responsive tweaks ─────────────────────────────────────────────────────────
+
+@media (max-width: 767px) {
+  .home-hero {
+    min-height: 85vh;
+  }
+
+  .home-hero__accent-line {
+    display: none;
+  }
+
+  .home-hero__inner {
+    padding-top: 3.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .home-features {
+    padding: 4rem 0 5rem;
+  }
+
+  .home-feature-card {
+    padding: 1.75rem 1.5rem;
+  }
+}
