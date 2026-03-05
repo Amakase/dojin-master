@@ -1,5 +1,6 @@
 <div class="row justify-content-center">
   <div class="col-sm-8 my-3">
+    <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>   </div>
     <%= form_with url: event_path(@event), method: :get, class: "d-flex" do %>
       <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
       <%= text_field_tag :query,
@@ -12,23 +13,26 @@
   </div>
 </div>
 
-  <h1 class="text-white"> <%= @event.name %> </h1>
-  <%= link_to events_path do %>
-  <i class="fa-solid fa-rotate-left fa-xl"></i>
-  <% end %>
+<h1 class="text-white text-center"> <%= @event.name %> </h1>
+  <%#= link_to events_path do %>
+  <%# <i class="fa-solid fa-rotate-left fa-xl"></i> %>
+  <%# end %>
 
+
+<div class="cards">
     <% @booths.each do |booth| %>
-  <div class="card-product mx-auto card-product-event">
-    <img src='https://picsum.photos/id/<%= booth.id  * 4%>/200' />
-    <div class="card-product-infos">
-    <%= link_to booth_path(booth.id) do%>
+<div class="card" style="width: 15rem;">
+  <div class="card-body bg-white rounded-5">
+   <%= link_to booth_path(booth.id), class: "text-decoration-none" do%>
       <div>
-        <h2>Circle Name: <%= booth.circle.name %> (Day: <%= ( booth.booth_day - @event.end_date + 2).to_i %>)</h2>
-        <h2>Genre: <%= booth.genre %></h2>
-        <p>Booth Space: <%= booth.booth_space %></p>
-        <p>Booth Day: <%= booth.booth_day %></p>
+        <img class="card-img-top" src="https://picsum.photos/id/<%= booth.id  * 4%>/200" alt="Card image cap" />
+        <h5 class="card-title text-black"><%= booth.circle.name %> (Day: <%= ( booth.booth_day - @event.end_date + 2).to_i %>)</h5>
+        <h6 class="card-text text-black">Genre: <%= booth.genre %></h6>
+        <p class="card-text text-black">Booth Space: <%= booth.booth_space %></p>
+        <p class="card-text text-black">Booth Day: <%= booth.booth_day %></p>
       </div>
-    </div>
+    <% end %>
   </div>
+</div>
     <% end %>
-    <% end %>
+</div>

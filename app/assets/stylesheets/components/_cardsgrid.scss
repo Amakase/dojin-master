@@ -1,0 +1,11 @@
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 12px;
+  place-items: center;
+}
+
+.card-body-adjust {
+  border-radius: 20px;
+
+}
