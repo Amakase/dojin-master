@@ -7,7 +7,7 @@
           aria-expanded="false">
 
     <% if favorite.present? %>
-      <%= favorite.priority %>
+      <span class="favorite-priority-span">Priority</span><%= favorite.priority %>
     <% else %>
       Add favorite
     <% end %>

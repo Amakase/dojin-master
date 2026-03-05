@@ -1,7 +1,7 @@
 <% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
-<div class="favorite-card-category d-flex justify-content-between">
+<div class="favorite-card-category d-flex justify-content-between align-items-center">
   <div class="favorite-circle-details">
   <%= image_tag image_path("default_circle.jpg"), alt: "circle_image", class: "favorite-circle-image object-fit-cover border rounded" %>
 <%# image_path(circle.image_filename.presence || "default_circle.jpg") %>
@@ -17,20 +17,20 @@
     <div class="favorite-booth-day">Day: <%= booth.booth_day %></div>
     <div class="favorite-booth-space">Booth: <%= booth.booth_space %></div>
   </div>
-    <div class="d-flex align-items-start">
-      <%= simple_form_for favorite, html: { class: "d-flex" } do |f| %>
+    <div class="d-flex align-items-center">
+      <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex" } do |f| %>
         <%= f.input :notes,
           as: :text,
           label: false,
           wrapper: false,
           input_html: { class: "favorite-notes-input" } %>
 
-        <%= f.button :submit, "Submit", class: "p-0 ms-2" %>
+        <%= f.button :submit, "Submit", class: "favorite-notes-btn p-0 ms-2 me-4" %>
       <% end %>
     </div>
   <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-    <%= render "shared/favorite_button", booth: booth %>
+    <%= render "shared/favorite_button", booth: booth, class: "favorite-priority-btn" %>
   <% end %>
-  <div class="favorite-delete">DEL</div>
+  <i class="fa-solid fa-trash favorite-delete-btn"></i>
 
 </div>

@@ -1,35 +1,53 @@
+.favorite-card-category {
+  font-size: 1.25rem
+}
+
 .favorite-circle-image {
-  max-width: 50px;
+  height: 5em
 }
 
 .favorite-circle-details {
-  width: 150px
+  width: 20em
 }
 
 .favorite-booth-details {
-  width: 150px
+  width: 18em
 }
 
 .required.favorite-notes {
   margin: 0
 }
 
+.favorite-notes-form {
+  width: 20em;
+  // height: 5em;
+}
+
 .favorite-notes-input.form-control {
   color: $deep-navy;
-  font-size: 0.5rem;
+  font-size: 1em;
   background-color: $light-gray;
   padding: 0;
   resize: none;
   overflow-y: auto;
   border-color: transparent;
-  height: 40px;
+  height: 5em;
 }
 
 .favorite-notes-input.form-control:focus {
   box-shadow: none;
   border-color: $dark-goldenrod;
+  border-width: 2px;
 }
 
 .favorite-notes-input.is-valid {
   background-image: none;
+}
+
+.favorite-priority-btn {
+  width: 1em;
+}
+
+.favorite-delete-btn {
+  display: none
 }
