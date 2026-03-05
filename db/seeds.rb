@@ -65,6 +65,7 @@ puts "Creating Circles..."
     name: [NAMES.sample, Faker::Creature::Animal.name].sample,
     name_reading: KATAKANA.sample,
     description: TEXTS.sample,
+    image: File.open(Rails.root.join("app/assets/images/default_circle.jpg"))
   )
 end
 
