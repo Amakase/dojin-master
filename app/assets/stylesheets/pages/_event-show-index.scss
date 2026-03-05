@@ -11,18 +11,13 @@
   position: relative;
 }
 
-.card-product-event {
-  min-height: 220px;
-  height: auto;
-}
-
 .card-product img {
   height: 100%;
   width: 120px;
   object-fit: cover;
 }
 
-.card-product h2 {
+.card-product h3 {
   font-size: 20px;
   font-weight: bold;
   margin: 0;
