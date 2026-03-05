@@ -1,4 +1,4 @@
-<div class="col-sm-12 d-flex justify-content-between align-items-center">
+<div class="col-sm-12 d-flex justify-content-center align-items-center border">
   <div>
     <div class="fs-1">
       <span class="fw-bold">Circle: </span>
@@ -9,17 +9,14 @@
       <span class="fw-bold">Booth: </span> <%= booth.booth_space %>
     </div>
   </div>
-  <div>
+</div>
+
+<div>
     <%= turbo_frame_tag dom_id(@booth, :favorite) do %>
       <%= render "shared/favorite_button", booth: booth %>
     <% end %>
-  </div>
 </div>
 <div class="d-flex my-3 justify-content-between">
-  <div>
-    <strong>Day: </strong> <%= booth.booth_day %>,
-    <strong>Booth: </strong> <%= booth.booth_space %>
-  </div>
   <div>
     <strong>Section: </strong> <%= booth.genre %>
   </div>
