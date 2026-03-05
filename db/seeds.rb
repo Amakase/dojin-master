@@ -64,7 +64,8 @@ puts "Creating Circles..."
   Circle.create!(
     name: [NAMES.sample, Faker::Creature::Animal.name].sample,
     name_reading: KATAKANA.sample,
-    description: TEXTS.sample
+    description: TEXTS.sample,
+    image: File.open(Rails.root.join("app/assets/images/default_circle.jpg"))
   )
 end
 
@@ -138,7 +139,7 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
   bookmarked_event.user = User.all.sample
   bookmarked_event.event = event
   bookmarked_event.save!
-  num = rand(10..20)
+  num = rand(20..30)
   sample_arr = Circle.all.sample(num)
   num.times do |i|
     booth = Booth.new(
