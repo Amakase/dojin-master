@@ -19,8 +19,9 @@ class EventsController < ApplicationController
   end
 
   def show
+    # @notification = Notification.where(id: :booth_id)
     @event = policy_scope(Event).find(params[:id])
-    @booths = @event.booths.includes(:circle)
+    @booths = @event.booths.joins(:circle).includes(:circle)
     authorize @event, :show?
     return unless params[:query].present?
 
@@ -29,6 +30,7 @@ class EventsController < ApplicationController
       OR booths.booth_space ILIKE :query
       OR booths.description ILIKE :query
       OR CAST(booths.booth_day AS TEXT) ILIKE :query
+      OR circles.name ILIKE :query
     SQL
 
     @booths = @booths.where(sql_subquery, query: "%#{params[:query]}%")
