@@ -1,0 +1,23 @@
+<% booth = favorite.booth %>
+<% circle = favorite.booth.circle %>
+
+<div class="card-category"
+     style="background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),
+     url(<%= image_path("default_circle.jpg") %>);">
+
+<%# url(<%= image_path(circle.image_filename.presence || "default_circle.jpg")  %>
+
+  <%= link_to circle.name,
+              booth_path(booth),
+              class: "text-decoration-none text-white" %>
+  <%= booth.booth_day %>
+  <%= booth.booth_space %>
+  <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+    <%= render "shared/favorite_button", booth: booth %>
+  <% end %>
+  <%= simple_form_for favorite do |f| %>
+    <%= f.input :notes %>
+    <%= f.button :submit %>
+  <% end %>
+
+</div>
