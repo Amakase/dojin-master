@@ -150,7 +150,7 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
     booth.event = event
     booth.circle = sample_arr[i]
     booth.save!
-    if i%3 == 0
+    if i % 3 == 0
       favorite = Favorite.new(
         priority: rand(1..9),
         notes: Faker::Lorem.paragraph
