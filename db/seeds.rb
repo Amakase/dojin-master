@@ -166,15 +166,16 @@ EVENTS.each do |this_event|
     start_date: this_event[:start_date],
     end_date: this_event[:end_date]
   )
-  bookmarked_event = BookmarkedEvent.new
-  bookmarked_event.user = User.all.first
-  bookmarked_event.event = event
-  bookmarked_event.save!
-
+  User.all.each do |user|
+    bookmarked_event = BookmarkedEvent.new
+    bookmarked_event.user = user
+    bookmarked_event.event = event
+    bookmarked_event.save!
+  end
   CIRCLES.each_with_index do |circle, i|
     booth = Booth.new(
       booth_day: [event.start_date, event.end_date].sample,
-      booth_space: "東" + i.to_s.rjust(2, "0") + %w(a b).sample,
+      booth_space: "東" + (i + 1).to_s.rjust(2, "0") + %w(a b).sample,
       genre: Faker::Book.genre,
       description: circle[:description]
     )
