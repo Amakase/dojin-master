@@ -6,6 +6,21 @@
   place-items: center;
 }
 
+
+.cards .card .card-body {
+  background-color: $white;
+  transition: 0.3s all ease;
+
+  &:hover {
+    background-color: $light-gray;
+    transform: translateY(-6px);
+    box-shadow:
+      0 10px 20px rgba(0, 0, 0, 0.15),
+      0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .card-fixed-width {
   width: 15rem;
+  transition: all 0.3s ease;
 }

@@ -9,12 +9,19 @@
   margin: 16px;
   border-radius: 20px;
   position: relative;
+  transition: 0.3s all ease;
+
+  &:hover {
+    background: $light-gray;
+  }
 }
 
 .card-product img {
   height: 100%;
-  width: 120px;
+  width: 240px;
   object-fit: cover;
+  margin-left: 16px;
+  border-radius: 8px;
 }
 
 .card-product h3 {
