@@ -8,6 +8,7 @@
   align-items: center;
   margin: 16px;
   border-radius: 20px;
+  position: relative;
 }
 
 .card-product-event {
@@ -37,4 +38,11 @@
 
 .card-product .card-product-infos {
   padding: 16px;
+}
+
+.event-bookmark {
+  position: absolute;
+  top: 36px;
+  right: 24px;
+  color: rgba(255, 174, 0, 0.719);
 }
