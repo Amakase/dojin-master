@@ -1,0 +1,20 @@
+<div class="bookmark_link">
+  <%= form_with url: events_path, method: :get, class: "toggle-form",
+      data: { turbo_frame: "events_frame" } do %>
+    <%= hidden_field_tag :query, params[:query] %>
+
+    <%# unchecked = All, checked = Bookmarked %>
+    <%= check_box_tag :filter,
+        "bookmarked",
+        @filter == "bookmarked",
+        id: "events_filter_toggle_input",
+        class: "toggle-input",
+        onchange: "var v=this.checked?'bookmarked':''; var f=document.getElementById('search_filter_field'); if(f) f.value=v; this.form.requestSubmit();" %>
+
+    <%= label_tag :events_filter_toggle_input, class: "toggle-switch" do %>
+      <span class="toggle-label toggle-label-all">All</span>
+      <span class="toggle-label toggle-label-bookmarked">Bookmarked</span>
+      <span class="toggle-knob" aria-hidden="true"></span>
+    <% end %>
+  <% end %>
+</div>

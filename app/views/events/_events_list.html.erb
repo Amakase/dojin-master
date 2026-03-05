@@ -1,0 +1,20 @@
+<% @events.each do |event| %>
+  <div class="card-product mx-auto">
+    <% if event.bookmarked_events.exists?(user_id: current_user.id) %>
+      <i class="fa-solid fa-star fa-2xl event-bookmark"></i>
+    <% end %>
+
+    <img src='https://picsum.photos/id/<%= event.id * 4 %>/200' alt="<%= event.name %>" />
+    <div class="card-product-infos">
+      <%= link_to event_path(event.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
+        <div>
+          <h2 class="card-title text-black"><%= event.name %></h2>
+          <h3 class="card-title text-black"><%= event.venue %></h3>
+          <p class="card-title text-black">Description: <%= event.description %></p>
+          <p class="card-title text-black">Start Date: <%= event.start_date %></p>
+          <p class="card-title text-black">End Date: <%= event.end_date %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

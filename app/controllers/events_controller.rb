@@ -1,10 +1,13 @@
 class EventsController < ApplicationController
   def index
-    if params[:filter] == "bookmarked"
+    @filter = params[:filter].presence
+
+    if @filter == "bookmarked"
       @events = policy_scope(current_user.events)
     else
       @events = policy_scope(Event)
     end
+
     return unless params[:query].present?
 
     sql_subquery = <<~SQL
