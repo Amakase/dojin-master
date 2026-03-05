@@ -14,21 +14,25 @@
 
   </button>
 
-  <ul class="dropdown-menu">
-    <% (1..9).each do |level| %>
-      <li class="priority-item priority-<%= level %>">
-        <% if favorite.present? %>
-          <%= link_to level,
-                      favorite_path(favorite, favorite: { priority: level }),
-                      data: { turbo_method: :patch },
-                      class: "dropdown-item" %>
-        <% else %>
-          <%= link_to level,
-                      booth_favorites_path(booth, favorite: { priority: level }),
-                      data: { turbo_method: :post },
-                      class: "dropdown-item" %>
-        <% end %>
-      </li>
-    <% end %>
+  <ul class="dropdown-menu w-25 p-0">
+    <div class="row row-cols-3 g-0">
+      <% (1..9).each do |level| %>
+        <div class="col text-center">
+          <li class="priority-item priority-<%= level %>">
+            <% if favorite.present? %>
+              <%= link_to level,
+                          favorite_path(favorite, favorite: { priority: level }),
+                          data: { turbo_method: :patch },
+                          class: "dropdown-item" %>
+            <% else %>
+              <%= link_to level,
+                          booth_favorites_path(booth, favorite: { priority: level }),
+                          data: { turbo_method: :post },
+                          class: "dropdown-item" %>
+            <% end %>
+          </li>
+        </div>
+      <% end %>
+    </div>
   </ul>
 </div>
