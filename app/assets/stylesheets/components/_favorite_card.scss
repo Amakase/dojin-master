@@ -1,0 +1,9 @@
+.favorite-notes-input {
+  font-size: 0.5rem;
+  background-color: $light-gray
+}
+
+.favorite-notes-input:focus {
+  box-shadow: none;
+  border-color: #999;
+}

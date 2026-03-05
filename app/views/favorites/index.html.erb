@@ -3,7 +3,7 @@
     <h1>Favorites</h1>
   </div>
 
-  <div class="cards">
+  <div class="cards row">
     <% @favorites.each do |favorite| %>
       <%= render 'favorite_card', favorite: favorite %>
     <% end %>
