@@ -1,0 +1,11 @@
+.cards {
+  display: grid;
+  width: 70%;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 16px;
+  place-items: center;
+}
+
+.card-fixed-width {
+  width: 15rem;
+}

@@ -1,10 +1,12 @@
 <div class="row justify-content-center">
   <div class="col-sm-8 my-3">
+    <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>   </div>
     <%= form_with url: events_path, method: :get, class: "d-flex" do %>
       <%= label_tag :query, "Search Events", class: "visually-hidden" %>
+      <%= hidden_field_tag :filter, params[:filter] %>
       <%= text_field_tag :query,
             params[:query],
-            class: "form-control",
+            class: "form-control bg-white",
             placeholder: "Type a keyword"
         %>
       <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
@@ -13,23 +15,40 @@
 </div>
 
 
-  <h1>Event List: </h1>
-<%= link_to "All Events", events_path %>
-<%= link_to "Bookmarked Events", events_path(filter: "bookmarked") %>
+  <h1 class="text-white text-center">Event List </h1>
+  <div class="bookmark_link">
+  <%= link_to "All Events", events_path %>
+  <%= link_to "Bookmarked Events", events_path(filter: "bookmarked") %>
+  </div>
   <% @events.each do |event| %>
-  <%= link_to event_path(event.id), class: "text-decoration-none" do %>
-    <div>
-      <h2><%= event.name %></h2>
-      <h5> <%= event.venue %></h5>
-      <p>Description: <%= event.description %></p>
-      <p>Start Date: <%= event.start_date %></p>
-      <p>End Date: <%= event.end_date %></p>
-    </div>
+  <div class="card-product mx-auto">
+    <% if event.bookmarked_events.exists?(user_id: current_user.id) %>
+    <i class="fa-solid fa-star fa-2xl event-bookmark"></i>
     <% end %>
+
+    <img src='https://picsum.photos/id/<%= event.id * 4 %>/200' alt="<%= event.name %>" />
+    <div class="card-product-infos">
+      <%= link_to event_path(event.id), class: "text-decoration-none" do %>
+      <div>
+        <h2 class="card-title text-black"><%= event.name %></h2>
+        <h3 class="card-title text-black"> <%= event.venue %></h3>
+        <p class="card-title text-black">Description: <%= event.description %></p>
+        <p class="card-title text-black">Start Date: <%= event.start_date %></p>
+        <p class="card-title text-black">End Date: <%= event.end_date %></p>
+      </div>
+        <% end %>
+    </div>
+  </div>
   <% end %>
 
 
-<%# plz igrone %>
+
+
+
+<%# plz ignore  %>
 <%# if policy(@event).destroy? %>
   <%#= link_to "Delete", event_path(@event), method: :delete %>
 <%# end %>
+
+
+<%# bookmark | start  / end date | filter day 1/2 | event (bm) %>
