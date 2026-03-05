@@ -1,9 +1,9 @@
 <% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
-<div class="card-category d-flex justify-content-between">
-  <div class="circle-details">
-  <%= image_tag image_path("default_circle.jpg"), alt: "circle_image", class: "object-fit-cover border rounded", style: "max-width: 50px;" %>
+<div class="favorite-card-category d-flex justify-content-between">
+  <div class="favorite-circle-details">
+  <%= image_tag image_path("default_circle.jpg"), alt: "circle_image", class: "favorite-circle-image object-fit-cover border rounded" %>
 <%# image_path(circle.image_filename.presence || "default_circle.jpg") %>
 
 <%# url(<%= image_path(circle.image_filename.presence || "default_circle.jpg")  %>
@@ -13,9 +13,9 @@
                 class: "text-decoration-none text-white" %>
   </div>
 
-  <div class="booth-details">
-    <div class="booth-day">Day: <%= booth.booth_day %></div>
-    <div class="booth-space">Booth: <%= booth.booth_space %></div>
+  <div class="favorite-booth-details">
+    <div class="favorite-booth-day">Day: <%= booth.booth_day %></div>
+    <div class="favorite-booth-space">Booth: <%= booth.booth_space %></div>
   </div>
     <div class="d-flex align-items-start">
       <%= simple_form_for favorite, html: { class: "d-flex" } do |f| %>
