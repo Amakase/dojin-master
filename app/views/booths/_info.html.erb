@@ -2,7 +2,7 @@
   <div>
     <div class="fs-1">
       <span class="fw-bold">Circle: </span>
-      <%= booth.circle.name %>
+      <%= circle.name %>
     </div>
     <div class="fs-3">
       <span class="fw-bold">Day: </span> <%= booth.booth_day %>
@@ -10,8 +10,8 @@
     </div>
   </div>
 </div>
-<div class="col-sm-4">
-
+<div class="col-sm-4 my-4">
+  <%= image_tag circle.image, id: "circle-image", class: "circle-image", alt: circle.name %>
 </div>
 <div class="col-sm-8 d-flex justify-content-end align-items-center">
     <%= turbo_frame_tag dom_id(@booth, :favorite) do %>

@@ -3,7 +3,7 @@
 <div class="container text-white">
   <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
   <div class="row">
-    <%= render "booths/info", { event: @event, booth: @booth }%>
+    <%= render "booths/info", { event: @event, booth: @booth, circle: @booth.circle}%>
   </div>
   <div>
     <%= render "booths/notifications", notifications: @notifications%>
