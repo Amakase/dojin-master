@@ -2,25 +2,53 @@
   display: grid;
   width: 70%;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 16px;
+  gap: 18px;
   place-items: center;
 }
 
+.cards .card {
+  border: 0;
+  background: transparent;
+}
 
 .cards .card .card-body {
+  border: 1px solid rgba(14, 16, 61, 0.12);
+  border-radius: 1.4rem;
   background-color: $white;
-  transition: 0.3s all ease;
+  box-shadow:
+    0 10px 20px rgba(9, 11, 36, 0.12),
+    0 4px 10px rgba(9, 11, 36, 0.08);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease;
 
   &:hover {
     background-color: $light-gray;
     transform: translateY(-6px);
     box-shadow:
-      0 10px 20px rgba(0, 0, 0, 0.15),
-      0 20px 40px rgba(0, 0, 0, 0.2);
+      0 16px 30px rgba(9, 11, 36, 0.16),
+      0 8px 16px rgba(9, 11, 36, 0.1);
   }
 }
 
 .card-fixed-width {
   width: 15rem;
   transition: all 0.3s ease;
+}
+
+.card-fixed-width img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+@media (max-width: 767px) {
+  .cards {
+    width: 94vw;
+    max-width: 32rem;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card-fixed-width {
+    width: 100%;
+  }
 }
