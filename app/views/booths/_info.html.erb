@@ -5,7 +5,7 @@
       <%= circle.name %>
     </div>
     <div class="fs-3">
-      <span class="fw-bold">Day: </span> <%= booth.booth_day %>
+      <span class="fw-bold">Day: </span> <%= (booth.booth_day - event.start_date).to_i + 1 %>
       <span class="fw-bold">Booth: </span> <%= booth.booth_space %>
     </div>
   </div>
@@ -32,8 +32,13 @@
       <% end %>
     </div>
   </div>
-  <div class="col-sm-4 d-flex justify-content-center align-items-center border">
-    <span class="fw-bold">Section: </span> <%= booth.genre %>
+  <div class="col-sm-4 d-flex flex-column justify-content-center align-items-center border">
+    <div>
+      <span class="fw-bold">Section: </span> <%= booth.genre %>
+    </div>
+    <div>
+      <span class="fw-bold">Date: </span> <%= booth.booth_day %>
+    </div>
   </div>
   <div class="col-sm-8 d-flex justify-content-center align-items-center border">
     <div>
