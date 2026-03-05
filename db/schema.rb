@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_04_060805) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_05_072231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,7 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_060805) do
     t.string "circle", default: ""
     t.datetime "created_at", null: false
     t.integer "limit"
-    t.boolean "new"
+    t.boolean "new_release"
     t.text "notes", default: ""
     t.integer "num_bought"
     t.integer "num_to_buy"
