@@ -8,17 +8,22 @@ class EventsController < ApplicationController
       @events = policy_scope(Event)
     end
 
-    return unless params[:query].present?
+    if params[:query].present?
+      sql_subquery = <<~SQL
+        events.name ILIKE :query
+        OR events.venue ILIKE :query
+        OR events.description ILIKE :query
+        OR CAST(events.start_date AS TEXT) ILIKE :query
+        OR CAST(events.end_date AS TEXT) ILIKE :query
+      SQL
 
-    sql_subquery = <<~SQL
-      events.name ILIKE :query
-      OR events.venue ILIKE :query
-      OR events.description ILIKE :query
-      OR CAST(events.start_date AS TEXT) ILIKE :query
-      OR CAST(events.end_date AS TEXT) ILIKE :query
-    SQL
+      @events = @events.where(sql_subquery, query: "%#{params[:query]}%")
+    end
 
-    @events = @events.where(sql_subquery, query: "%#{params[:query]}%")
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def show

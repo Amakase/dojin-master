@@ -1,6 +1,6 @@
 <div class="bookmark_link">
   <%= form_with url: events_path, method: :get, class: "toggle-form",
-      data: { turbo_frame: "events_frame" } do %>
+      data: { turbo_stream: true } do %>
     <%= hidden_field_tag :query, params[:query] %>
 
     <%# unchecked = All, checked = Bookmarked %>
