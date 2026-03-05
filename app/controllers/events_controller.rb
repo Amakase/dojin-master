@@ -20,7 +20,7 @@ class EventsController < ApplicationController
 
   def show
     @event = policy_scope(Event).find(params[:id])
-    @booths = @event.booths
+    @booths = @event.booths.includes(:circle)
     authorize @event, :show?
     return unless params[:query].present?
 
