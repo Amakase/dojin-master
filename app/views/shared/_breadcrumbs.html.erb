@@ -1,0 +1,6 @@
+<%= link_to "Events", events_path %>
+<% if event && booth %>
+  > <%= link_to event.name, event_path(event) %> > <strong><%= booth.circle.name %></strong>
+<% elsif event %>
+  > <strong><%= event.name %></strong>
+<% end %>
