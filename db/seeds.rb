@@ -175,7 +175,7 @@ puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and 
         title: [TITLES.sample, Faker::FunnyName.name].sample,
         circle: booth.circle.name,
         price: rand(1..15) * 100,
-        new: [true, false].sample,
+        new_release: [true, false].sample,
         limit: [nil, rand(1..2)].sample,
         num_to_buy: rand(1..3),
         num_bought: 0,

@@ -5,11 +5,11 @@ default: &default
 
 development:
   <<: *default
-  database: doujin_master_development
+  database: dojin_master_development
 
 test:
   <<: *default
-  database: doujin_master_test
+  database: dojin-master_test
 
 production:
   primary:
