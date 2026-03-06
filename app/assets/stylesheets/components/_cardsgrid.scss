@@ -2,7 +2,7 @@
   display: grid;
   width: 70%;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 18px;
+  gap: 24px;
   place-items: center;
 }
 
@@ -14,14 +14,14 @@
 .cards .card .card-body {
   border: 1px solid rgba(14, 16, 61, 0.12);
   border-radius: 1.4rem;
-  background-color: $white;
+  background-color: $custom-card-bg;
   box-shadow:
     0 10px 20px rgba(9, 11, 36, 0.12),
     0 4px 10px rgba(9, 11, 36, 0.08);
   transition: transform 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease;
 
   &:hover {
-    background-color: $light-gray;
+    background-color: $custom-card-bg-hover;
     transform: translateY(-6px);
     box-shadow:
       0 16px 30px rgba(9, 11, 36, 0.16),
@@ -51,4 +51,11 @@
   .card-fixed-width {
     width: 100%;
   }
+}
+
+.notification-adjust {
+  font-size: 20px;
+  bottom: 99.7%;
+  width: 40px !important;
+  left: 97%;
 }

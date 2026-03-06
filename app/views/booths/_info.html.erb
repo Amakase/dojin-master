@@ -27,7 +27,7 @@
             width: 180,
             height: 256 %>
     <% else %>
-      <%= image_tag File.open(Rails.root.join("app/assets/images/default_circle.jpg")),
+      <%= image_tag "blank_circle_cut.png",
             id: "circle-image",
             alt: "Default Image",
             class: "object-fit-contain border",
