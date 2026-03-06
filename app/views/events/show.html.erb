@@ -1,20 +1,22 @@
-<div class="row justify-content-center page-search-row">
-  <div class="col-sm-8 my-3">
-    <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: @event, booth: nil } %>   </div>
-    <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form" do %>
-      <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
-      <%= text_field_tag :query,
-            params[:query],
-            class: "form-control bg-white",
-            placeholder: "Type a keyword"
-        %>
-      <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
-    <% end %>
+<div class="event-show">
+  <div class="row justify-content-center page-search-row">
+    <div class="col-sm-8 my-3">
+      <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: @event, booth: nil } %>   </div>
+      <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form" do %>
+        <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
+        <%= text_field_tag :query,
+              params[:query],
+              class: "form-control bg-white",
+              placeholder: "Type a keyword"
+          %>
+        <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
+      <% end %>
+    </div>
   </div>
+
+<div class="text-white text-center event-page-title">
+  <%= render "shared/event_header", event: @event %>
 </div>
-
-<h1 class="text-white text-center event-page-title"> <%= @event.name %> (<%= @event.start_date %>) </h1>
-
 <div class="cards mx-auto">
     <% @booths.each do |booth| %>
 <div class="card" >
@@ -46,9 +48,9 @@
           <% end %>
         </div>
         <h5 class="card-title text-black"><%= booth.circle.name %> </h5>
-        <h6 class="card-text text-black">Genre: <%= booth.genre %> </h6>
-        <p class="card-text text-black">Booth Space: <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
-        <p class="card-text text-black">Booth Day: <%= booth.booth_day %></p>
+        <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i> <%= booth.genre %> </h6>
+        <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i> <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
+        <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i> <%= booth.booth_day %></p>
         <%
         user_favorites = booth.favorites.where(user: current_user)
         prioritized = user_favorites.where.not(priority: nil).exists?
@@ -70,4 +72,5 @@
       </div>
     </div>
   <% end %>
+</div>
 </div>
