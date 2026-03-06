@@ -1,21 +1,29 @@
 class EventsController < ApplicationController
   def index
-    if params[:filter] == "bookmarked"
+    @filter = params[:filter].presence
+
+    if @filter == "bookmarked"
       @events = policy_scope(current_user.events)
     else
       @events = policy_scope(Event)
     end
-    return unless params[:query].present?
 
-    sql_subquery = <<~SQL
-      events.name ILIKE :query
-      OR events.venue ILIKE :query
-      OR events.description ILIKE :query
-      OR CAST(events.start_date AS TEXT) ILIKE :query
-      OR CAST(events.end_date AS TEXT) ILIKE :query
-    SQL
+    if params[:query].present?
+      sql_subquery = <<~SQL
+        events.name ILIKE :query
+        OR events.venue ILIKE :query
+        OR events.description ILIKE :query
+        OR CAST(events.start_date AS TEXT) ILIKE :query
+        OR CAST(events.end_date AS TEXT) ILIKE :query
+      SQL
 
-    @events = @events.where(sql_subquery, query: "%#{params[:query]}%")
+      @events = @events.where(sql_subquery, query: "%#{params[:query]}%")
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def show

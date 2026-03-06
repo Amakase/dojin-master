@@ -1,23 +1,21 @@
-<div class="row justify-content-center page-search-row">
-  <div class="col-sm-8 my-3">
-    <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: @event, booth: nil } %>   </div>
-    <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form" do %>
-      <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
-      <%= text_field_tag :query,
-            params[:query],
-            class: "form-control bg-white",
-            placeholder: "Type a keyword"
-        %>
-      <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
-    <% end %>
+<div class="event-show">
+  <div class="row justify-content-center page-search-row">
+    <div class="col-sm-8 my-3">
+      <div class="text-white mb-2"> <%= render "shared/breadcrumbs", { event: @event, booth: nil } %>   </div>
+      <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form" do %>
+        <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
+        <%= text_field_tag :query,
+              params[:query],
+              class: "form-control bg-white",
+              placeholder: "Type a keyword"
+          %>
+        <%= submit_tag "Search", name: "", class: "btn btn-primary" %>
+      <% end %>
+    </div>
   </div>
-</div>
 
-<h1 class="text-white text-center event-page-title"> <%= @event.name %> (<%= @event.start_date %>) </h1>
-  <%#= link_to events_path do %>
-  <%# <i class="fa-solid fa-rotate-left fa-xl"></i> %>
-  <%# end %>
 
+  <%= render "shared/event_header", event: @event %>
 
 <div class="cards mx-auto">
     <% @booths.each do |booth| %>
@@ -25,13 +23,19 @@
      <%= link_to booth_path(booth.id), class: "text-decoration-none" do%>
   <div class="card-body rounded-5 card-fixed-width">
       <div class="position-relative">
-        <img src='https://picsum.photos/id/<%= booth.id * 4 %>/200' alt="<%= booth.circle.name %>" class="mb-3 rounded-3 mt-4"/>
+       
+        <%= render "shared/circle_cut", booth: booth, circle: booth.circle, width: 180, height: 256 %>
+        
         <h5 class="card-title text-black"><%= booth.circle.name %> </h5>
-        <h6 class="card-text text-black">Genre: <%= booth.genre %> </h6>
-        <p class="card-text text-black">Booth Space: <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
-        <p class="card-text text-black">Booth Day: <%= booth.booth_day %></p>
-        <% if booth.notifications.where(read: true).exists? %>
-        <span class="badge bg-danger rounded-5 position-absolute notification-adjust"> <%= booth.notifications.count %>
+        <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i> <%= booth.genre %> </h6>
+        <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i> <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
+        <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i> <%= booth.booth_day %></p>
+        <%
+        user_favorites = booth.favorites.where(user: current_user)
+        prioritized = user_favorites.where.not(priority: nil).exists?
+        if booth.notifications.where(read: true).exists? && prioritized
+        %>
+        <span class="badge rounded-5 position-absolute notification-adjust"> <%= booth.notifications.count %>
         </span>
         <% else %>
         <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
@@ -39,7 +43,7 @@
         <% end %>
       </div>
       <% end %>
-          <div class="border">
+          <div class="border favorite-button-size">
           <%= turbo_frame_tag dom_id(booth, :favorite) do %>
           <%= render "shared/favorite_button", booth: booth %>
           <% end %>
@@ -47,4 +51,5 @@
       </div>
     </div>
   <% end %>
+</div>
 </div>

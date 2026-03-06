@@ -1,0 +1,11 @@
+<%= turbo_stream.replace "search_frame" do %>
+  <%= turbo_frame_tag "search_frame" do %>
+    <%= render "search_form" %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "events_frame" do %>
+  <%= turbo_frame_tag "events_frame" do %>
+    <%= render "events_list" %>
+  <% end %>
+<% end %>

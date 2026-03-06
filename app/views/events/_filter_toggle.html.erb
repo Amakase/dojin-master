@@ -1,0 +1,19 @@
+<div class="bookmark_link">
+  <span class="toggle-text-color">Bookmarked</span>
+
+  <%= form_with url: events_path, method: :get, class: "toggle-form",
+      data: { turbo_stream: true } do %>
+    <%= hidden_field_tag :query, params[:query] %>
+
+    <%= check_box_tag :filter,
+        "bookmarked",
+        @filter == "bookmarked",
+        id: "events_filter_toggle_input",
+        class: "toggle-input",
+        onchange: "this.form.requestSubmit()" %>
+
+    <%= label_tag :events_filter_toggle_input, class: "toggle-switch" do %>
+      <span class="toggle-knob"></span>
+    <% end %>
+  <% end %>
+</div>

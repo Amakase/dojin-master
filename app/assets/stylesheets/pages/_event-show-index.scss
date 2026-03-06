@@ -35,7 +35,7 @@
   min-height: 320px;
   height: auto;
   width: 60%;
-  background: linear-gradient(160deg, #ffffff, #f7f7f7);
+  background: $custom-card-bg;
   border: 1px solid rgba(14, 16, 61, 0.12);
   box-shadow:
     0 10px 22px rgba(9, 11, 36, 0.12),
@@ -50,7 +50,7 @@
   transition: transform 0.32s ease, box-shadow 0.28s ease, background 0.28s ease;
 
   &:hover {
-    background: linear-gradient(160deg, #ffffff, #efefef);
+    background: $custom-card-bg-hover;
     transform: scale(1.015);
     box-shadow:
       0 18px 30px rgba(9, 11, 36, 0.16),
@@ -94,6 +94,22 @@
   margin-bottom: 0.45rem;
 }
 
+.favorite-button-size {
+  width: fit-content;
+  border: 1px solid;
+
+  /* make dropdown/menu stacking context so it can float above other cards */
+  position: relative;
+  z-index: 200;
+}
+
+/* on the show page only, force the menu to open upward */
+.event-show .favorite-button-size .dropdown-menu {
+  bottom: 100% !important;
+  top: auto !important;
+}
+
+
 .event-bookmark {
   position: absolute;
   top: 36px;
@@ -102,26 +118,10 @@
 }
 
 .bookmark_link {
-  text-align: end;
-  margin-right: 20%;
+  display: flex;
+  justify-content: end;
   margin-bottom: 0.8rem;
-}
-
-.bookmark_link a {
-  display: inline-block;
-  text-decoration: none;
-  padding: 0.35rem 0.7rem;
-  margin-left: 0.3rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: $white;
-  transition: background-color 0.25s ease, border-color 0.25s ease;
-}
-
-.bookmark_link a:hover {
-  background: rgba(255, 255, 255, 0.24);
-  border-color: rgba(255, 255, 255, 0.38);
+  margin-right: 20%;
 }
 
 @media (max-width: 767px) {
@@ -150,6 +150,59 @@
 
   .bookmark_link {
     margin-right: 0;
-    text-align: center;
   }
+}
+
+.toggle-form {
+  margin: 0;
+}
+
+.toggle-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toggle-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: 90vw;
+  max-width: 50px;
+  height: 30px;
+  border-radius: 999px;
+  padding: 4px;
+  background: $custom-card-bg;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.28s ease;
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+  transition: transform 0.28s ease;
+}
+
+.toggle-input:checked+.toggle-switch {
+  background: $custom-card-bg-hover-strong;
+}
+
+.toggle-input:checked+.toggle-switch .toggle-knob {
+  transform: translateX(100%);
+}
+
+.toggle-text-color {
+  color: $custom-light-gray;
+  align-items: center;
+  margin: 4px 6px;
+  font-weight: 700;
 }
