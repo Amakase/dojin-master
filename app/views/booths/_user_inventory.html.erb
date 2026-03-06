@@ -1,6 +1,24 @@
-<h3 class="mt-2">My Inventory: </h3>
-<ul>
-  <% user_inventory.each do |item| %>
-    <li><%= item.work.title %></li>
-  <% end %>
-</ul>
+<% if user_inventory.any? %>
+  <div class="row g-3">
+    <% user_inventory.each do |item| %>
+      <div class="col-sm-6 col-lg-4">
+        <div class="booth-panel-card d-flex align-items-center gap-3">
+          <div class="booth-inventory-icon flex-shrink-0">
+            <i class="fa-solid fa-book"></i>
+          </div>
+          <div class="overflow-hidden">
+            <p class="fw-semibold mb-0 text-truncate"><%= item.work.title %></p>
+            <% if item.work.title_reading.present? %>
+              <p class="booth-meta-text mb-0 text-truncate"><%= item.work.title_reading %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="booth-empty-state">
+    <i class="fa-solid fa-box-open fa-2x mb-3"></i>
+    <p class="mb-0">You don't own any works from this circle yet.</p>
+  </div>
+<% end %>
