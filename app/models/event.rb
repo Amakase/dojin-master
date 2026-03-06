@@ -12,4 +12,13 @@ class Event < ApplicationRecord
   # validates :description
   validates :start_date, presence: true
   validates :end_date, presence: true
+
+  def dates
+    starts = start_date.strftime('%b %e')
+    if start_date < end_date
+      "#{starts}–#{end_date.day}, #{start_date.year}"
+    else
+      "#{start_date.strftime('%a')} #{starts}, #{start_date.year}"
+    end
+  end
 end
