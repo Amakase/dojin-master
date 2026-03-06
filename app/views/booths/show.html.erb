@@ -1,3 +1,4 @@
+<% unread_exists = @notifications.exists?(read: false) %>
 <div class="container text-white pb-5">
   <div class="py-3">
     <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
@@ -10,12 +11,12 @@
   <div data-controller="booth-tabs">
     <ul class="nav booth-section-nav mb-4" id="boothTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active"
+        <button class="nav-link <%= 'active' if unread_exists %>"
                 data-bs-toggle="pill"
                 data-bs-target="#notifications-panel"
                 type="button"
                 role="tab"
-                aria-selected="true">
+                aria-selected="<%= unread_exists %>">
           <i class="fa-solid fa-bell me-2"></i>Notifications
           <% if @notifications.any? %>
             <span class="badge bg-danger ms-1"><%= @notifications.count %></span>
@@ -23,12 +24,12 @@
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link"
+        <button class="nav-link <%= 'active' unless unread_exists %>"
                 data-bs-toggle="pill"
                 data-bs-target="#booth-works-panel"
                 type="button"
                 role="tab"
-                aria-selected="false">
+                aria-selected="<%= !unread_exists %>">
           <i class="fa-solid fa-book me-2"></i>Booth Works
           <% if @booth_works.any? %>
             <span class="badge bg-secondary ms-1"><%= @booth_works.count %></span>
@@ -64,10 +65,10 @@
     </ul>
 
     <div class="tab-content">
-      <div class="tab-pane fade show active" id="notifications-panel" role="tabpanel">
+      <div class="tab-pane fade <%= 'show active' if unread_exists %>" id="notifications-panel" role="tabpanel">
         <%= render "booths/notifications", notifications: @notifications %>
       </div>
-      <div class="tab-pane fade" id="booth-works-panel" role="tabpanel">
+      <div class="tab-pane fade <%= 'show active' unless unread_exists %>" id="booth-works-panel" role="tabpanel">
         <%= render "booths/booth_works", booth_works: @booth_works %>
       </div>
       <div class="tab-pane fade" id="inventory-panel" role="tabpanel">

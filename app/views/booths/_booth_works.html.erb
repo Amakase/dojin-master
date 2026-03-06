@@ -15,9 +15,9 @@
               <span class="fw-semibold"><%= number_with_delimiter(booth_work.price) %></span>
             </p>
           <% end %>
-          <% if booth_work.limits.present? %>
+          <% if booth_work.limit.present? %>
             <p class="mb-0 booth-meta-text">
-              <i class="fa-solid fa-cubes-stacked me-1"></i>Limit: <%= booth_work.limits %>
+              <i class="fa-solid fa-cubes-stacked me-1"></i>Limit: <%= booth_work.limit %>
             </p>
           <% end %>
         </div>
