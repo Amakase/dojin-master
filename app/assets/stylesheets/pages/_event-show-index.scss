@@ -117,10 +117,6 @@
 .favorite-button-size {
   width: fit-content;
   border: 1px solid;
-
-  /* make dropdown/menu stacking context so it can float above other cards */
-  position: relative;
-  z-index: 200;
 }
 
 /* on the show page only, force the menu to open upward */
