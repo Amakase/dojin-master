@@ -6,12 +6,16 @@
     <%= render "booths/info", { event: @event, booth: @booth, circle: @booth.circle, favorite: @favorite } %>
   </div>
   <div>
-    <%= render "booths/notifications", notifications: @notifications%>
-  </div>
-  <div>
-    <%= render "booths/booth_works", booth_works: @booth_works %>
-  </div>
-  <div>
-    <%= render "booths/user_inventory", { user_inventory: @user_inventory, booth: @booth } %>
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <%= render "booths/notifications", notifications: @notifications%>
+      </li>
+      <li class="nav-item">
+        <%= render "booths/booth_works", booth_works: @booth_works %>
+      </li>
+      <li class="nav-item">
+        <%= render "booths/user_inventory", { user_inventory: @user_inventory, booth: @booth } %>
+      </li>
+    </ul>
   </div>
 </div>
