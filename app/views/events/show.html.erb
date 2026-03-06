@@ -24,28 +24,7 @@
   <div class="card-body rounded-5 card-fixed-width">
       <div class="position-relative">
         <div>
-          <% if booth.image.attached? %>
-            <%= image_tag booth.image,
-                  id: "circle-image",
-                  alt: "Booth Circle-Cut Image",
-                  class: "object-fit-contain",
-                  width: 180,
-                  height: 256 %>
-          <% elsif booth.circle && booth.circle.image.attached? %>
-            <%= image_tag circle.image,
-                  id: "circle-image",
-                  alt: "Circle Image",
-                  class: "object-fit-contain",
-                  width: 180,
-                  height: 256 %>
-          <% else %>
-            <%= image_tag "blank_circle_cut.png",
-                  id: "circle-image",
-                  alt: "Default Image",
-                  class: "object-fit-contain",
-                  width: 180,
-                  height: 256 %>
-          <% end %>
+    <%= render "shared/circle_cut", booth: booth ,width: 180,height: 256 %>
         </div>
         <h5 class="card-title text-black"><%= booth.circle.name %> </h5>
         <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i> <%= booth.genre %> </h6>
