@@ -1,11 +1,13 @@
 <div class="container mt-3">
-  <div class="d-flex justify-content-between align-items-center">
-    <h1>Favorites</h1>
-  </div>
+  <div class="row justify-content-center">
+    <div class="d-flex justify-content-between">
+      <h1> <%= @event.name %> - Favorites</h1>
+    </div>
 
-  <div class="cards">
-    <% @favorites.each do |favorite| %>
-      <%= render 'favorite_card', favorite: favorite %>
-    <% end %>
+    <div class="favorite-cards-container col-auto">
+      <% @favorites.each do |favorite| %>
+        <%= render 'favorite_card', favorite: favorite %>
+      <% end %>
+    </div>
   </div>
 </div>

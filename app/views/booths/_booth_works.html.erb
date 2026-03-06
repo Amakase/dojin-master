@@ -1,6 +1,32 @@
-<h3 class="mt-2">Booth Works:</h3>
-<ul>
-  <% booth_works.each do |booth_work| %>
-    <li><%= booth_work.title %></li>
-  <% end %>
-</ul>
+<% if booth_works.any? %>
+  <div class="row g-3">
+    <% booth_works.each do |booth_work| %>
+      <div class="col-sm-6 col-lg-4">
+        <div class="booth-panel-card h-100">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h6 class="fw-bold mb-0 me-2"><%= booth_work.title %></h6>
+            <% if booth_work.new_release %>
+              <span class="badge bg-danger flex-shrink-0">New</span>
+            <% end %>
+          </div>
+          <% if booth_work.price.present? %>
+            <p class="mb-1">
+              <i class="fa-solid fa-yen-sign me-1 booth-meta-text"></i>
+              <span class="fw-semibold"><%= number_with_delimiter(booth_work.price) %></span>
+            </p>
+          <% end %>
+          <% if booth_work.limit.present? %>
+            <p class="mb-0 booth-meta-text">
+              <i class="fa-solid fa-cubes-stacked me-1"></i>Limit: <%= booth_work.limit %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="booth-empty-state">
+    <i class="fa-regular fa-folder-open fa-2x mb-3"></i>
+    <p class="mb-0">No works listed for this booth.</p>
+  </div>
+<% end %>
