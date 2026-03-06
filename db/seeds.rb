@@ -195,7 +195,7 @@ EVENTS.each do |this_event|
       favorite.user = User.all.first
       favorite.save!
     end
-    if booth.circle == "U.S.S.ユキカゼ"
+    if booth.circle.name == "U.S.S.ユキカゼ"
       notification = Notification.new(
         source: "X",
         content: "あなたのサークル「U.S.S.ユキカゼ」は、Comic Paradiseで「#{booth.booth_space}」に配置されました！\nコミパ受かったよー！",
@@ -224,7 +224,7 @@ EVENTS.each do |this_event|
         notification.save!
       end
     end
-    circle_works = WORKS.select {|work| work[:circle] == booth.circle}
+    circle_works = WORKS.select {|work| work[:circle] == booth.circle.name}
     if circle_works
       circle_works.each do |work|
         booth_work = BoothWork.new(
