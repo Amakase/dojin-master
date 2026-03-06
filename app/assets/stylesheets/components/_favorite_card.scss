@@ -40,19 +40,20 @@
 .favorite-notes-input.form-control {
   color: $deep-navy;
   font-size: 0.8em;
+  line-height: 1.2;
+  padding: 0.25rem;
   background-color: $light-gray;
-  padding: 0;
   resize: none;
   overflow-y: auto;
   border-color: transparent;
   height: 5rem;
   min-width: 10em;
+  flex: 0 0 clamp(10em, 15em, 20em);
 }
 
 .favorite-notes-input.form-control:focus {
-  box-shadow: none;
-  border-color: $dark-goldenrod;
-  border-width: 2px;
+  box-shadow: 0 0 0 1px $dark-goldenrod;
+  border-color: transparent;
 }
 
 .favorite-notes-input.is-valid {
