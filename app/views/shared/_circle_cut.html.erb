@@ -1,0 +1,22 @@
+<% if booth.image.attached? %>
+  <%= image_tag booth.image,
+        id: "circle-image",
+        alt: "Booth Circle-Cut Image",
+        class: "object-fit-contain border",
+        width: 180,
+        height: 256 %>
+<% elsif circle.image.attached? %>
+  <%= image_tag circle.image,
+        id: "circle-image",
+        alt: "Circle Image",
+        class: "object-fit-contain border",
+        width: 180,
+        height: 256 %>
+<% else %>
+  <%= image_tag "blank_circle_cut.png",
+        id: "circle-image",
+        alt: "Default Image",
+        class: "object-fit-contain border",
+        width: 180,
+        height: 256 %>
+<% end %>
