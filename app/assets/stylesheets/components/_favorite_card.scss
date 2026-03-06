@@ -11,7 +11,7 @@
   // flex: 0 0 clamp(8em, 25svw, 15em);
   text-wrap: wrap;
   height: 80px;
-  font-size: 0.8em;
+  // font-size: 0.8em;
 }
 
 .favorite-circle-image {
@@ -20,7 +20,7 @@
 }
 
 .favorite-circle-name {
-  color: $custom-gray;
+  color: inherit;
 }
 
 .favorite-booth-details {
