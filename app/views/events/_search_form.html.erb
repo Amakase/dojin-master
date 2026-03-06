@@ -1,9 +1,10 @@
+<div class="container">
+  <div class="pt-3">
+    <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>
+  </div>
+</div>
 <div class="row justify-content-center page-search-row">
   <div class="col-sm-8 my-3">
-    <div class="text-white mb-2">
-      <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>
-    </div>
-
     <%= form_with url: events_path, method: :get, class: "d-flex event-search-form",
         data: { turbo_frame: "_top" } do %>
       <%= label_tag :query, "Search Events", class: "visually-hidden" %>
