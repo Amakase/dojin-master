@@ -23,9 +23,9 @@
      <%= link_to booth_path(booth.id), class: "text-decoration-none" do%>
   <div class="card-body rounded-5 card-fixed-width">
       <div class="position-relative">
-        <div>
-    <%= render "shared/circle_cut", booth: booth ,width: 180,height: 256 %>
-        </div>
+       
+        <%= render "shared/circle_cut", booth: booth, circle: booth.circle, width: 180, height: 256 %>
+        
         <h5 class="card-title text-black"><%= booth.circle.name %> </h5>
         <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i> <%= booth.genre %> </h6>
         <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i> <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
