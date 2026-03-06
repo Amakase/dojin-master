@@ -1,6 +1,6 @@
 <% unread_exists = @notifications.exists?(read: false) %>
 <div class="container text-white pb-5">
-  <div class="py-3">
+  <div class="pt-3">
     <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
   </div>
   <%= render "shared/event_header", event: @event %>
