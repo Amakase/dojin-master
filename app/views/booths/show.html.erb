@@ -3,7 +3,7 @@
   <div class="py-3">
     <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
   </div>
-
+  <%= render "shared/event_header", event: @event %>
   <div class="row mb-4">
     <%= render "booths/info", { event: @event, booth: @booth, circle: @booth.circle, favorite: @favorite } %>
   </div>

@@ -1,6 +1,14 @@
-<%= link_to "Events", events_path %>
-<% if event && booth %>
-  > <%= link_to event.name, event_path(event) %> > <strong><%= booth.circle.name %></strong>
-<% elsif event %>
-  > <strong><%= event.name %></strong>
-<% end %>
+<nav aria-label="breadcrumb" class="event-hero-breadcrumb">
+  <%= link_to "Events", events_path, class: "event-hero-breadcrumb-link" %>
+  <% if event && booth %>
+    <span class="event-hero-breadcrumb-sep">&rsaquo;</span>
+    <span class="event-hero-breadcrumb-link-wrap">
+      <%= link_to event.name, event_path(event), class: "event-hero-breadcrumb-link" %>
+    </span>
+    <span class="event-hero-breadcrumb-sep">&rsaquo;</span>
+    <span class="event-hero-breadcrumb-current"><%= booth.circle.name %></span>
+  <% elsif event %>
+    <span class="event-hero-breadcrumb-sep">&rsaquo;</span>
+    <span class="event-hero-breadcrumb-current"><%= event.name %></span>
+  <% end %>
+</nav>
