@@ -2,7 +2,19 @@
 <% circle = favorite.booth.circle %>
 
 <div class="favorite-card-category d-flex justify-content-between align-items-center mb-2 rounded-5">
-  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1">
+  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative">
+    <%
+    user_favorites = booth.favorites.where(user: current_user)
+    prioritized = user_favorites.where.not(priority: nil).exists?
+    if booth.notifications.where(read: true).exists? && prioritized
+    %>
+      <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %>
+      </span>
+      <% else %>
+      <span class="badge bg-danger rounded-5 notification-adjust opacity-0">
+      </span>
+    <% end %>
+
     <% if booth.image.attached? %>
       <%= image_tag booth.image,
             id: "circle-image",
