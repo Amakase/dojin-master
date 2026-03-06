@@ -1,8 +1,9 @@
-<div class="container mt-3">
+<div class="container">
   <div class="row justify-content-center">
-    <div class="d-flex justify-content-between">
-      <h1 class="text-white text-center w-100"> <%= @event.name %> - Favorites</h1>
+    <div class="py-3">
+      <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
     </div>
+    <%= render "shared/event_header", event: @event %>
 
     <div class="favorite-cards-container col-auto">
       <% @favorites.each do |favorite| %>

@@ -23,9 +23,9 @@
     <div class="favorite-booth-details ms-1 me-1">
       <%= link_to circle.name,
                 booth_path(booth),
-                class: "favorite-circle-name text-decoration-none" %>
-      <div class="favorite-booth-day">Day: <%= booth.day_number %></div>
-      <div class="favorite-booth-space">Booth: <%= booth.booth_space %></div>
+                class: "favorite-circle-name text-decoration-none text-wrap" %>
+      <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i><%= booth.day_number %></div>
+      <div class="favorite-booth-space"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
     </div>
   </div>
 
