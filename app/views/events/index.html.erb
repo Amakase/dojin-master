@@ -9,16 +9,9 @@
   <%= render "search_form" %>
 <% end %>
 
-  <h1 class="text-white text-center event-page-title">Event List </h1>
-  <%= render "filter_toggle" %>
+<h1 class="text-white text-center event-page-title">Event List</h1>
+<%= render "filter_toggle" %>
 
-  <%= turbo_frame_tag "events_frame" do %>
-    <%= render "events_list" %>
-  <% end %>
-
-<%# plz ignore  %>
-<%# if policy(@event).destroy? %>
-  <%#= link_to "Delete", event_path(@event), method: :delete %>
-<%# end %>
-
-<%# bookmark | start  / end date | filter day 1/2 | event (bm) %>
+<%= turbo_frame_tag "events_frame" do %>
+  <%= render "events_list" %>
+<% end %>

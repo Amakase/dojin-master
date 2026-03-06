@@ -14,10 +14,6 @@
 </div>
 
 <h1 class="text-white text-center event-page-title"> <%= @event.name %> (<%= @event.start_date %>) </h1>
-  <%#= link_to events_path do %>
-  <%# <i class="fa-solid fa-rotate-left fa-xl"></i> %>
-  <%# end %>
-
 
 <div class="cards mx-auto">
     <% @booths.each do |booth| %>
@@ -25,13 +21,40 @@
      <%= link_to booth_path(booth.id), class: "text-decoration-none" do%>
   <div class="card-body rounded-5 card-fixed-width">
       <div class="position-relative">
-        <img src='https://picsum.photos/id/<%= booth.id * 4 %>/200' alt="<%= booth.circle.name %>" class="mb-3 rounded-3 mt-4"/>
+                <div>
+          <% if booth.image.attached? %>
+            <%= image_tag booth.image,
+                  id: "circle-image",
+                  alt: "Booth Circle-Cut Image",
+                  class: "object-fit-contain",
+                  width: 180,
+                  height: 256 %>
+          <% elsif booth.circle && booth.circle.image.attached? %>
+            <%= image_tag circle.image,
+                  id: "circle-image",
+                  alt: "Circle Image",
+                  class: "object-fit-contain",
+                  width: 180,
+                  height: 256 %>
+          <% else %>
+            <%= image_tag "blank_circle_cut.png",
+                  id: "circle-image",
+                  alt: "Default Image",
+                  class: "object-fit-contain",
+                  width: 180,
+                  height: 256 %>
+          <% end %>
+        </div>
         <h5 class="card-title text-black"><%= booth.circle.name %> </h5>
         <h6 class="card-text text-black">Genre: <%= booth.genre %> </h6>
         <p class="card-text text-black">Booth Space: <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)</p>
         <p class="card-text text-black">Booth Day: <%= booth.booth_day %></p>
-        <% if booth.notifications.where(read: true).exists? %>
-        <span class="badge bg-danger rounded-5 position-absolute notification-adjust"> <%= booth.notifications.count %>
+        <%
+        user_favorites = booth.favorites.where(user: current_user)
+        prioritized = user_favorites.where.not(priority: nil).exists?
+        if booth.notifications.where(read: true).exists? && prioritized
+        %>
+        <span class="badge rounded-5 position-absolute notification-adjust"> <%= booth.notifications.count %>
         </span>
         <% else %>
         <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
@@ -39,7 +62,7 @@
         <% end %>
       </div>
       <% end %>
-          <div class="border">
+          <div class="border favorite-button-size">
           <%= turbo_frame_tag dom_id(booth, :favorite) do %>
           <%= render "shared/favorite_button", booth: booth %>
           <% end %>

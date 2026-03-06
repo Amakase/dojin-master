@@ -5,6 +5,7 @@
     <% end %>
 
     <img src='https://picsum.photos/id/<%= event.id * 4 %>/200' alt="<%= event.name %>" />
+
     <div class="card-product-infos">
       <%= link_to event_path(event.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
         <div>
