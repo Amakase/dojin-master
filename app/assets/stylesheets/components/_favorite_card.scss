@@ -1,6 +1,6 @@
 .favorite-card-category {
   font-size: clamp(0.9rem, calc(0.6rem + 1svh), 1.2rem);
-  width: 80vw;
+  width: 70vw;
   background-color: $custom-card-bg;
   color: $deep-navy;
   height: 95px
@@ -12,6 +12,7 @@
   text-wrap: wrap;
   height: 80px;
   // font-size: 0.8em;
+  overflow-wrap: break-word;
 }
 
 .favorite-circle-image {
@@ -25,7 +26,7 @@
 }
 
 .favorite-booth-details {
-  flex: 0 0 clamp(10vw, 15vw, 20vw);
+  flex: 0 0 clamp(5vw, 7.5vw, 10vw);
   text-wrap: wrap;
   font-size: 0.8em;
 }
@@ -49,7 +50,7 @@
   border-color: transparent;
   height: 5rem;
   // min-width: 10em;
-  flex: 0 0 clamp(10vw, 40vw, 50vw);
+  flex: 0 0 clamp(10vw, 30vw, 40vw);
 }
 
 .favorite-notes-input.form-control:focus {
