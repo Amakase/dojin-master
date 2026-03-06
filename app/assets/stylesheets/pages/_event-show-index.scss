@@ -1,3 +1,17 @@
+// Match the event show page width to Bootstrap's .container (same as booth show)
+.event-show {
+  width: 100%;
+  max-width: 1140px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: var(--bs-gutter-x, 0.75rem);
+  padding-left: var(--bs-gutter-x, 0.75rem);
+
+  @media (min-width: 1400px) {
+    max-width: 1320px;
+  }
+}
+
 .page-search-row {
   margin-right: 0;
   margin-left: 0;
@@ -34,7 +48,13 @@
 .card-product {
   min-height: 320px;
   height: auto;
-  width: 60%;
+  width: 100%;
+  max-width: 1140px;
+
+  @media (min-width: 1400px) {
+    max-width: 1320px;
+  }
+
   background: $custom-card-bg;
   border: 1px solid rgba(14, 16, 61, 0.12);
   box-shadow:
