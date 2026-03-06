@@ -1,2 +1,10 @@
-<h2><%= event.name %></h2>
-<p><%= event.venue %> ・ <%= event.dates %></p>
+<div class="event-hero-header">
+  <div class="event-hero-inner container">
+    <h1 class="event-hero-title"><%= event.name %></h1>
+    <p class="event-hero-meta">
+      <span><%= event.venue %></span>
+      <span class="event-hero-dot">&middot;</span>
+      <span><%= event.dates %></span>
+    </p>
+  </div>
+</div>

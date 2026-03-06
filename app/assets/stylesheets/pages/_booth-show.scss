@@ -1,3 +1,78 @@
+// ── Event Hero Header ─────────────────────────────────────────────────────────
+
+.event-hero-header {
+  background-color: $deep-navy;
+  padding: 2.5rem 0 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.event-hero-inner {
+  position: relative;
+}
+
+.event-hero-breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.event-hero-breadcrumb-link {
+  color: #5b9cf6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: lighten(#5b9cf6, 15%);
+    text-decoration: underline;
+  }
+}
+
+.event-hero-breadcrumb-sep {
+  color: rgba($white, 0.35);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.event-hero-breadcrumb-current {
+  color: rgba($white, 0.6);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40ch;
+}
+
+.event-hero-title {
+  color: $white;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+.event-hero-meta {
+  color: rgba($white, 0.55);
+  font-size: 0.95rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.event-hero-dot {
+  color: rgba($white, 0.3);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
 // ── Booth Show — Info Hero ────────────────────────────────────────────────────
 
 .booth-info-card {
