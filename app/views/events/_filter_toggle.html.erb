@@ -5,7 +5,6 @@
       data: { turbo_stream: true } do %>
     <%= hidden_field_tag :query, params[:query] %>
 
-    <%# unchecked = All, checked = Bookmarked %>
     <%= check_box_tag :filter,
         "bookmarked",
         @filter == "bookmarked",
@@ -14,8 +13,6 @@
         onchange: "this.form.requestSubmit()" %>
 
     <%= label_tag :events_filter_toggle_input, class: "toggle-switch" do %>
-      <%# <span class="toggle-label toggle-label-all">All</span> %>
-      <%# <span class="toggle-label toggle-label-bookmarked">Bookmarked</span> %>
       <span class="toggle-knob"></span>
     <% end %>
   <% end %>

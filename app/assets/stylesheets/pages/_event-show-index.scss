@@ -95,8 +95,7 @@
 }
 
 .favorite-button-size {
-  width: 40px;
-  height: 40px;
+  width: fit-content;
   border: 1px solid;
 }
 
@@ -180,24 +179,6 @@
   background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
   transition: transform 0.28s ease;
-}
-
-.toggle-label {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  transition: color 0.22s ease;
-}
-
-.toggle-label-all {
-  color: #4f545d;
-}
-
-.toggle-label-bookmarked {
-  color: $custom-gray;
 }
 
 .toggle-input:checked+.toggle-switch {
