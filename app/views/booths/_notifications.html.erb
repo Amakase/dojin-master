@@ -1,6 +1,37 @@
-<h3 class="mt-2">Notifications: </h3>
-<ul>
-  <% notifications.each do |notification| %>
-    <li><%= notification.source %>, created at: <%= notification.created_at %></li>
-  <% end %>
-</ul>
+<% if notifications.any? %>
+  <div class="row g-3">
+    <% notifications.each do |notification| %>
+      <div class="col-12">
+        <div class="booth-panel-card">
+          <div class="d-flex align-items-start gap-3">
+            <div class="booth-notif-icon flex-shrink-0">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <span class="fw-semibold"><%= notification.source %></span>
+                <span class="booth-meta-text"><%= notification.created_at.strftime("%Y/%m/%d %H:%M") %></span>
+              </div>
+              <% if notification.content.present? %>
+                <p class="mt-1 mb-0 booth-description"><%= notification.content %></p>
+              <% end %>
+              <% if notification.url.present? %>
+                <%= link_to notification.url, target: "_blank", rel: "noopener", class: "btn btn-sm btn-outline-secondary mt-2" do %>
+                  <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>View
+                <% end %>
+              <% end %>
+            </div>
+            <% unless notification.read %>
+              <span class="badge bg-danger flex-shrink-0">New</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="booth-empty-state">
+    <i class="fa-regular fa-bell-slash fa-2x mb-3"></i>
+    <p class="mb-0">No notifications for this booth.</p>
+  </div>
+<% end %>

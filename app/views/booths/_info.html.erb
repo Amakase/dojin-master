@@ -1,64 +1,57 @@
-<div class="col-sm-12 d-flex justify-content-center align-items-center border">
-  <div>
-    <div class="fs-1">
-      <span class="fw-bold">Circle: </span>
-      <%= circle.name %>
-    </div>
-    <div class="fs-3">
-      <span class="fw-bold">Day: </span> <%= booth.day_number %>
-      <span class="fw-bold">Booth: </span> <%= booth.booth_space %>
+<div class="col-12">
+  <div class="booth-info-card">
+    <div class="row g-0 align-items-stretch">
+
+      <%# Circle-cut image %>
+      <div class="col-auto d-flex align-items-center p-3">
+        <% if booth.image.attached? %>
+          <%= image_tag booth.image,
+                class: "booth-circle-image",
+                alt: "Booth Circle-Cut Image" %>
+        <% elsif circle.image.attached? %>
+          <%= image_tag circle.image,
+                class: "booth-circle-image",
+                alt: "Circle Image" %>
+        <% else %>
+          <%= image_tag "blank_circle_cut.png",
+                class: "booth-circle-image",
+                alt: "Default Image" %>
+        <% end %>
+      </div>
+
+      <%# Main info %>
+      <div class="col d-flex flex-column justify-content-center p-3 p-md-4">
+        <h1 class="booth-circle-name mb-2"><%= circle.name %></h1>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="booth-badge">
+            <i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %>
+          </span>
+          <span class="booth-badge">
+            <i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %>
+          </span>
+          <% if booth.genre.present? %>
+            <span class="booth-badge">
+              <i class="fa-solid fa-tag me-1"></i><%= booth.genre %>
+            </span>
+          <% end %>
+          <span class="booth-badge">
+            <i class="fa-regular fa-calendar me-1"></i><%= booth.booth_day %>
+          </span>
+        </div>
+
+        <% if booth.description.present? %>
+          <p class="booth-description mb-0"><%= booth.description %></p>
+        <% end %>
+      </div>
+
+      <%# Favorite button %>
+      <div class="col-12 col-md-auto d-flex flex-column align-items-center justify-content-center p-3 booth-info-sidebar">
+        <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+          <%= render "shared/favorite_button", booth: booth %>
+        <% end %>
+      </div>
+
     </div>
   </div>
 </div>
-  <div class="col-sm-4 border d-flex justify-content-center align-items-center">
-    <%# Dimensions: 635px x 903px %>
-    <% if booth.image.attached? %>
-      <%= image_tag booth.image,
-            id: "circle-image",
-            alt: "Booth Circle-Cut Image",
-            class: "object-fit-contain border",
-            width: 180,
-            height: 256 %>
-    <% elsif circle.image.attached? %>
-      <%= image_tag circle.image,
-            id: "circle-image",
-            alt: "Circle Image",
-            class: "object-fit-contain border",
-            width: 180,
-            height: 256 %>
-    <% else %>
-      <%= image_tag "blank_circle_cut.png",
-            id: "circle-image",
-            alt: "Default Image",
-            class: "object-fit-contain border",
-            width: 180,
-            height: 256 %>
-    <% end %>
-  </div>
-  <div class="col-sm-8 d-flex justify-content-between align-items-center border">
-    <div class="border">
-      <% if favorite %>
-        <span class="fw-bold">Notes: </span> <%= favorite.notes %>
-      <% else %>
-        <span class="fw-bold">Notes: </span> No notes for unfavorited booths.
-      <% end %>
-    </div>
-    <div class="border">
-      <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-        <%= render "shared/favorite_button", booth: booth %>
-      <% end %>
-    </div>
-  </div>
-  <div class="col-sm-4 d-flex flex-column justify-content-center align-items-center border">
-    <div>
-      <span class="fw-bold">Section: </span> <%= booth.genre %>
-    </div>
-    <div>
-      <span class="fw-bold">Date: </span> <%= booth.booth_day %>
-    </div>
-  </div>
-  <div class="col-sm-8 d-flex justify-content-center align-items-center border">
-    <div>
-      <span class="fw-bold">Description: </span> <%= booth.description %>
-    </div>
-  </div>
