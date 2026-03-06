@@ -2,7 +2,7 @@
 
 .booth-info-card {
   background: $custom-card-bg;
-  border: 1px solid rgba(14, 16, 61, 0.12);
+  border: 1px solid rgba($deep-navy, 0.12);
   border-radius: 1.25rem;
   box-shadow:
     0 10px 20px rgba(9, 11, 36, 0.12),
@@ -22,16 +22,16 @@
   width: 180px;
   height: 256px;
   object-fit: contain;
-  border: 1px solid rgba(14, 16, 61, 0.15);
-  background: rgba(14, 16, 61, 0.05);
+  border: 1px solid rgba($deep-navy, 0.15);
+  background: rgba($deep-navy, 0.05);
 }
 
 .booth-badge {
   display: inline-flex;
   align-items: center;
   padding: 0.3rem 0.75rem;
-  background: rgba(192, 138, 51, 0.18);
-  border: 1px solid rgba(192, 138, 51, 0.45);
+  background: rgba($dark-goldenrod, 0.18);
+  border: 1px solid rgba($dark-goldenrod, 0.45);
   border-radius: 999px;
   font-size: 0.8rem;
   color: darken($dark-goldenrod, 8%);
@@ -40,29 +40,29 @@
 
 .booth-description {
   font-size: 0.9rem;
-  color: rgba(14, 16, 61, 0.65);
+  color: rgba($deep-navy, 0.65);
   line-height: 1.6;
 }
 
 .booth-meta-text {
   font-size: 0.82rem;
-  color: rgba(14, 16, 61, 0.5);
+  color: rgba($deep-navy, 0.5);
 }
 
 .booth-notes {
   font-size: 0.82rem;
-  color: rgba(14, 16, 61, 0.6);
+  color: rgba($deep-navy, 0.6);
   text-align: center;
   max-width: 160px;
   line-height: 1.5;
 }
 
 .booth-info-sidebar {
-  border-top: 1px solid rgba(14, 16, 61, 0.1);
+  border-top: 1px solid rgba($deep-navy, 0.1);
 
   @media (min-width: 768px) {
     border-top: none;
-    border-left: 1px solid rgba(14, 16, 61, 0.1);
+    border-left: 1px solid rgba($deep-navy, 0.1);
     min-width: 160px;
   }
 }
@@ -74,9 +74,9 @@
   flex-wrap: wrap;
 
   .nav-link {
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba($white, 0.7);
+    background: rgba($white, 0.08);
+    border: 1px solid rgba($white, 0.15);
     border-radius: 999px;
     padding: 0.45rem 1.1rem;
     font-size: 0.9rem;
@@ -84,8 +84,8 @@
 
     &:hover {
       color: $white;
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.28);
+      background: rgba($white, 0.15);
+      border-color: rgba($white, 0.28);
     }
 
     &.active {
@@ -101,7 +101,7 @@
 
 .booth-panel-card {
   background: $custom-card-bg;
-  border: 1px solid rgba(14, 16, 61, 0.12);
+  border: 1px solid rgba($deep-navy, 0.12);
   border-radius: 1.4rem;
   padding: 1rem 1.25rem;
   color: $deep-navy;
@@ -127,8 +127,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(192, 138, 51, 0.18);
-  border: 1px solid rgba(192, 138, 51, 0.4);
+  background: rgba($dark-goldenrod, 0.18);
+  border: 1px solid rgba($dark-goldenrod, 0.4);
   border-radius: 50%;
   color: darken($dark-goldenrod, 10%);
 }
@@ -141,8 +141,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(30, 221, 136, 0.15);
-  border: 1px solid rgba(30, 221, 136, 0.3);
+  background: rgba($green, 0.15);
+  border: 1px solid rgba($green, 0.3);
   border-radius: 50%;
   color: darken($green, 15%);
 }
@@ -156,8 +156,8 @@
   justify-content: center;
   padding: 3rem 1rem;
   background: $custom-card-bg;
-  border: 1px solid rgba(14, 16, 61, 0.12);
+  border: 1px solid rgba($deep-navy, 0.12);
   border-radius: 1.4rem;
-  color: rgba(14, 16, 61, 0.45);
+  color: rgba($deep-navy, 0.45);
   text-align: center;
 }
