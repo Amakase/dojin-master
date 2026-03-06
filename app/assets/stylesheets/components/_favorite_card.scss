@@ -1,7 +1,7 @@
 .favorite-card-category {
   font-size: clamp(0.9rem, calc(0.6rem + 1svh), 1.2rem);
   max-width: 95svw;
-  background-color: $light-gray;
+  background-color: $custom-card-bg;
   color: $deep-navy;
   height: 95px
 }
@@ -20,7 +20,7 @@
 }
 
 .favorite-circle-name {
-  color: unset;
+  color: $custom-gray;
 }
 
 .favorite-booth-details {
@@ -40,7 +40,7 @@
 .favorite-notes-input.form-control {
   color: $deep-navy;
   font-size: 0.8em;
-  background-color: $gray;
+  background-color: $light-gray;
   padding: 0;
   resize: none;
   overflow-y: auto;
