@@ -1,17 +1,32 @@
 .favorite-card-category {
-  font-size: 1.25rem
-}
-
-.favorite-circle-image {
-  height: 100px;
+  font-size: clamp(0.9rem, calc(0.6rem + 1svh), 1.2rem);
+  max-width: 95svw;
+  background-color: $light-gray;
+  color: $deep-navy;
+  height: 95px
 }
 
 .favorite-circle-details {
-  flex: 0 0 220px;
+  // flex: 0 0 15em;
+  // flex: 0 0 clamp(8em, 25svw, 15em);
+  text-wrap: wrap;
+  height: 80px;
+  font-size: 0.8em;
+}
+
+.favorite-circle-image {
+  width: 80px;
+  height: 80px;
+}
+
+.favorite-circle-name {
+  color: unset;
 }
 
 .favorite-booth-details {
-  flex: 0 0 220px;
+  flex: 0 0 7svw;
+  text-wrap: wrap;
+  font-size: 0.8em;
 }
 
 .required.favorite-notes {
@@ -24,13 +39,14 @@
 
 .favorite-notes-input.form-control {
   color: $deep-navy;
-  font-size: 1em;
-  background-color: $light-gray;
+  font-size: 0.8em;
+  background-color: $gray;
   padding: 0;
   resize: none;
   overflow-y: auto;
   border-color: transparent;
-  height: 5em;
+  height: 5rem;
+  min-width: 10em;
 }
 
 .favorite-notes-input.form-control:focus {
@@ -43,10 +59,19 @@
   background-image: none;
 }
 
+.favorite-notes-btn {
+  font-size: 0.8em;
+  flex: 0 0 clamp(2em, 5svw, 5em);
+  text-wrap: wrap;
+  color: inherit;
+}
+
 .favorite-priority-btn {
-  width: 80px;
+  font-size: 0.8em;
+  flex: 0 0 clamp(2em, 5svw, 5em);
+  color: inherit;
 }
 
 .favorite-delete-btn {
-  display: none
+  display: none;
 }
