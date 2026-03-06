@@ -1,6 +1,6 @@
 .favorite-priority-btn {
   font-size: 0.8em;
-  width: 6.4rem;
+  flex: 0 0 clamp(6.4em, 15vw, 20vw);
   color: inherit;
 }
 
