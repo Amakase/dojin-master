@@ -1,5 +1,12 @@
 .favorite-priority-btn {
+  font-size: 0.8em;
   width: 6.4rem;
+  color: inherit;
+}
+
+.favorite-priority-btn:hover {
+  border-color: $deep-navy;
+  border-width: 1px;
 }
 
 .priority-btn-1, .priority-1 { background-color: $comiket-orange; }
