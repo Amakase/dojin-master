@@ -1,1 +1,1 @@
-release: rails db:mmigrate
+release: rails db:migrate
