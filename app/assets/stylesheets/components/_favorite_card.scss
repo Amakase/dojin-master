@@ -3,15 +3,15 @@
 }
 
 .favorite-circle-image {
-  height: 5em
+  height: 100px;
 }
 
 .favorite-circle-details {
-  width: 20em
+  flex: 0 0 220px;
 }
 
 .favorite-booth-details {
-  width: 18em
+  flex: 0 0 220px;
 }
 
 .required.favorite-notes {
@@ -19,8 +19,7 @@
 }
 
 .favorite-notes-form {
-  width: 20em;
-  // height: 5em;
+  flex: 1;
 }
 
 .favorite-notes-input.form-control {
@@ -45,7 +44,7 @@
 }
 
 .favorite-priority-btn {
-  width: 1em;
+  width: 80px;
 }
 
 .favorite-delete-btn {
