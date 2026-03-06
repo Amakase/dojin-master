@@ -1,21 +1,103 @@
+<div class="container text-white pb-5">
+  <div class="py-3">
+    <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
+  </div>
 
-
-<div class="container text-white">
-  <%= render "shared/breadcrumbs", { event: @event, booth: @booth } %>
-  <div class="row">
+  <div class="row mb-4">
     <%= render "booths/info", { event: @event, booth: @booth, circle: @booth.circle, favorite: @favorite } %>
   </div>
-  <div>
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <%= render "booths/notifications", notifications: @notifications%>
+
+  <div data-controller="booth-tabs">
+    <ul class="nav booth-section-nav mb-4" id="boothTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active"
+                data-bs-toggle="pill"
+                data-bs-target="#notifications-panel"
+                type="button"
+                role="tab"
+                aria-selected="true">
+          <i class="fa-solid fa-bell me-2"></i>Notifications
+          <% if @notifications.any? %>
+            <span class="badge bg-danger ms-1"><%= @notifications.count %></span>
+          <% end %>
+        </button>
       </li>
-      <li class="nav-item">
-        <%= render "booths/booth_works", booth_works: @booth_works %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link"
+                data-bs-toggle="pill"
+                data-bs-target="#booth-works-panel"
+                type="button"
+                role="tab"
+                aria-selected="false">
+          <i class="fa-solid fa-book me-2"></i>Booth Works
+          <% if @booth_works.any? %>
+            <span class="badge bg-secondary ms-1"><%= @booth_works.count %></span>
+          <% end %>
+        </button>
       </li>
-      <li class="nav-item">
-        <%= render "booths/user_inventory", { user_inventory: @user_inventory, booth: @booth } %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link"
+                data-bs-toggle="pill"
+                data-bs-target="#inventory-panel"
+                type="button"
+                role="tab"
+                aria-selected="false">
+          <i class="fa-solid fa-box-archive me-2"></i>My Inventory
+          <% if @user_inventory.any? %>
+            <span class="badge bg-success ms-1"><%= @user_inventory.count %></span>
+          <% end %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link"
+                data-bs-toggle="pill"
+                data-bs-target="#notes-panel"
+                type="button"
+                role="tab"
+                aria-selected="false">
+          <i class="fa-solid fa-note-sticky me-2"></i>Notes
+          <% if @favorite&.notes.present? %>
+            <span class="badge bg-info ms-1"><i class="fa-solid fa-check"></i></span>
+          <% end %>
+        </button>
       </li>
     </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="notifications-panel" role="tabpanel">
+        <%= render "booths/notifications", notifications: @notifications %>
+      </div>
+      <div class="tab-pane fade" id="booth-works-panel" role="tabpanel">
+        <%= render "booths/booth_works", booth_works: @booth_works %>
+      </div>
+      <div class="tab-pane fade" id="inventory-panel" role="tabpanel">
+        <%= render "booths/user_inventory", { user_inventory: @user_inventory, booth: @booth } %>
+      </div>
+      <div class="tab-pane fade" id="notes-panel" role="tabpanel">
+        <% if @favorite&.notes.present? %>
+          <div class="booth-panel-card">
+            <div class="d-flex align-items-start gap-3">
+              <div class="booth-notif-icon flex-shrink-0">
+                <i class="fa-solid fa-note-sticky"></i>
+              </div>
+              <div>
+                <p class="mb-1 fw-semibold booth-meta-text">Your notes for this booth</p>
+                <p class="mb-0"><%= @favorite.notes %></p>
+              </div>
+            </div>
+          </div>
+        <% elsif @favorite %>
+          <div class="booth-empty-state">
+            <i class="fa-regular fa-note-sticky fa-2x mb-3"></i>
+            <p class="mb-0">No notes added yet. Edit your favorite to add notes.</p>
+          </div>
+        <% else %>
+          <div class="booth-empty-state">
+            <i class="fa-solid fa-heart fa-2x mb-3"></i>
+            <p class="mb-0">Favorite this booth to add personal notes.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
