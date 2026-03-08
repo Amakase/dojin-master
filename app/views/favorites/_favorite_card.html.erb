@@ -1,20 +1,14 @@
 <% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
-<div class="favorite-card-category d-flex justify-content-between align-items-center mb-2 rounded-5">
-  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative">
-    <%
-    user_favorites = booth.favorites.where(user: current_user)
-    prioritized = user_favorites.where.not(priority: nil).exists?
-    if booth.notifications.where(read: true).exists? && prioritized
-    %>
-      <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %>
-      </span>
-      <% else %>
-      <span class="badge bg-danger rounded-5 notification-adjust opacity-0">
-      </span>
-    <% end %>
+<%# <div class="favorite-card-category d-flex justify-content-between align-items-center mb-2 rounded-5"> %>
+<div class="favorite-card-category d-flex align-items-center mb-2 rounded-5">
+  <div class="ms-2"></div>
+  <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+    <%= render "shared/favorite_button", booth: booth %>
+  <% end %>
 
+  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative">
     <% if booth.image.attached? %>
       <%= image_tag booth.image,
             id: "circle-image",
@@ -32,6 +26,18 @@
             class: "favorite-circle-image object-fit-cover border rounded" %>
     <% end %>
 
+    <%
+    user_favorites = booth.favorites.where(user: current_user)
+    prioritized = user_favorites.where.not(priority: nil).exists?
+    if booth.notifications.where(read: true).exists? && prioritized
+    %>
+      <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %>
+      </span>
+      <% else %>
+      <span class="badge bg-danger rounded-5 notification-adjust opacity-0">
+      </span>
+    <% end %>
+
     <div class="favorite-booth-details ms-1 me-1">
       <%= link_to circle.name,
                 booth_path(booth),
@@ -41,20 +47,17 @@
     </div>
   </div>
 
-    <div class="d-flex align-items-center">
-      <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex me-1" } do |f| %>
-        <%= f.input :notes,
-          as: :text,
-          label: false,
-          wrapper: false,
-          input_html: { class: "favorite-notes-input" } %>
+  <div class="d-flex align-items-center">
+    <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-1 align-items-end" } do |f| %>
+      <%= f.input :notes,
+        as: :text,
+        label: false,
+        wrapper: false,
+        input_html: { class: "favorite-notes-input" } %>
 
-        <%= f.button :submit, "Submit", class: "favorite-notes-btn p-0 ms-1" %>
-      <% end %>
-    </div>
-  <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-    <%= render "shared/favorite_button", booth: booth %>
-  <% end %>
+      <%= f.button :submit, "Save", class: "favorite-notes-btn p-0 ms-1 me-2" %>
+    <% end %>
+  </div>
   <i class="fa-solid fa-trash favorite-delete-btn me-2"></i>
 
 </div>

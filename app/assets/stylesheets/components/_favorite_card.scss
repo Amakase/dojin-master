@@ -1,6 +1,7 @@
 .favorite-card-category {
   font-size: clamp(0.9rem, calc(0.6rem + 1svh), 1.2rem);
-  width: 70vw;
+  // width: clamp(5vw, 70vw, 70vw);
+  flex: 0 0 80vw;
   background-color: $custom-card-bg;
   color: $deep-navy;
   height: 95px
@@ -8,7 +9,7 @@
 
 .favorite-circle-details {
   // flex: 0 0 15em;
-  // flex: 0 0 clamp(8em, 25svw, 15em);
+  min-width: 15vw;
   text-wrap: wrap;
   height: 80px;
   // font-size: 0.8em;
@@ -18,6 +19,16 @@
 .favorite-circle-image {
   width: 80px;
   height: 80px;
+  position: relative;
+}
+
+.favorite-circle-details > .badge.rounded-5.notification-adjust {
+  font-size: 0.6em;
+  width: 1.3rem !important;
+  height: 1.1rem !important;
+  position: absolute;
+  top: -5px;
+  left: 67px;
 }
 
 .favorite-circle-name {
@@ -26,8 +37,8 @@
 }
 
 .favorite-booth-details {
-  flex: 0 0 clamp(5vw, 7.5vw, 10vw);
-  text-wrap: wrap;
+  // flex: 0 0 clamp(5vw, 5vw, 10vw);
+  // text-wrap: wrap;
   font-size: 0.8em;
 }
 
@@ -44,13 +55,13 @@
   font-size: 0.8em;
   line-height: 1.2;
   padding: 0.25rem;
-  background-color: $light-gray;
+  background-color: $custom-card-bg-hover-strong;
   resize: none;
   overflow-y: auto;
   border-color: transparent;
   height: 5rem;
-  // min-width: 10em;
-  flex: 0 0 clamp(10vw, 30vw, 40vw);
+  // width: clamp(5em, 20em, 40vw);
+  flex: 0 0 clamp(1vw, 40vw, 40em);
 }
 
 .favorite-notes-input.form-control:focus {
@@ -67,6 +78,15 @@
   flex: 0 0 clamp(2em, 5svw, 5em);
   text-wrap: wrap;
   color: inherit;
+  border-color: $deep-navy;
+  border-width: 1px;
+  height: 2.289rem
+}
+
+.favorite-notes-btn:hover {
+  background-color: $custom-card-bg-hover;
+  border-color: $deep-navy;
+  border-width: 1px;
 }
 
 .favorite-delete-btn {

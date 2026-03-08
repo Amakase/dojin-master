@@ -1,20 +1,27 @@
 .favorite-priority-btn {
   font-size: 0.8em;
-  flex: 0 0 clamp(6.4em, 15vw, 20vw);
-  color: inherit;
+  // flex: 0 0 clamp(6.6rem, 20vw, 50vw);
+  color: unset;
+  border: none;
+  width: 6.5rem;
 }
 
-.favorite-priority-btn:hover {
-  border-color: $deep-navy;
-  border-width: 1px;
-}
+.priority-btn-1, .priority-1 { background: $comiket-orange !important; }
+.priority-btn-2, .priority-btn-2:focus:not(:focus-visible), .priority-2 { background: $comiket-pink; }
+.priority-btn-3, .priority-btn-3:focus:not(:focus-visible), .priority-3 { background: $comiket-yellow; }
+.priority-btn-4, .priority-btn-4:focus:not(:focus-visible), .priority-4 { background: $comiket-green; }
+.priority-btn-5, .priority-btn-5:focus:not(:focus-visible), .priority-5 { background: $comiket-light-blue; }
+.priority-btn-6, .priority-btn-6:focus:not(:focus-visible), .priority-6 { background: $comiket-purple; }
+.priority-btn-7, .priority-btn-7:focus:not(:focus-visible), .priority-7 { background: $comiket-blue; color: $light-gray }
+.priority-btn-8, .priority-btn-8:focus:not(:focus-visible), .priority-8 { background: $comiket-light-green; }
+.priority-btn-9, .priority-btn-9:focus:not(:focus-visible), .priority-9 { background: $comiket-red; }
 
-.priority-btn-1, .priority-1 { background-color: $comiket-orange; }
-.priority-btn-2, .priority-2 { background-color: $comiket-pink; }
-.priority-btn-3, .priority-3 { background-color: $comiket-yellow; }
-.priority-btn-4, .priority-4 { background-color: $comiket-green; }
-.priority-btn-5, .priority-5 { background-color: $comiket-light-blue; }
-.priority-btn-6, .priority-6 { background-color: $comiket-purple; }
-.priority-btn-7, .priority-7 { background-color: $comiket-blue; }
-.priority-btn-8, .priority-8 { background-color: $comiket-light-green; }
-.priority-btn-9, .priority-9 { background-color: $comiket-red; }
+.priority-btn-1:hover, .dropdown-priority-1:hover { background: #e15e00 !important; }
+.priority-btn-2:hover, .dropdown-priority-2:hover { background: #a300a3 }
+.priority-btn-3:hover, .dropdown-priority-3:hover { background: #d4cd00 }
+.priority-btn-4:hover, .dropdown-priority-4:hover { background: #007430 }
+.priority-btn-5:hover, .dropdown-priority-5:hover { background: #0077a6 }
+.priority-btn-6:hover, .dropdown-priority-6:hover { background: #5f0c5f; color: $light-gray }
+.priority-btn-7:hover, .dropdown-priority-7:hover { background: #15157d; color: $light-gray }
+.priority-btn-8:hover, .dropdown-priority-8:hover { background: #007a00 }
+.priority-btn-9:hover, .dropdown-priority-9:hover { background: #8a0000 }
