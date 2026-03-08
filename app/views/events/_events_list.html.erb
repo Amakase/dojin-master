@@ -1,8 +1,6 @@
 <% @events.each_with_index do |event, index| %>
   <div class="card-product mx-auto">
-    <% if event.bookmarked_events.exists?(user_id: current_user.id) %>
-      <i class="fa-solid fa-star fa-2xl event-bookmark"></i>
-    <% end %>
+    <%= render "shared/bookmark_button", event: event %>
   <% if index == 0 %>
     <% if event.image.attached? %>
       <%= image_tag booth.image,
