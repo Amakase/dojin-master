@@ -6,7 +6,7 @@
     <%= render "shared/event_header", event: @event %>
 
     <div class="favorite-cards-container d-flex justify-content-center col-12 col-lg-6 row">
-      <p class="priority-hint">↑ lower is higher priority</p>
+      <p class="priority-hint">↑ lower number is higher priority</p>
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>
       <% end %>
