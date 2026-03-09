@@ -8,7 +8,7 @@ class Admin::BaseController < ApplicationController
 
   def require_admin!
     return if current_user&.admin?
-    flash[:alert] = "Not authorized."
+    flash[:alert] = "Not authorized." # flash stores a one-time message displayed on the next page render
     redirect_to root_path
   end
 end
