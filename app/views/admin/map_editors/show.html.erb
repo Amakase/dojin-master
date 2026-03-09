@@ -1,0 +1,48 @@
+<div class="container-fluid py-3 map-editor-page"
+     data-controller="map-editor"
+     data-map-editor-coords-value="<%= @existing_coords.to_json %>"
+     data-map-editor-booth-spaces-value="<%= @booth_spaces.to_json %>"
+     data-map-editor-save-url-value="<%= admin_event_map_editor_path(@event) %>"
+     data-map-editor-image-url-value="<%= @event.floor_plan.attached? ? url_for(@event.floor_plan) : '' %>">
+
+  <%# Header %>
+  <div class="d-flex align-items-center justify-content-between me-header">
+    <div>
+      <p class="me-header__label mb-0">Map Editor</p>
+      <h4 class="me-header__title"><%= @event.name %></h4>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <span data-map-editor-status class="me-status"></span>
+      <button class="btn btn-me-save" data-action="click->map-editor#save">Save All</button>
+    </div>
+  </div>
+
+  <div class="d-flex gap-3 align-items-start">
+    <%# Sidebar %>
+    <div class="me-sidebar">
+      <div class="me-sidebar__inner">
+        <h6 class="me-sidebar__title">Booth Spaces</h6>
+        <p class="me-sidebar__counter" data-map-editor-counter>Placed: 0 / <%= @booth_spaces.size %></p>
+        <div style="max-height: calc(100vh - 280px); overflow-y: auto;">
+          <ul class="me-sidebar__list" data-map-editor-sidebar></ul>
+        </div>
+      </div>
+    </div>
+
+    <%# Canvas area %>
+    <div class="flex-grow-1">
+      <div class="me-toolbar">
+        <button class="btn-me-add" data-action="click->map-editor#addRect">+ Add Rect</button>
+        <button class="btn-me-delete" data-action="click->map-editor#deleteSelected">Delete Selected</button>
+      </div>
+      <% if @event.floor_plan.attached? %>
+        <div class="me-canvas-wrap">
+          <canvas></canvas>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">No floor plan uploaded for this event yet.</div>
+      <% end %>
+    </div>
+  </div>
+
+</div>

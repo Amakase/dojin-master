@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_05_091652) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_09_032420) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -112,6 +112,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_091652) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_collections_on_user_id"
+  end
+
+  create_table "event_map_coordinates", force: :cascade do |t|
+    t.string "booth_space", null: false
+    t.datetime "created_at", null: false
+    t.bigint "event_id", null: false
+    t.float "height", null: false
+    t.datetime "updated_at", null: false
+    t.float "width", null: false
+    t.float "x", null: false
+    t.float "y", null: false
+    t.index ["event_id", "booth_space"], name: "index_event_map_coordinates_on_event_id_and_booth_space", unique: true
+    t.index ["event_id"], name: "index_event_map_coordinates_on_event_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -297,6 +310,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_091652) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.date "date_of_birth"
     t.string "email", default: "", null: false
@@ -338,6 +352,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_091652) do
   add_foreign_key "collection_works", "collections"
   add_foreign_key "collection_works", "works"
   add_foreign_key "collections", "users"
+  add_foreign_key "event_map_coordinates", "events"
   add_foreign_key "favorites", "booths"
   add_foreign_key "favorites", "users"
   add_foreign_key "included_works", "works"
