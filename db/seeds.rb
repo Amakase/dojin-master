@@ -243,7 +243,7 @@ puts "...#{CollectionWork.count} collection works created"
 puts "Creating Events, Bookmarked Events, Booths, Favorites, Notifications, and Booth Works..."
 
 EVENTS.each do |this_event|
-  event = Event.create!(
+  event = Event.new(
     name: this_event[:name],
     venue: this_event[:venue],
     description: this_event[:description],
@@ -255,6 +255,7 @@ EVENTS.each do |this_event|
   if File.exist?(file_path)
     event.image = File.open(Rails.root.join(file_path))
   end
+  event.save!
   User.all.each do |user|
     bookmarked_event = BookmarkedEvent.new
     bookmarked_event.user = user
