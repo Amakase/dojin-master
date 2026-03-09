@@ -55,6 +55,7 @@ gem "kramdown"
 gem "rouge"
 gem "kramdown-parser-gfm"
 gem "pg_search"
+gem "csv"
 
 group :development, :test do
   gem "dotenv-rails"
