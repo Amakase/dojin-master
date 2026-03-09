@@ -1,3 +1,6 @@
+# Shared parent for all admin controllers.
+# Pundit is skipped for the admin namespace via the ApplicationController regex, so
+# access control is enforced here with a simple admin flag check instead.
 class Admin::BaseController < ApplicationController
   before_action :require_admin!
 

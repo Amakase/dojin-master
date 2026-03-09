@@ -5,8 +5,8 @@ class Event < ApplicationRecord
   has_many :circles, through: :booths
   # has_many :booth_works, through: :booths
   # has_many :notifications, through: :booths
-  has_one_attached :image
-  has_one_attached :floor_plan
+  has_one_attached :image                                    # poster / promotional image shown on event cards
+  has_one_attached :floor_plan                               # venue map PNG used by the admin map editor
   has_many :event_map_coordinates, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
