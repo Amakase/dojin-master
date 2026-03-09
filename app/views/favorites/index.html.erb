@@ -5,14 +5,20 @@
     </div>
     <%= render "shared/event_header", event: @event %>
 
-    <div class="favorites-map-container">
-      <%# <%= render "favorites/map", event: @event %>
-    </div>
-
     <div class="favorite-cards-container d-flex justify-content-center col-12 col-lg-6 row">
-      <div class="favorite-hint-map-btn">
-        <p class="priority-hint">↑ lower number is higher priority</p>
-        <%# <%= link_to , %>
+      <div class="favorite-hint-map-btn d-flex justify-content-between">
+        <p class="priority-hint align-text-center">↑ lower number is higher priority</p>
+        <button class="nav-link favorite-show-map-btn"
+                data-bs-toggle="pill"
+                data-bs-target="#show-map"
+                type="button"
+                role="tab"
+                aria-selected="false">
+          <i class="fa-solid fa-location-dot me-1"></i><span class="favorite-show-map-span">Show map</span>
+        </button>
+      </div>
+      <div class="favorites-map-container" id="show-map">
+        <%# <%= render "favorites/map", event: @event %>
       </div>
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>
