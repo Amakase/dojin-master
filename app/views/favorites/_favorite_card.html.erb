@@ -2,13 +2,12 @@
 <% circle = favorite.booth.circle %>
 
 <%# <div class="favorite-card-category d-flex justify-content-between align-items-center mb-2 rounded-5"> %>
-<div class="favorite-card-category d-flex align-items-center mb-2 rounded-5">
-  <div class="ms-2"></div>
-  <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-    <%= render "shared/favorite_button", booth: booth %>
-  <% end %>
+<div class="favorite-card-category d-flex justify-content-start align-items-center mb-2 rounded-5">
+    <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+      <%= render "shared/favorite_button", booth: booth %>
+    <% end %>
 
-  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative">
+  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative col-5 col-lg-4">
     <% if booth.image.attached? %>
       <%= image_tag booth.image,
             id: "circle-image",
@@ -47,15 +46,15 @@
     </div>
   </div>
 
-  <div class="d-flex align-items-center">
-    <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-1 align-items-end" } do |f| %>
+  <div class="d-flex align-items-center col-6 col-lg-7">
+    <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-2 align-items-end" } do |f| %>
       <%= f.input :notes,
         as: :text,
         label: false,
         wrapper: false,
         input_html: { class: "favorite-notes-input" } %>
 
-      <%= f.button :submit, "Save", class: "favorite-notes-btn p-0 ms-1 me-2" %>
+
     <% end %>
   </div>
   <i class="fa-solid fa-trash favorite-delete-btn me-2"></i>
