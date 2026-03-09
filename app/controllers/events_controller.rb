@@ -32,13 +32,15 @@ class EventsController < ApplicationController
     authorize @event, :show?
 
     # load booths once (with images preloaded); subsequent searches filter the Ruby array
-    @booths = Rails.cache.fetch(cache_key_for(@event)) do
+    booth_ids = Rails.cache.fetch(cache_key_for(@event)) do
       @event.booths
             .joins(:circle)
-            .includes({ image_attachment: :blob },
-                      circle: { image_attachment: :blob })
-            .to_a
+            .pluck(:id)
     end
+    @booths = Booth
+              .where(id: booth_ids)
+              .includes({ image_attachment: :blob },
+                        circle: { image_attachment: :blob })
 
     if params[:query].present?
       q = params[:query].downcase
