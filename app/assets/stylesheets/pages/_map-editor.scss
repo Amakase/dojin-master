@@ -16,6 +16,7 @@
     border-bottom: 1px solid rgba($dark-goldenrod, 0.45);
   }
 
+  // __label — the small uppercase eyebrow text ("Map Editor") above the event name
   .me-header__label {
     font-size: 0.6875rem;
     font-weight: 600;
@@ -25,6 +26,7 @@
     margin-bottom: 0.2rem;
   }
 
+  // __title — the event name heading rendered as an h4
   .me-header__title {
     font-size: 1.35rem;
     font-weight: 700;
@@ -71,10 +73,13 @@
     overflow: hidden;
   }
 
+  // __inner — inner padding wrapper; separated from the block so the
+  // scrollable list inside can extend to the edges without padding gaps
   .me-sidebar__inner {
     padding: 0.875rem 0.75rem;
   }
 
+  // __title — the "Booth Spaces" section heading at the top of the sidebar
   .me-sidebar__title {
     font-size: 0.6875rem;
     font-weight: 700;
@@ -84,6 +89,7 @@
     margin-bottom: 0.4rem;
   }
 
+  // __counter — the "Placed: X / Y" line updated by Stimulus as rects are drawn
   .me-sidebar__counter {
     font-size: 0.75rem;
     color: $custom-gray;
@@ -92,6 +98,7 @@
     border-bottom: 1px solid rgba($white, 0.07);
   }
 
+  // __list — the <ul> that Stimulus rebuilds on every canvas change
   .me-sidebar__list {
     list-style: none;
     padding: 0;
@@ -99,7 +106,8 @@
     font-size: 0.75rem;
   }
 
-  // Sidebar booth space items — Stimulus dynamically injects these with BEM modifier classes.
+  // __space — each individual booth space <li> row in the sidebar list.
+  // Stimulus dynamically injects BEM modifier classes on these items.
   // The `&` below is SCSS's parent selector. Inside `.me-sidebar__space { &--placed { ... } }`,
   // `&--placed` compiles to `.me-sidebar__space--placed`. This is standard BEM + SCSS nesting.
   .me-sidebar__space {
@@ -115,7 +123,8 @@
       background-color: rgba($white, 0.06);
     }
 
-    // Already mapped — not clickable
+    // --placed: booth has been drawn on the canvas. Shown in green.
+    // pointer-events: none disables all mouse interaction so it cannot be clicked again.
     &--placed {
       color: $green;
       cursor: default;
@@ -127,8 +136,10 @@
       }
     }
 
-    // Currently selected — waiting for the admin to draw its rect.
-    // Must override :hover (which has higher specificity) to keep gold background.
+    // --selected: admin clicked this item and is currently drawing its rect.
+    // Shown with a gold background to indicate active draw mode.
+    // Must also target &--selected:hover — otherwise the base :hover rule wins
+    // due to higher CSS specificity and the gold background disappears on mouseover.
     &--selected,
     &--selected:hover {
       background-color: $dark-goldenrod;
@@ -206,6 +217,8 @@
     }
   }
 
+  // __hint — the italic instructional text ("Scroll or pinch to zoom · Alt + drag to pan")
+  // pushed to the far right of the toolbar via margin-left: auto
   .me-toolbar__hint {
     font-size: 0.7rem;
     color: $custom-gray;
