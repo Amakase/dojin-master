@@ -21,4 +21,8 @@ class Event < ApplicationRecord
       "#{start_date.strftime('%a')} #{starts}, #{start_date.year}"
     end
   end
+
+  def single_day?
+    start_date == end_date
+  end
 end
