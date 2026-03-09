@@ -1,4 +1,4 @@
-<% favorite = current_user.favorites.find_by(booth: booth) %>
+<% favorite = local_assigns.fetch(:favorite) { current_user.favorites.find_by(booth: booth) } %>
 
 <div class="dropdown">
   <button class="btn favorite-priority-btn <%= favorite ? "priority-btn-#{favorite.priority}" : "priority-btn-default" %>"
