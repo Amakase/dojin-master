@@ -1,14 +1,8 @@
-<div class="container">
-  <div class="pt-3">
-    <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>
-  </div>
-</div>
-<div class="event-show row justify-content-center">
+<div class="row justify-content-center page-search-row">
   <div class="col-sm-8 my-3">
-    <%= form_with url: events_path, method: :get, class: "d-flex event-search-form",
+    <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form",
         data: { controller: "search", search_target: "form", action: "submit->search#prevent" } do %>
-      <%= label_tag :query, "Search Events", class: "visually-hidden" %>
-      <%= hidden_field_tag :filter, @filter %>
+      <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
       <%= text_field_tag :query,
             params[:query],
             class: "form-control bg-white",
