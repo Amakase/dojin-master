@@ -1,0 +1,44 @@
+<h1 class="text-white text-center mt-0 mb-3">Booth: <%= @booths.count %>
+</h1>
+<div class="cards mx-auto">
+  <% @booths.each do |booth| %>
+    <div class="card">
+      <%= link_to booth_path(booth.id), class: "text-decoration-none" , data: { turbo_frame: "_top" } do%>
+        <div class="card-body rounded-5 card-fixed-width">
+          <div class="position-relative">
+            <%= render "shared/circle_cut" , booth: booth, circle: booth.circle, width: 180, height: 256 %>
+              <h5 class="card-title text-black">
+                <%= booth.circle.name %>
+              </h5>
+              <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i>
+                <%= booth.genre %>
+              </h6>
+              <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i>
+                <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)
+              </p>
+              <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i>
+                <%= booth.booth_day %>
+              </p>
+              <%
+                user_favorites = booth.favorites.where(user: current_user)
+                prioritized = user_favorites.where.not(priority: nil).exists?
+                if booth.notifications.where(read: true).exists? && prioritized
+              %>
+                <span class="badge rounded-5 position-absolute notification-adjust">
+                  <%= booth.notifications.count %>
+                </span>
+                <% else %>
+                  <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
+                  </span>
+                  <% end %>
+          </div>
+          <% end %>
+            <div class="border favorite-button-size">
+              <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+                <%= render "shared/favorite_button" , booth: booth %>
+                  <% end %>
+            </div>
+        </div>
+    </div>
+    <% end %>
+</div>
