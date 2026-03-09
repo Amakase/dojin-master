@@ -10,7 +10,8 @@
   // flex: 0 0 80vw;
   background-color: $custom-card-bg;
   color: $deep-navy;
-  height: 95px
+  height: 95px;
+  position: relative;
 }
 
 .favorite-card-category .favorite-priority-span {
@@ -107,4 +108,19 @@
 
 .favorite-delete-btn {
   display: none;
+}
+
+.save-tick {
+  position: absolute;
+  right: 15px;
+  bottom: 8px;
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 1s ease;
+  color: $green;
+  font-weight: bold;
+}
+
+.save-tick.visible {
+  opacity: 1;
 }

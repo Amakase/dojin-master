@@ -47,14 +47,18 @@
   </div>
 
   <div class="d-flex align-items-center col-6 col-lg-7">
-    <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-2 align-items-end" } do |f| %>
+    <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-2 align-items-end", data: { controller: "notes" } } do |f| %>
       <%= f.input :notes,
         as: :text,
         label: false,
         wrapper: false,
-        input_html: { class: "favorite-notes-input" } %>
-
-
+        input_html: {
+          id: dom_id(favorite, :notes),
+          class: "favorite-notes-input",
+          data: { action: "input->notes#autoSaveType blur->notes#autoSaveBlur",
+                  notes_target: "input" },
+          "data-turbo-permanent": true }
+        %>
     <% end %>
   </div>
   <i class="fa-solid fa-trash favorite-delete-btn me-2"></i>
