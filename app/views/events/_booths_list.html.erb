@@ -3,38 +3,38 @@
 <div class="cards mx-auto">
   <% @booths.each do |booth| %>
     <div class="card">
-      <%= link_to booth_path(booth.id), class: "text-decoration-none" , data: { turbo_frame: "_top" } do%>
-        <div class="card-body rounded-5 card-fixed-width">
+      <div class="card-body rounded-5 card-fixed-width">
+        <%= link_to booth_path(booth.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
           <div class="position-relative">
-            <%= render "shared/circle_cut" , booth: booth, circle: booth.circle, width: 180, height: 256 %>
-              <h5 class="card-title text-black">
-                <%= booth.circle.name %>
-              </h5>
-              <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i>
-                <%= booth.genre %>
-              </h6>
-              <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i>
-                <%= booth.booth_space %> (Day: <%= ( booth.booth_day - @event.start_date + 1).to_i %>)
-              </p>
-              <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i>
-                <%= booth.booth_day %>
-              </p>
-              <% if @notified_booth_ids.include?(booth.id) && @prioritized_booth_ids.include?(booth.id) %>
-                <span class="badge rounded-5 position-absolute notification-adjust">
-                  <%= @notification_counts[booth.id] %>
-                </span>
-              <% else %>
-                <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
-                </span>
-              <% end %>
+            <%= render "shared/circle_cut", booth: booth, circle: booth.circle, width: 180, height: 256 %>
+            <h5 class="card-title text-black">
+              <%= booth.circle.name %>
+            </h5>
+            <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i>
+              <%= booth.genre %>
+            </h6>
+            <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i>
+              <%= booth.booth_space %> (Day: <%= (booth.booth_day - @event.start_date + 1).to_i %>)
+            </p>
+            <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i>
+              <%= booth.booth_day %>
+            </p>
+            <% if @notified_booth_ids.include?(booth.id) && @prioritized_booth_ids.include?(booth.id) %>
+              <span class="badge rounded-5 position-absolute notification-adjust">
+                <%= @notification_counts[booth.id] %>
+              </span>
+            <% else %>
+              <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
+              </span>
+            <% end %>
           </div>
+        <% end %>
+        <div class="border favorite-button-size">
+          <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+            <%= render "shared/favorite_button", booth: booth, favorite: @favorites_by_booth_id[booth.id] %>
           <% end %>
-            <div class="border favorite-button-size">
-              <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-                <%= render "shared/favorite_button", booth: booth, favorite: @favorites_by_booth_id[booth.id] %>
-                  <% end %>
-            </div>
         </div>
+      </div>
     </div>
     <% end %>
 </div>
