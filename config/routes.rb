@@ -13,6 +13,15 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  # Admin namespace: provides URL prefix (/admin/...), controller module (Admin::),
+  # and named helper prefix (admin_*). Pundit is automatically skipped for all
+  # controllers under this namespace via the regex in ApplicationController#skip_pundit?.
+  namespace :admin do
+    resources :events, only: [] do
+      resource :map_editor, only: [:show, :update]
+    end
+  end
+
   resources :events, only: [:index, :show] do
     resources :favorites, only: [:index]
   end
