@@ -6,13 +6,13 @@
     <%= render "shared/event_header", event: @event %>
 
     <div class="favorites-map-container">
-      <%= render "favorites/map", event: @event %>
+      <%# <%= render "favorites/map", event: @event %>
     </div>
 
     <div class="favorite-cards-container d-flex justify-content-center col-12 col-lg-6 row">
       <div class="favorite-hint-map-btn">
         <p class="priority-hint">↑ lower number is higher priority</p>
-        <%= link_to ,  %>
+        <%# <%= link_to , %>
       </div>
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>

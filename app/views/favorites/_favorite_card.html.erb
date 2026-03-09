@@ -53,7 +53,9 @@
               %>
       <div class="booth-space-and-day d-flex">
         <div class="favorite-booth-space me-1"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
-        <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
+        <% if booth.event.single_day? == false %>
+          <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
+        <% end %>
       </div>
       <div class="booth-genre"><i class="fa-solid fa-tag me-1"></i><%= booth.genre %></div>
     </div>
