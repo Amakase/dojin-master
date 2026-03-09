@@ -12,17 +12,20 @@
       <%= image_tag booth.image,
             id: "circle-image",
             alt: "Booth Circle-Cut Image",
-            class: "favorite-circle-image object-fit-cover border rounded" %>
+            class: "favorite-circle-image object-fit-cover border rounded",
+            href: booth_path(booth) %>
     <% elsif circle.image.attached? %>
       <%= image_tag circle.image,
             id: "circle-image",
             alt: "Circle Image",
-            class: "favorite-circle-image object-fit-cover border rounded" %>
+            class: "favorite-circle-image object-fit-cover border rounded",
+            href: booth_path(booth) %>
     <% else %>
       <%= image_tag "blank_circle_cut.png",
             id: "circle-image",
             alt: "Default Image",
-            class: "favorite-circle-image object-fit-cover border rounded" %>
+            class: "favorite-circle-image object-fit-cover border rounded",
+            href: booth_path(booth) %>
     <% end %>
 
     <%
