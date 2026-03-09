@@ -5,6 +5,9 @@
 class Admin::MapEditorsController < Admin::BaseController
   before_action :set_event
 
+  # Renders the map editor page. Passes existing coordinates and booth spaces
+  # as instance variables so the view can embed them as data attributes for
+  # the Stimulus controller to consume on load.
   def show
     # Serialise existing coordinates to JSON for the Stimulus controller to render on load
     @existing_coords = @event.event_map_coordinates.map do |coordinate|
@@ -14,7 +17,13 @@ class Admin::MapEditorsController < Admin::BaseController
     @booth_spaces = @event.booths.pluck(:booth_space).compact.uniq.sort
   end
 
+  # Replaces all coordinates for the event with the set submitted by the editor.
+  # Uses a full-replace strategy (delete_all + recreate) rather than diffing the
+  # existing records — simpler and keeps the DB in sync with exactly what the
+  # admin sees on the canvas.
   def update
+    # transaction ensures atomicity: if any create! fails, the delete_all is
+    # rolled back and no coordinates are lost.
     @event.transaction do
       @event.event_map_coordinates.delete_all
 
