@@ -34,6 +34,8 @@
       <div class="me-toolbar">
         <button class="btn-me-add" data-action="click->map-editor#addRect">+ Add Rect</button>
         <button class="btn-me-delete" data-action="click->map-editor#deleteSelected">Delete Selected</button>
+        <button class="btn-me-reset" data-action="click->map-editor#resetZoom">Reset Zoom</button>
+        <span class="me-toolbar__hint">Scroll or pinch to zoom · Alt + drag to pan</span>
       </div>
       <% if @event.floor_plan.attached? %>
         <div class="me-canvas-wrap">
