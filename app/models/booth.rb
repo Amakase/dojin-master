@@ -28,6 +28,6 @@ class Booth < ApplicationRecord
     previous_event_id, _new_event_id = saved_change_to_event_id
     return unless previous_event_id && previous_event_id != event_id
 
-    endRails.cache.delete(["event", previous_event_id, "booths_v2"])
+    Rails.cache.delete(["event", previous_event_id, "booths_v2"])
   end
 end
