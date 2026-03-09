@@ -9,23 +9,29 @@
 
   <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative col-5 col-lg-4">
     <% if booth.image.attached? %>
-      <%= image_tag booth.image,
-            id: "circle-image",
-            alt: "Booth Circle-Cut Image",
-            class: "favorite-circle-image object-fit-cover border rounded",
-            href: booth_path(booth) %>
+      <%= link_to booth_path(booth) do %>
+        <%= image_tag booth.image,
+              id: "circle-image",
+              alt: "Booth Circle-Cut Image",
+              class: "favorite-circle-image object-fit-cover border rounded"
+            %>
+      <% end %>
     <% elsif circle.image.attached? %>
-      <%= image_tag circle.image,
-            id: "circle-image",
-            alt: "Circle Image",
-            class: "favorite-circle-image object-fit-cover border rounded",
-            href: booth_path(booth) %>
+      <%= link_to booth_path(booth) do %>
+        <%= image_tag circle.image,
+              id: "circle-image",
+              alt: "Circle Image",
+              class: "favorite-circle-image object-fit-cover border rounded"
+            %>
+      <% end %>
     <% else %>
-      <%= image_tag "blank_circle_cut.png",
-            id: "circle-image",
-            alt: "Default Image",
-            class: "favorite-circle-image object-fit-cover border rounded",
-            href: booth_path(booth) %>
+      <%= link_to booth_path(booth) do %>
+        <%= image_tag "blank_circle_cut.png",
+              id: "circle-image",
+              alt: "Default Image",
+              class: "favorite-circle-image object-fit-cover border rounded"
+            %>
+      <% end %>
     <% end %>
 
     <%
@@ -43,9 +49,13 @@
     <div class="favorite-booth-details ms-1 me-1">
       <%= link_to circle.name,
                 booth_path(booth),
-                class: "favorite-circle-name text-decoration-none text-wrap" %>
-      <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
-      <div class="favorite-booth-space"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
+                class: "favorite-circle-name text-decoration-none text-wrap"
+              %>
+      <div class="booth-space-and-day d-flex">
+        <div class="favorite-booth-space me-1"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
+        <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
+      </div>
+      <div class="booth-genre"><i class="fa-solid fa-tag me-1"></i><%= booth.genre %></div>
     </div>
   </div>
 

@@ -19,6 +19,7 @@
 }
 
 .favorite-card-category .favorite-priority-btn {
+  width: 30px;
   border-radius: 10px;
 }
 
@@ -27,7 +28,11 @@
   // min-width: 15vw;
   // text-wrap: wrap;
   height: 80px;
-  // font-size: 0.8em;
+  font-size: 0.8rem;
+}
+
+.favorite-circle-details .favorite-circle-name {
+  font-size: 0.9rem;
   overflow-wrap: break-word;
 }
 
