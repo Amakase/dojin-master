@@ -32,6 +32,10 @@
 .card-fixed-width {
   width: 15rem;
   transition: all 0.3s ease;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 4px;
 }
 
 .card-fixed-width img {
@@ -55,7 +59,7 @@
 
 .notification-adjust {
   font-size: 20px;
-  bottom: 99.7%;
+  bottom: 110%;
   width: 40px !important;
   left: 97%;
   background-color: rgb(192, 0, 38);

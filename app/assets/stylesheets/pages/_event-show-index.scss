@@ -57,9 +57,8 @@
 
   background: $custom-card-bg;
   border: 1px solid rgba(14, 16, 61, 0.12);
-  box-shadow:
-    0 10px 22px rgba(9, 11, 36, 0.12),
-    0 4px 8px rgba(9, 11, 36, 0.08);
+  box-shadow: 0 10px 22px rgba(9, 11, 36, 0.12),
+  0 4px 8px rgba(9, 11, 36, 0.08);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -67,7 +66,9 @@
   border-radius: 22px;
   position: relative;
   transform-origin: center;
-  transition: transform 0.32s ease, box-shadow 0.28s ease, background 0.28s ease;
+  transition: transform 0.32s ease,
+  box-shadow 0.28s ease,
+  background 0.28s ease;
 
   &:hover {
     background: $custom-card-bg-hover;
@@ -115,13 +116,19 @@
 }
 
 .favorite-button-size {
+  position: relative;
   width: fit-content;
   border: 1px solid;
+  margin-top: auto;
 }
 
-/* on the show page only, force the menu to open upward */
+/* on the show page only, force the menu to open upward, 4px from the bottom border of .favorite-button-size */
+.event-show .favorite-button-size .dropdown {
+  position: static;
+}
+
 .event-show .favorite-button-size .dropdown-menu {
-  bottom: 100% !important;
+  bottom: 4px !important;
   top: auto !important;
 }
 
