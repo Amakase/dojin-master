@@ -7,7 +7,7 @@ class BoothsController < ApplicationController
 
     @event = @booth.event
     @favorite = @booth.favorites.find_by(user: current_user)
-    @notifications = @booth.notifications.where(read: false).order(created_at: :desc)
+    @notifications = @booth.notifications.order(created_at: :desc)
     @booth_works = @booth.booth_works.order(new_release: :desc)
     @user_inventory = current_user.collections.first.collection_works
                                   .joins(work: :circle_works)
