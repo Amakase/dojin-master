@@ -1,5 +1,11 @@
 // ── Admin Map Editor Page ──────────────────────────────────────────
 // Uses color variables from config/_colors.scss
+//
+// BEM naming convention used throughout this file:
+//   Block:     .me-sidebar          — the standalone component
+//   Element:   .me-sidebar__space   — a part of the block (double underscore)
+//   Modifier:  .me-sidebar__space--placed  — a variant of the element (double dash)
+// Modifiers are added/removed by the Stimulus controller at runtime to change appearance.
 
 .map-editor-page {
 
@@ -93,7 +99,9 @@
     font-size: 0.75rem;
   }
 
-  // Sidebar booth space items — Stimulus dynamically injects these with BEM modifier classes
+  // Sidebar booth space items — Stimulus dynamically injects these with BEM modifier classes.
+  // The `&` below is SCSS's parent selector. Inside `.me-sidebar__space { &--placed { ... } }`,
+  // `&--placed` compiles to `.me-sidebar__space--placed`. This is standard BEM + SCSS nesting.
   .me-sidebar__space {
     padding: 0.25rem 0.4rem;
     line-height: 1.4;

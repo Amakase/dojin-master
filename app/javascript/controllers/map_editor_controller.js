@@ -114,6 +114,8 @@ export default class extends Controller {
   // Uses three Fabric.js events: created (new selection), updated (different rect selected),
   // cleared (click on empty canvas area).
   initCanvasSelection() {
+    // Fabric passes the selected objects as an array even for single selections,
+    // so we always read index [0] — we only ever select one rect at a time.
     this.canvas.on('selection:created', (opt) => this.onCanvasSelect(opt.selected[0]))
     this.canvas.on('selection:updated', (opt) => this.onCanvasSelect(opt.selected[0]))
     this.canvas.on('selection:cleared',  ()      => this.onCanvasDeselect())
@@ -121,6 +123,9 @@ export default class extends Controller {
 
   // Highlights the sidebar item matching the selected canvas rect and scrolls it into view
   onCanvasSelect(obj) {
+    // `boothSpace` is not a built-in Fabric property — we set it manually on each
+    // Rect after creation (e.g. `rect.boothSpace = "一展 A-01a"`). Guard in case
+    // a non-booth Fabric object (like the background image) is somehow selected.
     if (!obj?.boothSpace) return
     this.canvasSelectedBoothSpace = obj.boothSpace
     this.updateSidebar()
@@ -137,6 +142,8 @@ export default class extends Controller {
   scrollSidebarTo(space) {
     const list = this.element.querySelector("[data-map-editor-sidebar]")
     if (!list) return
+    // CSS.escape() sanitizes the booth space string so special characters like
+    // parentheses or Japanese text don't break the querySelector selector syntax.
     const item = list.querySelector(`li[data-space="${CSS.escape(space)}"]`)
     item?.scrollIntoView({ block: "nearest", behavior: "smooth" })
   }
@@ -215,6 +222,9 @@ export default class extends Controller {
     // Alt is reserved for panning — skip draw if it's held.
     this._onMouseDown = (opt) => {
       if (opt.e.altKey) return
+      // getScenePoint converts screen pixel coordinates to Fabric's "scene" space,
+      // accounting for any zoom and pan. Using e.offsetX/Y directly would give wrong
+      // positions when the canvas is zoomed in or panned.
       const pointer = this.canvas.getScenePoint(opt.e)
       startX = pointer.x
       startY = pointer.y
