@@ -58,12 +58,15 @@ class EventsController < ApplicationController
                                          .index_by(&:booth_id)
     @prioritized_booth_ids = @favorites_by_booth_id
                              .each_with_object(Set.new) { |(id, f), s| s << id unless f.priority.nil? }
-    notification_data = Notification
-                        .where(booth_id: booth_ids, read: true)
-                        .group(:booth_id)
-                        .count
-    @notified_booth_ids    = notification_data.keys.to_set
-    @notification_counts   = notification_data
+    # which booths have at least one unread (new) notification (controls badge visibility)
+    @notified_booth_ids  = Notification
+                           .where(booth_id: booth_ids, read: false)
+                           .pluck(:booth_id).to_set
+    # count only unread (new) notifications per booth
+    @notification_counts = Notification
+                           .where(booth_id: booth_ids, read: false)
+                           .group(:booth_id)
+                           .count
   end
 
   private
