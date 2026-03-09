@@ -1,4 +1,4 @@
-<% favorite = current_user.favorites.find_by(booth: booth) %>
+<% favorite = local_assigns.fetch(:favorite) { current_user.favorites.find_by(booth: booth) } %>
 
 <div class="dropdown">
   <button class="btn favorite-priority-btn <%= favorite ? "priority-btn-#{favorite.priority}" : "priority-btn-default" %>"
@@ -23,12 +23,12 @@
               <%= link_to level,
                           favorite_path(favorite, favorite: { priority: level }),
                           data: { turbo_method: :patch },
-                          class: "dropdown-item" %>
+                          class: "dropdown-item dropdown-priority-#{level}" %>
             <% else %>
               <%= link_to level,
                           booth_favorites_path(booth, favorite: { priority: level }),
                           data: { turbo_method: :post },
-                          class: "dropdown-item" %>
+                          class: "dropdown-item dropdown-priority-#{level}" %>
             <% end %>
           </li>
         </div>

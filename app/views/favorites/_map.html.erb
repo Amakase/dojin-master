@@ -1,0 +1,5 @@
+<%# Renders the event floor plan with the user's favorited booths highlighted.
+    Include this partial from favorites/index.html.erb once the teammate's branch is merged. %>
+<%= render "shared/event_map",
+      event: @event,
+      highlight_booth_spaces: @favorites.map { |f| f.booth.booth_space } %>

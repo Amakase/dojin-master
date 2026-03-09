@@ -1,0 +1,239 @@
+// ── Admin Map Editor Page ──────────────────────────────────────────
+// Uses color variables from config/_colors.scss
+//
+// BEM naming convention used throughout this file:
+//   Block:     .me-sidebar          — the standalone component
+//   Element:   .me-sidebar__space   — a part of the block (double underscore)
+//   Modifier:  .me-sidebar__space--placed  — a variant of the element (double dash)
+// Modifiers are added/removed by the Stimulus controller at runtime to change appearance.
+
+.map-editor-page {
+
+  // ── Header ─────────────────────────────────────────────────────
+  .me-header {
+    padding-bottom: 0.875rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba($dark-goldenrod, 0.45);
+  }
+
+  // __label — the small uppercase eyebrow text ("Map Editor") above the event name
+  .me-header__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $dark-goldenrod;
+    margin-bottom: 0.2rem;
+  }
+
+  // __title — the event name heading rendered as an h4
+  .me-header__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: $white;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .me-status {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: $custom-gray;
+  }
+
+  // ── Save button ────────────────────────────────────────────────
+  .btn-me-save {
+    background-color: $dark-goldenrod;
+    border-color: $dark-goldenrod;
+    color: $deep-navy;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 1.1rem;
+    border-radius: 0.125rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover,
+    &:focus {
+      background-color: lighten($dark-goldenrod, 10%);
+      border-color: lighten($dark-goldenrod, 10%);
+      color: $deep-navy;
+      box-shadow: 0 0 0 3px rgba($dark-goldenrod, 0.3);
+    }
+  }
+
+  // ── Sidebar ────────────────────────────────────────────────────
+  .me-sidebar {
+    width: 210px;
+    flex-shrink: 0;
+    background-color: lighten($deep-navy, 4%);
+    border: 1px solid rgba($white, 0.06);
+    border-left: 3px solid $dark-goldenrod;
+    border-radius: 0.25rem;
+    overflow: hidden;
+  }
+
+  // __inner — inner padding wrapper; separated from the block so the
+  // scrollable list inside can extend to the edges without padding gaps
+  .me-sidebar__inner {
+    padding: 0.875rem 0.75rem;
+  }
+
+  // __title — the "Booth Spaces" section heading at the top of the sidebar
+  .me-sidebar__title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $dark-goldenrod;
+    margin-bottom: 0.4rem;
+  }
+
+  // __counter — the "Placed: X / Y" line updated by Stimulus as rects are drawn
+  .me-sidebar__counter {
+    font-size: 0.75rem;
+    color: $custom-gray;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba($white, 0.07);
+  }
+
+  // __list — the <ul> that Stimulus rebuilds on every canvas change
+  .me-sidebar__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.75rem;
+  }
+
+  // __space — each individual booth space <li> row in the sidebar list.
+  // Stimulus dynamically injects BEM modifier classes on these items.
+  // The `&` below is SCSS's parent selector. Inside `.me-sidebar__space { &--placed { ... } }`,
+  // `&--placed` compiles to `.me-sidebar__space--placed`. This is standard BEM + SCSS nesting.
+  .me-sidebar__space {
+    padding: 0.25rem 0.4rem;
+    line-height: 1.4;
+    border-radius: 0.125rem;
+    color: $custom-light-gray;
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+
+    &:hover {
+      color: $white;
+      background-color: rgba($white, 0.06);
+    }
+
+    // --placed: booth has been drawn on the canvas. Shown in green.
+    // pointer-events: none disables all mouse interaction so it cannot be clicked again.
+    &--placed {
+      color: $green;
+      cursor: default;
+      pointer-events: none;
+
+      &:hover {
+        background-color: transparent;
+        color: $green;
+      }
+    }
+
+    // --selected: admin clicked this item and is currently drawing its rect.
+    // Shown with a gold background to indicate active draw mode.
+    // Must also target &--selected:hover — otherwise the base :hover rule wins
+    // due to higher CSS specificity and the gold background disappears on mouseover.
+    &--selected,
+    &--selected:hover {
+      background-color: $dark-goldenrod;
+      color: $deep-navy;
+      font-weight: 700;
+    }
+  }
+
+  // ── Toolbar ────────────────────────────────────────────────────
+  .me-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+  }
+
+  .btn-me-add {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.875rem;
+    border-radius: 0.125rem;
+    border: 1px solid $dark-goldenrod;
+    color: $dark-goldenrod;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba($dark-goldenrod, 0.15);
+      color: lighten($dark-goldenrod, 10%);
+      border-color: $dark-goldenrod;
+      outline: none;
+    }
+  }
+
+  .btn-me-delete {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.875rem;
+    border-radius: 0.125rem;
+    border: 1px solid rgba($burgundy, 0.55);
+    color: lighten($burgundy, 30%);
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba($burgundy, 0.18);
+      color: lighten($burgundy, 40%);
+      border-color: rgba($burgundy, 0.8);
+      outline: none;
+    }
+  }
+
+  .btn-me-reset {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.875rem;
+    border-radius: 0.125rem;
+    border: 1px solid rgba($white, 0.2);
+    color: $custom-gray;
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:focus {
+      border-color: rgba($white, 0.4);
+      color: $white;
+      outline: none;
+    }
+  }
+
+  // __hint — the italic instructional text ("Scroll or pinch to zoom · Alt + drag to pan")
+  // pushed to the far right of the toolbar via margin-left: auto
+  .me-toolbar__hint {
+    font-size: 0.7rem;
+    color: $custom-gray;
+    align-self: center;
+    margin-left: auto;
+    font-style: italic;
+  }
+
+  // ── Canvas container ───────────────────────────────────────────
+  .me-canvas-wrap {
+    overflow: auto;
+    background: #1a1a1a;
+    max-height: calc(100vh - 160px);
+    border-radius: 0.25rem;
+    border: 1px solid rgba($dark-goldenrod, 0.2);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 4px 24px rgba(0, 0, 0, 0.5);
+  }
+}

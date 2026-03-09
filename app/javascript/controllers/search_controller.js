@@ -4,12 +4,12 @@ export default class extends Controller {
   static targets = ["input", "form"]
 
   connect() {
-    this._debounceTimer = null
+    this._setTime = null
   }
 
   search() {
-    clearTimeout(this._debounceTimer)
-    this._debounceTimer = setTimeout(() => this._doSearch(), 300)
+    clearTimeout(this._setTime)
+    this._setTime = setTimeout(() => this._doSearch(), 300)
   }
 
   prevent(event) {

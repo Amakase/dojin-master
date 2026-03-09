@@ -3,7 +3,7 @@
     <%= render "shared/breadcrumbs", { event: nil, booth: nil } %>
   </div>
 </div>
-<div class="row justify-content-center page-search-row">
+<div class="event-show row justify-content-center">
   <div class="col-sm-8 my-3">
     <%= form_with url: events_path, method: :get, class: "d-flex event-search-form",
         data: { controller: "search", search_target: "form", action: "submit->search#prevent" } do %>
