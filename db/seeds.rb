@@ -149,7 +149,7 @@ puts "Clearing Events DB..."
 Event.destroy_all
 
 
-puts "Creating M3-2025 Spring Circles"
+puts "Creating M3-2025 Spring circles..."
 
 m3_circles.each do |circle|
   Circle.create!(
@@ -251,11 +251,11 @@ EVENTS.each do |this_event|
     end_date: this_event[:end_date]
   )
   file_path = "app/assets/images/events/#{event.name}.png"
-  puts file_path
   if File.exist?(file_path)
     event.image = File.open(Rails.root.join(file_path))
   end
   event.save!
+  puts "...“#{event.name}” event created"
   User.all.each do |user|
     bookmarked_event = BookmarkedEvent.new
     bookmarked_event.user = user
@@ -359,6 +359,7 @@ EVENTS.each do |this_event|
       end
     end
   end
+  puts "...“#{event.name}” bookmarked events, booths, favorites, notifications, and booth works created"
 end
 puts "...#{Event.count} events created"
 puts "...#{BookmarkedEvent.count} bookmarked events created"
@@ -377,6 +378,7 @@ puts "Creating fully fake Events, Bookmarked Events, Booths, Favorites, Notifica
     start_date: Date.today,
     end_date: Date.today + 1
   )
+  puts "...“#{event.name}” event created"
   bookmarked_event = BookmarkedEvent.new
   bookmarked_event.user = User.all.sample
   bookmarked_event.event = event
