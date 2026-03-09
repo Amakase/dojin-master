@@ -8,6 +8,19 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 Faker::Config.locale = 'ja'
+
+filepath = "app/assets/csv/seed_info.csv"
+
+m3_circles = []
+CSV.foreach(filepath, headers: :first_row) do |row|
+  m3_circles << {
+    name: row['サークル名'],
+    name_reading: row['サークル名'],
+    booth_space: "#{row['会場']} #{row['スペース']}",
+    genre: row['ジャンル'],
+    description: row['description'] }
+end
+
 KATAKANA = ["ブレーキ", "アップル", "ヱヴァンゲリオン", "ビックカメラ", "エクスプロージョン", "プラスアルファ", "イッセキニチョウ", "ガンダム", "メグロ", "アオイトリ"]
 
 CIRCLES = [
@@ -67,7 +80,20 @@ WORKS = [
 ]
 
 EVENTS = [
-  { name: "Comic Paradise 47", venue: "東京ビッグサイト", description: Faker::Lorem.paragraph, start_date: Date.new(2026, 5, 10), end_date: Date.new(2026, 5, 10)}
+  {
+    name: "M3-2025春",
+    venue: "東京流通センター(TRC) 第一展示場・第二展示場",
+    description: "自主制作音系作品の展示即売会。試聴コーナー・上映コーナー併設",
+    start_date: Date.new(2025, 4, 27),
+    end_date: Date.new(2025, 4, 27)
+  },
+  {
+    name: "Comic Market 107",
+    venue: "Tokyo Big Sight",
+    description: "Comic Market is a doujinshi marketplace that started in 1975 as a \"space\" reserved for people to pursue new possibilities in creative expression in the realm of manga and to act as a forum for communication between fans. ",
+    start_date: Date.new(2025, 12, 30),
+    end_date: Date.new(2025, 12, 31)
+  }
 ]
 
 puts "Clearing Circle DB..."
@@ -79,27 +105,42 @@ Work.destroy_all
 puts "Clearing Events DB..."
 Event.destroy_all
 
-puts "Creating semi-fake circles..."
+
+puts "Creating M3-2025 Spring Circles"
+
+m3_circles.each do |circle|
+  Circle.create!(
+    name: circle[:name],
+    name_reading: circle[:name_reading],
+    description: circle[:description]
+  )
+end
+
+num_circles = Circle.count
+puts "...#{num_circles} circles created"
+puts "Creating a few Comiket circles..."
 
 CIRCLES.each do |circle|
   Circle.create!(
     name: circle[:name],
     name_reading: circle[:name_reading],
-    description: Faker::Lorem.paragraph,
-  )
-end
-
-puts "...#{Circle.count} circles created"
-puts "Creating fake Circles..."
-
-50.times do
-  Circle.create!(
-    name: Faker::Creature::Animal.name,
-    name_reading: KATAKANA.sample,
     description: Faker::Lorem.paragraph
   )
 end
 
+puts "...#{Circle.count - num_circles} circles created"
+# num_circles = Circle.count
+# puts "Creating fake Circles..."
+#
+# 50.times do
+#   Circle.create!(
+#     name: Faker::Creature::Animal.name,
+#     name_reading: KATAKANA.sample,
+#     description: Faker::Lorem.paragraph
+#   )
+# end
+#
+# puts "...#{Circle.count - num_circles} circles created"
 puts "...#{Circle.count} total circles created"
 puts "Creating fully-fake Works and Circle Works..."
 
@@ -122,7 +163,7 @@ puts "Creating fully-fake Works and Circle Works..."
   work.save!
   circle_work = CircleWork.new
   circle_work.work = work
-  circle_work.circle = Circle.all.sample
+  circle_work.circle = Circle.all.first(20).sample
   circle_work.save!
 end
 
