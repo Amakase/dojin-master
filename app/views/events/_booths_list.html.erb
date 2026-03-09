@@ -19,23 +19,19 @@
               <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i>
                 <%= booth.booth_day %>
               </p>
-              <%
-                user_favorites = booth.favorites.where(user: current_user)
-                prioritized = user_favorites.where.not(priority: nil).exists?
-                if booth.notifications.where(read: true).exists? && prioritized
-              %>
+              <% if @notified_booth_ids.include?(booth.id) && @prioritized_booth_ids.include?(booth.id) %>
                 <span class="badge rounded-5 position-absolute notification-adjust">
-                  <%= booth.notifications.count %>
+                  <%= @notification_counts[booth.id] %>
                 </span>
-                <% else %>
-                  <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
-                  </span>
-                  <% end %>
+              <% else %>
+                <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
+                </span>
+              <% end %>
           </div>
           <% end %>
             <div class="border favorite-button-size">
               <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-                <%= render "shared/favorite_button" , booth: booth %>
+                <%= render "shared/favorite_button", booth: booth, favorite: @favorites_by_booth_id[booth.id] %>
                   <% end %>
             </div>
         </div>

@@ -6,19 +6,22 @@
         alt: "Booth Circle-Cut Image",
         class: "object-fit-contain border",
         width: width,
-        height: height %>
+        height: height,
+        loading: "lazy" %>
 <% elsif circle.image.attached? %>
   <%= image_tag circle.image,
         id: "circle-image",
         alt: "Circle Image",
         class: "object-fit-contain border",
         width: width,
-        height: height %>
+        height: height,
+        loading: "lazy" %>
 <% else %>
   <%= image_tag "blank_circle_cut.png",
         id: "circle-image",
         alt: "Default Image",
         class: "object-fit-contain border",
         width: width,
-        height: height %>
+        height: height,
+        loading: "lazy" %>
 <% end %>
