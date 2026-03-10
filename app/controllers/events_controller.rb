@@ -53,6 +53,22 @@ class EventsController < ApplicationController
       end
     end
 
+    if params[:filter_by].present?
+      filter = params[:filter_by]
+      if filter.start_with?("space:")
+        prefix = filter.sub("space:", "")
+        @booths = @booths.select { |b| b.booth_space&.start_with?(prefix) }
+      elsif filter == "favorites"
+        fav_ids = current_user.favorites
+                              .where(booth_id: @booths.map(&:id))
+                              .pluck(:booth_id)
+                              .to_set
+        @booths = @booths.select { |b| fav_ids.include?(b.id) }
+      else
+        @booths = @booths.select { |b| b.genre == filter }
+      end
+    end
+
     # Bulk-load per-user data in 2 SQL regardless of booth count
     booth_ids = @booths.map(&:id)
     @favorites_by_booth_id = current_user.favorites
