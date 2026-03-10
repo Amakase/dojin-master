@@ -1,31 +1,31 @@
-<%= turbo_stream_from "ai_placement_#{@event.id}" %>
+<%= turbo_stream_from "ai_placement_floor_plan_#{@floor_plan.id}" %>
 <div class="container-fluid py-3 map-editor-page"
      data-controller="map-editor"
      data-map-editor-coords-value="<%= @existing_coords.to_json %>"
      data-map-editor-booth-spaces-value="<%= @booth_spaces.to_json %>"
-     data-map-editor-save-url-value="<%= admin_event_map_editor_path(@event) %>"
-     data-map-editor-image-url-value="<%= @event.floor_plan.attached? ? url_for(@event.floor_plan) : '' %>">
+     data-map-editor-save-url-value="<%= admin_event_floor_plan_map_editor_path(@event, @floor_plan) %>"
+     data-map-editor-image-url-value="<%= @floor_plan.image.attached? ? url_for(@floor_plan.image) : '' %>">
 
   <%# Header %>
   <div class="d-flex align-items-center justify-content-between me-header">
     <div>
       <p class="me-header__label mb-0">Map Editor</p>
-      <h4 class="me-header__title"><%= @event.name %></h4>
+      <h4 class="me-header__title"><%= @event.name %> — <%= @floor_plan.name %></h4>
     </div>
     <div class="d-flex align-items-center gap-3">
       <span data-map-editor-status class="me-status"></span>
-      <% if @event.floor_plan.attached? %>
+      <% if @floor_plan.image.attached? %>
         <div class="me-ai-cluster">
-          <%= button_to admin_event_ai_placement_path(@event),
+          <%= button_to admin_event_floor_plan_ai_placement_path(@event, @floor_plan),
                 method: :post,
                 class: "btn btn-me-ai",
-                disabled: @event.ai_placement_status.in?(%w[pending running]) do %>
+                disabled: @floor_plan.ai_placement_status.in?(%w[pending running]) do %>
             <i class="fa-solid fa-wand-magic-sparkles btn-me-ai__icon"></i>
             AI Auto-place
           <% end %>
           <%= render "admin/map_editors/ai_placement_status",
-                status: @event.ai_placement_status || "",
-                message: ai_status_message(@event) %>
+                status: @floor_plan.ai_placement_status || "",
+                message: ai_status_message(@floor_plan) %>
         </div>
       <% end %>
       <button class="btn btn-me-save" data-action="click->map-editor#save">Save All</button>
@@ -52,12 +52,12 @@
         <button class="btn-me-reset" data-action="click->map-editor#resetZoom">Reset Zoom</button>
         <span class="me-toolbar__hint">Scroll or pinch to zoom · Alt + drag to pan</span>
       </div>
-      <% if @event.floor_plan.attached? %>
+      <% if @floor_plan.image.attached? %>
         <div class="me-canvas-wrap">
           <canvas></canvas>
         </div>
       <% else %>
-        <div class="alert alert-warning">No floor plan uploaded for this event yet.</div>
+        <div class="alert alert-warning">No image uploaded for this section yet.</div>
       <% end %>
     </div>
   </div>
