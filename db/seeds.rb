@@ -301,10 +301,10 @@ puts "Creating fully fake Events, Bookmarked Events, Booths, Favorites, Notifica
     end_date: Date.today + 1
   )
   puts "...“#{event.name}” event created"
-  bookmarked_event = BookmarkedEvent.new
-  bookmarked_event.user = User.all.sample
-  bookmarked_event.event = event
-  bookmarked_event.save!
+  # bookmarked_event = BookmarkedEvent.new
+  # bookmarked_event.user = User.all.sample
+  # bookmarked_event.event = event
+  # bookmarked_event.save!
   num = rand(20..30)
   sample_arr = Circle.all.sample(num)
   booth_num = (10..50).to_a.sample(num)
