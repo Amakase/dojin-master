@@ -20,6 +20,13 @@ class EventsController < ApplicationController
       @events = @events.where(sql_subquery, query: "%#{params[:query]}%")
     end
 
+    if user_signed_in?
+      event_ids = @events.pluck(:id)
+      @bookmarked_events_by_event_id = current_user.bookmarked_events
+                                                   .where(event_id: event_ids)
+                                                   .index_by(&:event_id)
+    end
+
     respond_to do |format|
       format.html
       format.turbo_stream

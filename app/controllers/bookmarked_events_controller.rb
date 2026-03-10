@@ -11,7 +11,7 @@ class BookmarkedEventsController < ApplicationController
       respond_to do |format|
         format.turbo_stream do
           flash.now[:alert] = @bookmarked_event.errors.full_messages.to_sentence
-          render :bookmark, status: :unprocessable_entity
+          render :bookmark
         end
         format.html do
           redirect_to events_path, alert: @bookmarked_event.errors.full_messages.to_sentence
