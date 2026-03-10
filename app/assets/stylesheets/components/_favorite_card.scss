@@ -18,12 +18,17 @@
   display: none;
 }
 
+.toggle-text-color.favorite-show-map-span {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
 .favorite-show-map-btn {
 
 }
 
-.favorite-show-map-span {
-
+.favorites-map-container {
+  display: none
 }
 
 .favorite-card-category .favorite-priority-btn {
