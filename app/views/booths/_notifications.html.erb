@@ -13,7 +13,7 @@
                 <span class="booth-meta-text"><%= notification.created_at.strftime("%Y/%m/%d %H:%M") %></span>
               </div>
               <% if notification.content.present? %>
-                <p class="mt-1 mb-0 booth-description"><%= notification.content %></p>
+                <p class="mt-1 mb-0 booth-description booth-description-white-space-pre"><%= notification.content %></p>
               <% end %>
               <% if notification.url.present? %>
                 <%= link_to notification.url, target: "_blank", rel: "noopener", class: "btn btn-sm btn-outline-secondary mt-2" do %>
