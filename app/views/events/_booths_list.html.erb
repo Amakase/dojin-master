@@ -5,20 +5,27 @@
     <div class="card">
       <div class="card-body rounded-5 card-fixed-width">
         <%= link_to booth_path(booth.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
+          <h5 class="card-title text-black text-center fw-bolder">
+              <%= booth.circle.name %>
+          </h5>
           <div class="position-relative">
             <%= render "shared/circle_cut", booth: booth, circle: booth.circle, width: 180, height: 256 %>
-            <h5 class="card-title text-black">
-              <%= booth.circle.name %>
-            </h5>
+            <div class="d-flex">
+            <p class="card-text text-black flex-grow-1"><i class="fa-solid fa-location-dot"></i>
+              <%= booth.booth_space %>
+            </p>
+            <p class="card-text text-black flex-grow-1"><i class="fa-solid fa-calendar-day"></i>
+            <% if @event.end_date - @event.start_date == 0 %>
+
+            <% else %>
+              Day <%= (booth.booth_day - @event.start_date + 1).to_i %>
+            <% end %>
+            </p>
+            </div>
             <h6 class="card-text text-black"><i class="fa-solid fa-tag"></i>
               <%= booth.genre %>
             </h6>
-            <p class="card-text text-black"><i class="fa-solid fa-location-dot"></i>
-              <%= booth.booth_space %> (Day: <%= (booth.booth_day - @event.start_date + 1).to_i %>)
-            </p>
-            <p class="card-text text-black"><i class="fa-solid fa-calendar-day"></i>
-              <%= booth.booth_day %>
-            </p>
+            <small class="card-text text-muted"><i class="fa-solid fa-comment-dots"></i> <%= truncate(booth.description, length: 30) %></small>
             <% if @notified_booth_ids.include?(booth.id) && @prioritized_booth_ids.include?(booth.id) %>
               <span class="badge rounded-5 position-absolute notification-adjust">
                 <%= @notification_counts[booth.id] %>
