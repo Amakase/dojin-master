@@ -21,7 +21,6 @@
       <div class="favorites-map-container" id="show-map">
         <%= render "map", event: @event %>
       </div>
-      <p class="priority-hint justify-content-start align-content-end">↑ lower number is higher priority</p>
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>
       <% end %>
