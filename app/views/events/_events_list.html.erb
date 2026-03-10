@@ -3,7 +3,6 @@
     <% if user_signed_in? %>
       <%= render "shared/bookmark_button", event: event, bookmarked_events_by_event_id: @bookmarked_events_by_event_id %>
     <% end %>
-  <% if index == 0 || index == 1  %>
     <% if event.image.attached? %>
       <%= image_tag event.image,
             alt: "Event Image",
@@ -17,10 +16,6 @@
             width: 228
       %>
     <% end %>
-  <% else %>
-    <img src='https://picsum.photos/id/<%= event.id * 4 %>/200' alt="<%= event.name %>" />
-  <% end %>
-
     <div class="card-product-infos">
       <%= link_to event_path(event.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
         <div>
