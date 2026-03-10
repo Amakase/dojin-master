@@ -1,13 +1,8 @@
-<div class="event-show">
-  <div class="pt-3">
-    <%= render "shared/breadcrumbs", { event: @event, booth: nil } %>
-  </div>
+<div class="event-show"><div class="container pt-3 event-show__breadcrumbs"><%=render "shared/breadcrumbs",
+  {
+  event: @event, booth: nil
+}
 
-<%= render "show_search_form" %>
-<%= render "shared/event_header", event: @event %>
-
-
-<%= turbo_frame_tag "booths_frame" do %>
- <%= render "booths_list" %>
-<% end %>
-</div>
+%></div><div class="event-show__content"><div class="event-show__hero-shell"><%=render "shared/event_header",
+event: @event %><div class="event-show__search event-show__search--hero"><%=render "show_search_form"%></div></div><% if @booths %><%=turbo_frame_tag "booths_frame"do %><%=render "booths_list"%><% end %><% else %><%=turbo_frame_tag "booths_frame",
+src: event_path(@event, request.query_parameters) do %><div class="text-center py-5"><div class="spinner-border text-secondary"role="status"><span class="visually-hidden">Loading...</span></div></div><% end %><% end %></div></div>
