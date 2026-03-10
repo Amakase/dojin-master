@@ -1,0 +1,7 @@
+<%# Replaces the status indicator immediately on button click (before job runs) %>
+<%= turbo_stream.replace "ai-placement-status" do %>
+  <% message = @no_floor_plan ? "No image attached to this section." : "Job enqueued. AI is analyzing…" %>
+  <%= render "admin/map_editors/ai_placement_status",
+        status: @floor_plan.ai_placement_status || "",
+        message: message %>
+<% end %>
