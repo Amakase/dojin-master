@@ -62,7 +62,19 @@ class EventsController < ApplicationController
 
     if params[:filter_by].present?
       filter = params[:filter_by]
-      if filter.start_with?("space:")
+      if @booths.is_a?(ActiveRecord::Relation)
+        if filter.start_with?("space:")
+          prefix = filter.sub("space:", "")
+          @booths = @booths.where("booth_space LIKE ?", "#{prefix}%")
+        elsif filter == "inventory"
+          circle_ids = current_user.works
+                                   .joins(:circle_works)
+                                   .pluck("circle_works.circle_id")
+          @booths = @booths.where(circle_id: circle_ids)
+        else
+          @booths = @booths.where(genre: filter)
+        end
+      elsif filter.start_with?("space:")
         prefix = filter.sub("space:", "")
         @booths = @booths.select { |b| b.booth_space&.start_with?(prefix) }
       elsif filter == "inventory"

@@ -5,4 +5,9 @@ class Favorite < ApplicationRecord
   validates :booth, uniqueness: { scope: :user }
   validates :priority, inclusion: { in: 1..9, message: "must be an integer between 1 and 9 inclusive" }, allow_nil: true
   # validates :notes
+  validates :visited, inclusion: { in: [true, false] }
+
+  def visited?
+    visited
+  end
 end

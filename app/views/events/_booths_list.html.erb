@@ -3,7 +3,7 @@
   <span class="booths-results-count">
     <%= @booths.count %> <%= "booth".pluralize(@booths.count) %>
   </span>
-   <%= form_with url: event_path(@event), method: :get do %>
+   <%= form_with url: event_path(@event), method: :get, data: { turbo_frame: "_top" } do %>
     <%= hidden_field_tag :query, params[:query] %>
     <%= select_tag :filter_by,
           grouped_options_for_select(
@@ -14,7 +14,7 @@
                 ["二展",     "space:二展"]
               ]],
               ["My Collection", [
-                ["所持アイテム", "inventory"]
+                ["Owned Works", "inventory"]
               ]],
               ["アニメ・ゲーム", [
                 ["PC・ネットゲーム",       "［アニメ・ゲーム］PC・ネットゲーム"],
@@ -52,6 +52,7 @@
           include_blank: "-- Filter --",
           class: "form-select form-select-sm bg-white rounded-5",
           style: "min-width: 200px;",
+          aria: { label: "Filter booths" },
           onchange: "this.form.requestSubmit()" %>
   <% end %>
 </div>
