@@ -88,6 +88,21 @@ class EventsController < ApplicationController
       end
     end
 
+    # Sort: by day ASC, then booth_space natural order (A-01a < A-01b < A-02…), カタログ last
+    @booths = @booths.sort_by do |b|
+      space = b.booth_space.to_s
+      if space.include?("カタログ")
+        [1, Date.new(9999), "", 999, ""]
+      else
+        day = b.booth_day || Date.new(9999, 12, 31)
+        if (m = space.match(/\A([A-Za-z]+)-(\d+)([a-zA-Z]*)\z/))
+          [0, day, m[1].upcase, m[2].to_i, m[3].downcase]
+        else
+          [0, day, space, 0, ""]
+        end
+      end
+    end
+
     # Bulk-load per-user data in 2 SQL regardless of booth count
     booth_ids = @booths.map(&:id)
     @favorites_by_booth_id = current_user.favorites
