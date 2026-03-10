@@ -14,7 +14,7 @@
   position: relative;
 }
 
-.favorite-card-category .favorite-priority-span {
+.favorite-card-category .favorite-priority-span, .favorite-card-category .fa-heart {
   display: none;
 }
 
@@ -58,7 +58,7 @@
 .favorite-circle-details > .badge.rounded-5.notification-adjust {
   font-size: 0.6em;
   width: 1.3rem !important;
-  height: 1.1rem !important;
+  height: 0.9rem !important;
   position: absolute;
   top: -5px;
   left: -10px;
