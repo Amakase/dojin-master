@@ -248,16 +248,14 @@ events.each do |this_event|
         favorite.user = user
         favorite.save!
       end
-    elsif rand(0..9) == 0 && booth.circle.name != UNFAVORITED_CIRCLE
-      User.all.each do |user|
-        favorite = Favorite.new(
-          priority: rand(1..9),
-          notes: Faker::Lorem.paragraph
-        )
-        favorite.booth = booth
-        favorite.user = user
-        favorite.save!
-      end
+    elsif rand(0..4) == 0 && booth.circle.name != UNFAVORITED_CIRCLE
+      favorite = Favorite.new(
+        priority: rand(1..9),
+        notes: Faker::Lorem.paragraph
+      )
+      favorite.booth = booth
+      favorite.user = User.all.sample
+      favorite.save!
     end
     booth_notifications = notifications_list.select {|notification_item| notification_item[:circle] == booth.circle.name }
     if booth_notifications.any?
