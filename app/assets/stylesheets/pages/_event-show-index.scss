@@ -116,12 +116,41 @@
   margin-top: auto;
 }
 
+// Shared wrapper — constrains both the results bar and the cards grid to the
+// same width so the dropdown's right edge lines up with the cards' right edge.
+.booths-grid-wrapper {
+  width: 100%;
+  max-width: 1140px;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media (min-width: 1400px) {
+    max-width: 1320px;
+  }
+}
+
 // Booth results bar — replaces the raw "Booth: N" h1
 .booths-results-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   padding: 0.5rem 0 1rem;
+  position: relative;
+
+  form {
+    margin-right: 16px;
+  }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: static;
+
+    form {
+      margin-right: 0;
+    }
+  }
 }
 
 .booths-results-count {
@@ -133,6 +162,14 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.55);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  @media (max-width: 767px) {
+    position: static;
+    transform: none;
+  }
 }
 
 // Booth card meta row (location + day chips)
