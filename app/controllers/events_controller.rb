@@ -65,12 +65,12 @@ class EventsController < ApplicationController
       if filter.start_with?("space:")
         prefix = filter.sub("space:", "")
         @booths = @booths.select { |b| b.booth_space&.start_with?(prefix) }
-      elsif filter == "favorites"
-        fav_ids = current_user.favorites
-                              .where(booth_id: @booths.map(&:id))
-                              .pluck(:booth_id)
-                              .to_set
-        @booths = @booths.select { |b| fav_ids.include?(b.id) }
+      elsif filter == "inventory"
+        circle_ids = current_user.works
+                                 .joins(:circle_works)
+                                 .pluck("circle_works.circle_id")
+                                 .to_set
+        @booths = @booths.select { |b| circle_ids.include?(b.circle_id) }
       else
         @booths = @booths.select { |b| b.genre == filter }
       end
