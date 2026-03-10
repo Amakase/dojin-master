@@ -87,6 +87,7 @@
         id: dom_id(favorite, :visited),
         class: "ms-1",
         onchange: "this.form.requestSubmit(); setTimeout(() => location.reload(), 300);",
+        autocomplete: "off",
       } %>
     <% end %>
   </div>
