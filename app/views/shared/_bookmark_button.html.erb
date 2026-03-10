@@ -1,0 +1,16 @@
+<div id="<%= dom_id(event, :bookmark) %>">
+  <% bookmark = current_user.bookmarked_events.find_by(event: event) %>
+  <% if bookmark %>
+    <%= button_to event_bookmarked_event_path(event, bookmark),
+                  method: :delete,
+                  class: "btn btn-link p-0 border-0" do %>
+      <i class="fa-solid fa-star fa-2xl event-bookmark"></i>
+    <% end %>
+  <% else %>
+    <%= button_to event_bookmarked_events_path(event),
+                  method: :post,
+                  class: "btn btn-link p-0 border-0" do %>
+      <i class="fa-regular fa-star fa-2xl event-bookmark"></i>
+    <% end %>
+  <% end %>
+</div>

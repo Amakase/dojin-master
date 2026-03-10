@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@event, :bookmark) do %>
+  <%= render "shared/bookmark_button", event: @event %>
+<% end %>
