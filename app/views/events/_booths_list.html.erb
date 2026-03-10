@@ -1,9 +1,62 @@
+<div class="booths-grid-wrapper">
 <div class="booths-results-bar">
   <span class="booths-results-count">
     <%= @booths.count %> <%= "booth".pluralize(@booths.count) %>
   </span>
+   <%= form_with url: event_path(@event), method: :get, data: { turbo_frame: "_top" } do %>
+    <%= hidden_field_tag :query, params[:query] %>
+    <%= select_tag :filter_by,
+          grouped_options_for_select(
+            [
+              ["Booth Space", [
+                ["カタログ", "space:カタログ"],
+                ["一展",     "space:一展"],
+                ["二展",     "space:二展"]
+              ]],
+              ["My Collection", [
+                ["Owned Works", "inventory"]
+              ]],
+              ["アニメ・ゲーム", [
+                ["PC・ネットゲーム",       "［アニメ・ゲーム］PC・ネットゲーム"],
+                ["VOCALOID",             "［アニメ・ゲーム］VOCALOID"],
+                ["アニメソング",           "［アニメ・ゲーム］アニメソング"],
+                ["コンシューマ・アーケード", "［アニメ・ゲーム］コンシューマ・アーケード"],
+                ["レトロゲーム",           "［アニメ・ゲーム］レトロゲーム"],
+                ["東方 Project",          "［アニメ・ゲーム］東方 Project"],
+                ["音ゲー",               "［アニメ・ゲーム］音ゲー"]
+              ]],
+              ["マルチメディア", [
+                ["YouTuber/VTuber",          "［マルチメディア］YouTuber/VTuber"],
+                ["その他ノンジャンル",         "［マルチメディア］その他ノンジャンル"],
+                ["ソフトウエア・ゲームソフト", "［マルチメディア］ソフトウエア・ゲームソフト"],
+                ["ハードウエア・楽譜・書籍",   "［マルチメディア］ハードウエア・楽譜・書籍"]
+              ]],
+              ["映像", [
+                ["アニメ（セル・CG 等）",    "［映像］アニメ（セル・CG 等）"],
+                ["その他（実験映像等）",      "［映像］その他（実験映像等）"],
+                ["静止画（2D・3D データ等）", "［映像］静止画（2D・3D データ等）"]
+              ]],
+              ["音楽", [
+                ["クラシック・ジャズ・環境音楽等", "［音楽］クラシック・ジャズ・環境音楽等"],
+                ["テクノ・クラブ",              "［音楽］テクノ・クラブ"],
+                ["ポップス",                  "［音楽］ポップス"],
+                ["ロック",                    "［音楽］ロック"]
+              ]],
+              ["音響", [
+                ["その他",                      "［音響］その他"],
+                ["ドラマ・トーク（放送劇・声優等）", "［音響］ドラマ・トーク（放送劇・声優等）"]
+              ]]
+            ],
+            params[:filter_by]
+          ),
+          include_blank: "-- Filter --",
+          class: "form-select form-select-sm bg-white rounded-5",
+          style: "min-width: 200px;",
+          aria: { label: "Filter booths" },
+          onchange: "this.form.requestSubmit()" %>
+  <% end %>
 </div>
-<div class="cards mx-auto">
+<div class="cards">
   <% @booths.each do |booth| %>
     <div class="card">
       <div class="card-body card-fixed-width">
@@ -39,4 +92,5 @@
       </div>
     </div>
     <% end %>
+</div>
 </div>

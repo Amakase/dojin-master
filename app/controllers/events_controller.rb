@@ -60,6 +60,34 @@ class EventsController < ApplicationController
       end
     end
 
+    if params[:filter_by].present?
+      filter = params[:filter_by]
+      if @booths.is_a?(ActiveRecord::Relation)
+        if filter.start_with?("space:")
+          prefix = filter.sub("space:", "")
+          @booths = @booths.where("booth_space LIKE ?", "#{prefix}%")
+        elsif filter == "inventory"
+          circle_ids = current_user.works
+                                   .joins(:circle_works)
+                                   .pluck("circle_works.circle_id")
+          @booths = @booths.where(circle_id: circle_ids)
+        else
+          @booths = @booths.where(genre: filter)
+        end
+      elsif filter.start_with?("space:")
+        prefix = filter.sub("space:", "")
+        @booths = @booths.select { |b| b.booth_space&.start_with?(prefix) }
+      elsif filter == "inventory"
+        circle_ids = current_user.works
+                                 .joins(:circle_works)
+                                 .pluck("circle_works.circle_id")
+                                 .to_set
+        @booths = @booths.select { |b| circle_ids.include?(b.circle_id) }
+      else
+        @booths = @booths.select { |b| b.genre == filter }
+      end
+    end
+
     # Bulk-load per-user data in 2 SQL regardless of booth count
     booth_ids = @booths.map(&:id)
     @favorites_by_booth_id = current_user.favorites

@@ -2,6 +2,7 @@
   <div class="col-sm-8 my-3">
     <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form",
         data: { controller: "search", search_target: "form", action: "submit->search#prevent" } do %>
+      <%= hidden_field_tag :filter_by, params[:filter_by] %>
       <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
       <%= text_field_tag :query,
             params[:query],
