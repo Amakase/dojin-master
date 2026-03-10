@@ -227,6 +227,41 @@
     font-style: italic;
   }
 
+  // ── AI placement button ─────────────────────────────────────────
+  // --selected, --canvas-selected exist on sidebar items; this is a separate block-level button
+  .btn-me-ai {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 1.1rem;
+    border-radius: 0.125rem;
+    border: 1px solid rgba($custom-test-color, 0.7);
+    color: $custom-test-color;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover:not(:disabled) { background-color: rgba($custom-test-color, 0.15); }
+    &:disabled             { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  // ── AI placement status indicator ──────────────────────────────
+  // Shown inline next to the AI button; state driven by BEM modifiers
+  .me-ai-status {
+    font-size: 0.75rem;
+    font-style: italic;
+
+    // --pending / --running: neutral gray while job is in progress
+    &--pending,
+    &--running { color: $custom-gray; }
+
+    // --done: green to signal success
+    &--done    { color: $green; }
+
+    // --failed: muted red to signal an error
+    &--failed  { color: lighten($burgundy, 30%); }
+  }
+
   // ── Canvas container ───────────────────────────────────────────
   .me-canvas-wrap {
     overflow: auto;
