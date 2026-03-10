@@ -1,0 +1,67 @@
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <p class="text-muted mb-0 small">Floor Plans</p>
+      <h4 class="mb-0"><%= @event.name %></h4>
+    </div>
+  </div>
+
+  <%# Existing sections %>
+  <% if @floor_plans.any? %>
+    <div class="list-group mb-4">
+      <% @floor_plans.each do |fp| %>
+        <div class="list-group-item d-flex align-items-center gap-3">
+          <% if fp.image.attached? %>
+            <%= image_tag fp.image, style: "height: 60px; width: 90px; object-fit: cover; border-radius: 4px;" %>
+          <% else %>
+            <div style="height: 60px; width: 90px; background: #eee; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+              <span class="text-muted small">No image</span>
+            </div>
+          <% end %>
+          <div class="flex-grow-1">
+            <strong><%= fp.name %></strong>
+            <% if fp.ai_placement_status.present? %>
+              <span class="badge bg-secondary ms-2"><%= fp.ai_placement_status %></span>
+            <% end %>
+          </div>
+          <div class="d-flex gap-2">
+            <%= link_to "Edit Map", admin_event_floor_plan_map_editor_path(@event, fp), class: "btn btn-sm btn-outline-primary" %>
+            <%= button_to "Delete", admin_event_floor_plan_path(@event, fp),
+                  method: :delete,
+                  data: { turbo_confirm: "Delete \"#{fp.name}\"? This will also remove all its map coordinates." },
+                  class: "btn btn-sm btn-outline-danger" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">No sections yet. Add one below.</p>
+  <% end %>
+
+  <%# Add new section form %>
+  <div class="card">
+    <div class="card-header">Add a new section</div>
+    <div class="card-body">
+      <%= form_with model: @new_floor_plan, url: admin_event_floor_plans_path(@event) do |f| %>
+        <% if @new_floor_plan.errors.any? %>
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              <% @new_floor_plan.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+        <div class="mb-3">
+          <%= f.label :name, "Section name", class: "form-label" %>
+          <%= f.text_field :name, class: "form-control", placeholder: "e.g. 第一展示場 2階" %>
+        </div>
+        <div class="mb-3">
+          <%= f.label :image, "Floor plan image", class: "form-label" %>
+          <%= f.file_field :image, class: "form-control", accept: "image/*" %>
+        </div>
+        <%= f.submit "Add Section", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>

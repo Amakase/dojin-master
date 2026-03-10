@@ -18,8 +18,18 @@ Rails.application.routes.draw do
   # controllers under this namespace via the regex in ApplicationController#skip_pundit?.
   namespace :admin do
     resources :events, only: [] do
-      resource :map_editor,   only: [:show, :update]
-      resource :ai_placement, only: [:create], controller: "ai_placements"
+      # Floor plan section management (list + upload + delete)
+      resources :floor_plans, only: [:index, :create, :destroy],
+                              controller: "event_floor_plans"
+
+      # Per-section map editor and AI placement (nested under floor_plans)
+      resources :floor_plans, only: [] do
+        resource :map_editor,   only: [:show, :update]
+        resource :ai_placement, only: [:create], controller: "floor_plan_ai_placements"
+      end
+
+      # Legacy route — redirect to floor plans index
+      get "map_editor", to: redirect { |p, _| "/admin/events/#{p[:event_id]}/floor_plans" }
     end
   end
 
