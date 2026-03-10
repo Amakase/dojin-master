@@ -8,6 +8,7 @@ class Event < ApplicationRecord
   has_one_attached :image                                    # poster / promotional image shown on event cards
   has_one_attached :floor_plan                               # venue map PNG used by the admin map editor
   has_many :event_map_coordinates, dependent: :destroy
+  has_many :event_floor_plans, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :venue, presence: true
