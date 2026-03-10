@@ -1,0 +1,26 @@
+<%# Renders a floor plan image with an SVG overlay highlighting specific booth spaces.
+    Locals:
+      event                  — Event record (must have floor_plan attached and event_map_coordinates)
+      highlight_booth_spaces — Array of booth_space strings to highlight (e.g. the user's favorites) %>
+<% if event.floor_plan.attached? && event.event_map_coordinates.any? %>
+  <div class="event-map-wrapper" style="position: relative; display: inline-block; width: 100%;">
+    <%= image_tag event.floor_plan, style: "width: 100%; display: block;" %>
+    <%# SVG is absolutely positioned over the image. viewBox matches the coordinate system
+        (0–100 in both axes, same as the stored percentages). preserveAspectRatio="none"
+        ensures the SVG stretches to exactly match the image at any display size. %>
+    <svg style="position: absolute; inset: 0; width: 100%; height: 100%;"
+         viewBox="0 0 100 100"
+         preserveAspectRatio="none">
+      <% event.event_map_coordinates.each do |coord| %>
+        <% highlighted = highlight_booth_spaces.include?(coord.booth_space) %>
+        <rect x="<%= coord.x %>"
+              y="<%= coord.y %>"
+              width="<%= coord.width %>"
+              height="<%= coord.height %>"
+              fill="<%= highlighted ? 'rgba(255,200,0,0.5)' : 'rgba(255,255,255,0.1)' %>"
+              stroke="<%= highlighted ? 'gold' : 'rgba(255,255,255,0.2)' %>"
+              stroke-width="0.3" />
+      <% end %>
+    </svg>
+  </div>
+<% end %>
