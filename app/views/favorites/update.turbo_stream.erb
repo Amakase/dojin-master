@@ -5,3 +5,7 @@
     <%= render "shared/favorite_button", booth: @booth %>
   <% end %>
 <% end %>
+
+<%= turbo_stream.append "body" do %>
+  <script>setTimeout(() => Turbo.visit(window.location.href, { action: "replace" }), 100)</script>
+<% end %>

@@ -7,7 +7,7 @@ class FavoritesController < ApplicationController
                 .joins(booth: :circle)
                 .includes(booth: :circle)
                 .where(booths: { event_id: @event.id })
-                .order("favorites.priority ASC, circles.name_reading ASC")
+                .order("favorites.visited ASC, favorites.priority ASC, circles.name_reading ASC")
   end
 
   def create
@@ -51,6 +51,6 @@ class FavoritesController < ApplicationController
   end
 
   def favorite_params
-    params.require(:favorite).permit(:priority, :notes)
+    params.require(:favorite).permit(:priority, :notes, :visited)
   end
 end

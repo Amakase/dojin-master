@@ -76,11 +76,19 @@
         %>
     <% end %>
   </div>
-  <div class="form-check d-flex flex-column align-items-center col-1">
-    <label class="form-check-label ms-2" for="checkDefault-<%= dom_id(booth, :favorite) %>">
-      Visited
-    </label>
-    <input class="form-check-input ms-1" type="checkbox" value="" id="checkDefault-<%= dom_id(booth, :favorite) %>" checked=<%= favorite.visited? %>>
+  <div class="form-check d-flex flex-column justify-content-center col-auto p-0">
+    <p class="form-check-label ms-2 mb-0">Visited</p>
+    <%= simple_form_for favorite, html: { class: "col-2 p-0" } do |f| %>
+      <%= f.input :visited,
+      as: :boolean,
+      label: false,
+      wrapper: false,
+      input_html: {
+        id: dom_id(favorite, :visited),
+        class: "ms-1",
+        onchange: "this.form.requestSubmit(); setTimeout(() => location.reload(), 300);",
+      } %>
+    <% end %>
   </div>
   <%# <i class="fa-solid fa-trash favorite-delete-btn me-2"></i> %>
 
