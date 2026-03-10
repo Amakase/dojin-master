@@ -1,5 +1,5 @@
 <% @events.each_with_index do |event, index| %>
-  <div class="card-product mx-auto <%= 'card-product--pinned' if index < 2 %>">
+  <div class="card-product mx-auto">
     <% if user_signed_in? %>
       <%= render "shared/bookmark_button", event: event, bookmarked_events_by_event_id: @bookmarked_events_by_event_id %>
     <% end %>
