@@ -236,11 +236,16 @@
   }
 
   .card-product {
-    width: 92vw;
-    max-width: 34rem;
+    width: 320px;
     flex-direction: column;
     align-items: stretch;
     min-height: auto;
+
+    h2,
+    h3,
+    p {
+      font-size: 80%;
+    }
   }
 
   .card-product img {
@@ -250,7 +255,7 @@
   }
 
   .bookmark_link {
-    margin-right: 0;
+    margin-right: 16px;
   }
 }
 
