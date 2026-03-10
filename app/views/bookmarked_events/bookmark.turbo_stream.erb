@@ -1,5 +1,5 @@
 <%= turbo_stream.replace dom_id(@event, :bookmark) do %>
-  <% if @bookmarked_event && !@bookmarked_event.persisted? %>
+  <% if @bookmarked_event&.errors&.any? %>
     <div class="bookmark-error">
       Unable to update bookmark for this event. Please try again.
     </div>
