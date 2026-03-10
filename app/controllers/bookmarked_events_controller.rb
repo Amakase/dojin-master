@@ -5,9 +5,19 @@ class BookmarkedEventsController < ApplicationController
     @bookmarked_event = current_user.bookmarked_events.new(event: @event)
     authorize @bookmarked_event
 
-    @bookmarked_event.save
-
-    respond_with_bookmark
+    if @bookmarked_event.save
+      respond_with_bookmark
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:alert] = @bookmarked_event.errors.full_messages.to_sentence
+          render :bookmark, status: :unprocessable_entity
+        end
+        format.html do
+          redirect_to events_path, alert: @bookmarked_event.errors.full_messages.to_sentence
+        end
+      end
+    end
   end
 
   def destroy

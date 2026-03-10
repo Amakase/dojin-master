@@ -1,5 +1,10 @@
 <div id="<%= dom_id(event, :bookmark) %>">
-  <% bookmark = current_user.bookmarked_events.find_by(event: event) %>
+    <% bookmark =
+       if defined?(bookmarked_events_by_event_id) && bookmarked_events_by_event_id
+         bookmarked_events_by_event_id[event.id]
+       else
+         current_user.bookmarked_events.find { |b| b.event_id == event.id }
+       end %>
   <% if bookmark %>
     <%= button_to event_bookmarked_event_path(event, bookmark),
                   method: :delete,
