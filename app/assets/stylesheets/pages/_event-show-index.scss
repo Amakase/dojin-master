@@ -236,8 +236,7 @@
   }
 
   .card-product {
-    width: 92vw;
-    max-width: 34rem;
+    width: 320px;
     flex-direction: column;
     align-items: stretch;
     min-height: auto;
@@ -251,6 +250,16 @@
 
   .bookmark_link {
     margin-right: 16px;
+  }
+
+  .card-product--pinned {
+    width: 320px;
+
+    h2,
+    h3,
+    p {
+      font-size: 80%;
+    }
   }
 }
 
