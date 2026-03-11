@@ -4,13 +4,15 @@
       <div class="col-sm-6 col-lg-4">
         <div class="booth-panel-card d-flex align-items-center gap-3">
           <div class="booth-inventory-icon flex-shrink-0">
-            <i class="fa-solid fa-book"></i>
+            <% if item.work.medium == "CD" %>
+              <i class="fa-solid fa-compact-disc"></i>
+            <% else %>
+              <i class="fa-solid fa-book"></i>
+            <% end %>
           </div>
           <div class="overflow-hidden">
             <p class="fw-semibold mb-0 text-truncate"><%= item.work.title %></p>
-            <% if item.work.title_reading.present? %>
-              <p class="booth-meta-text mb-0 text-truncate"><%= item.work.title_reading %></p>
-            <% end %>
+            <p class="booth-meta-text mb-0">Published: <%= item.work.published_on.strftime("%Y-%m-%d") %></p>
           </div>
         </div>
       </div>
