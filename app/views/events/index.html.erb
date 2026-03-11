@@ -5,13 +5,16 @@
   </style>
 <% end %>
 
-<%= turbo_frame_tag "search_frame" do %>
-  <%= render "search_form" %>
-<% end %>
+<section class="events-index">
+  <div class="events-index__header">
+    <%= turbo_frame_tag "search_frame", class: "events-index__search" do %>
+      <%= render "search_form" %>
+    <% end %>
+  </div>
 
-<h1 class="text-white text-center event-page-title">Event List</h1>
-<%= render "filter_toggle" %>
+  <%= render "filter_toggle" %>
 
-<%= turbo_frame_tag "events_frame" do %>
-  <%= render "events_list" %>
-<% end %>
+  <%= turbo_frame_tag "events_frame" do %>
+    <%= render "events_list" %>
+  <% end %>
+</section>

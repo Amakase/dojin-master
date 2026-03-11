@@ -1,7 +1,7 @@
-<div class="bookmark_link">
-  <span class="toggle-text-color">Bookmarked</span>
+<div class="bookmark_link events-index__filter-row">
+  <span class="toggle-text-color events-index__filter-label">Bookmarked</span>
 
-  <%= form_with url: events_path, method: :get, class: "toggle-form",
+  <%= form_with url: events_path, method: :get, class: "toggle-form events-index__toggle-form",
       data: { turbo_stream: true } do %>
     <%= hidden_field_tag :query, params[:query] %>
 
