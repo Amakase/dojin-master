@@ -8,7 +8,7 @@ export default class extends Controller {
     saveUrl: String,     // PATCH endpoint for saving coordinates
     imageUrl: String     // URL of the floor plan image
   }
-  // IGNORE THIS
+
   // Stimulus targets used by the section placement panel
   static targets = ["sectionAnchor", "sectionRangeStart", "sectionRangeEnd",
                     "sectionStatus", "sectionDrawBtn", "sectionSelect"]
