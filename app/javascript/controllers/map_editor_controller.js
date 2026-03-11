@@ -11,7 +11,7 @@ export default class extends Controller {
 
   // Stimulus targets used by the section placement panel
   static targets = ["sectionAnchor", "sectionRangeStart", "sectionRangeEnd",
-                    "sectionStatus", "sectionDrawBtn"]
+                    "sectionStatus", "sectionDrawBtn", "sectionSelect"]
 
   async connect() {
     // Fabric is imported dynamically so it's only bundled for pages that use this
@@ -378,7 +378,7 @@ export default class extends Controller {
       ? this.sectionAnchorTarget.value.trim()
       : ""
     if (!anchorSpace) {
-      this._setSectionStatus("Enter an anchor booth space first.")
+      this._setSectionStatus("Select a section and anchor booth first.")
       return
     }
 
@@ -555,9 +555,9 @@ export default class extends Controller {
   //   section height. Within each pair column the "a" and "b" variants sit beside each
   //   other horizontally. Which half is "a" is detected from the anchor's x within its column.
   //
-  // Layout "stacked":  each booth number gets a column spanning the full section width.
-  //   The "a" and "b" variants are placed in the upper or lower half of the column.
-  //   Which row is "a" is detected from the anchor's y relative to the section midpoint.
+  // Layout "stacked":  every booth gets its own full-width row — pure vertical stack.
+  //   a and b are also stacked on top of each other (no side-by-side splitting).
+  //   Numbers run top-to-bottom or bottom-to-top based on the anchor's y position.
   //
   // Booth space naming conventions handled:
   //   "あ-01a"  → num=1, row="a"
@@ -625,37 +625,107 @@ export default class extends Controller {
         }
       })
     } else {
-      // Stacked: each number occupies one column; a and b stacked vertically within it.
-      const colWidth  = sectionRect.width / N
-      const rowHeight = sectionRect.height / 2
+      // Stacked: every booth gets its own full-width row — pure vertical stack.
+      // No side-by-side splitting at all; a and b are also stacked on top of each other.
+      // Numbers run top-to-bottom or bottom-to-top based on anchor y position.
+      // Within each number: a (or "") always precedes b.
+      // "ab" combined booths span double the slot height (they replace both a and b).
 
-      // Is 'a' in the upper half of the section? Compare anchor center to vertical midpoint.
       const anchorMidY = anchor.y + anchor.height / 2
-      const isATop     = anchorMidY < sectionRect.y + sectionRect.height / 2
-      const rowA_y = isATop ? sectionRect.y : sectionRect.y + rowHeight
-      const rowB_y = isATop ? sectionRect.y + rowHeight : sectionRect.y
+      const isBTT = anchorMidY > sectionRect.y + sectionRect.height / 2
 
-      sortedNums.forEach((num, stepIdx) => {
-        const colFromLeft = isRTL ? (N - 1 - stepIdx) : stepIdx
-        const colX        = sectionRect.x + colFromLeft * colWidth
+      // Build a flat ordered list: numbers in direction order, a before b within each number
+      const numsInOrder = isBTT ? [...sortedNums].reverse() : sortedNums
+      const orderedBooths = []
+      for (const num of numsInOrder) {
+        const entries = byNum.get(num).slice().sort((x, y) => {
+          // "a"/"" → 0, "b" → 1, "ab" → 2
+          const rank = r => (r === "a" || r === "") ? 0 : r === "b" ? 1 : 2
+          return rank(x.row) - rank(y.row)
+        })
+        orderedBooths.push(...entries)
+      }
 
-        for (const { boothSpace, row } of byNum.get(num)) {
-          if (row === "ab") {
-            // Combined booth spans both rows
-            results.push({ boothSpace, x: colX, y: sectionRect.y, width: colWidth, height: sectionRect.height })
-          } else if (row === "a" || row === "") {
-            results.push({ boothSpace, x: colX, y: rowA_y, width: colWidth, height: rowHeight })
-          } else if (row === "b") {
-            results.push({ boothSpace, x: colX, y: rowB_y, width: colWidth, height: rowHeight })
-          }
-        }
-      })
+      // Each "ab" booth counts as 2 slots; a/b each count as 1
+      const totalSlots = orderedBooths.reduce((sum, e) => sum + (e.row === "ab" ? 2 : 1), 0)
+      const slotHeight = sectionRect.height / totalSlots
+
+      let curY = sectionRect.y
+      for (const { boothSpace, row } of orderedBooths) {
+        const slots = row === "ab" ? 2 : 1
+        results.push({
+          boothSpace,
+          x:      sectionRect.x,
+          y:      curY,
+          width:  sectionRect.width,
+          height: slotHeight * slots
+        })
+        curY += slotHeight * slots
+      }
     }
 
     return results
   }
 
   // ── Section panel helpers ─────────────────────────────────────────────────
+
+  // Rebuilds the section prefix dropdown from currently placed booths.
+  // Preserves the current section/anchor selections if they are still valid
+  // (e.g. after a new booth is placed the dropdowns stay put).
+  updateSectionDropdown() {
+    if (!this.hasSectionSelectTarget) return
+
+    const placed = this.canvas.getObjects().map(o => o.boothSpace).filter(Boolean)
+
+    // Extract unique section prefixes — everything before the first "-"
+    const sections = [...new Set(
+      placed.map(bs => bs.split("-")[0]).filter(Boolean)
+    )].sort()
+
+    const sectionSel = this.sectionSelectTarget
+    const prevSection = sectionSel.value
+    const prevAnchor  = this.hasSectionAnchorTarget ? this.sectionAnchorTarget.value : ""
+
+    sectionSel.innerHTML =
+      '<option value="">Section…</option>' +
+      sections.map(s =>
+        `<option value="${s}"${s === prevSection ? " selected" : ""}>${s}</option>`
+      ).join("")
+
+    // Repopulate anchor dropdown for whatever section is currently selected,
+    // preserving the anchor value if it's still in the new list.
+    this._populateAnchorDropdown(sectionSel.value, placed, prevAnchor)
+  }
+
+  // Populates the anchor <select> with placed booths that belong to sectionPrefix.
+  // preserveAnchor is re-selected if it still exists in the list.
+  _populateAnchorDropdown(sectionPrefix, placed, preserveAnchor = "") {
+    if (!this.hasSectionAnchorTarget) return
+    const anchorSel = this.sectionAnchorTarget
+
+    if (!sectionPrefix) {
+      anchorSel.innerHTML = '<option value="">Anchor…</option>'
+      return
+    }
+
+    const matches = placed
+      .filter(bs => bs.startsWith(sectionPrefix + "-"))
+      .sort()
+
+    anchorSel.innerHTML =
+      '<option value="">Anchor…</option>' +
+      matches.map(bs =>
+        `<option value="${bs}"${bs === preserveAnchor ? " selected" : ""}>${bs}</option>`
+      ).join("")
+  }
+
+  // Triggered when the section dropdown changes — refreshes the anchor dropdown
+  // and resets any previously chosen anchor (it belongs to the old section).
+  onSectionChange() {
+    if (!this.hasSectionSelectTarget) return
+    const placed = this.canvas.getObjects().map(o => o.boothSpace).filter(Boolean)
+    this._populateAnchorDropdown(this.sectionSelectTarget.value, placed, "")
+  }
 
   _setSectionStatus(msg) {
     if (this.hasSectionStatusTarget) this.sectionStatusTarget.textContent = msg
@@ -714,6 +784,8 @@ export default class extends Controller {
     // Update the "Placed: X / Y" counter
     const counter = this.element.querySelector("[data-map-editor-counter]")
     if (counter) counter.textContent = `Placed: ${placed.size} / ${this.boothSpacesValue.length}`
+
+    this.updateSectionDropdown()
   }
 
   renderExistingCoords() {

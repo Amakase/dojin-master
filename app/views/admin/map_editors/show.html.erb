@@ -29,10 +29,15 @@
           <%# Section placement panel — pure geometry, no LLM call %>
           <div class="me-section-panel">
             <div class="me-section-panel__fields">
-              <input type="text"
-                     placeholder="Anchor (e.g. あ-01a)"
-                     class="me-section-panel__anchor"
-                     data-map-editor-target="sectionAnchor">
+              <select class="me-section-panel__select me-section-panel__select--section"
+                      data-map-editor-target="sectionSelect"
+                      data-action="change->map-editor#onSectionChange">
+                <option value="">Section…</option>
+              </select>
+              <select class="me-section-panel__select me-section-panel__select--anchor"
+                      data-map-editor-target="sectionAnchor">
+                <option value="">Anchor…</option>
+              </select>
               <input type="number" min="1" placeholder="From"
                      class="me-section-panel__num"
                      data-map-editor-target="sectionRangeStart">

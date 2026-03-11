@@ -307,8 +307,35 @@
     gap: 0.25rem;
   }
 
-  // Shared base for anchor text input and the number range inputs
-  .me-section-panel__anchor,
+  // Section + anchor dropdowns
+  .me-section-panel__select {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.3rem;
+    border-radius: 0.125rem;
+    border: 1px solid rgba($comiket-light-blue, 0.35);
+    background-color: rgba($comiket-light-blue, 0.05);
+    color: $white;
+    height: 1.65rem;
+    min-width: 0;
+    cursor: pointer;
+    appearance: auto; // keep native OS arrow
+
+    option {
+      background-color: $deep-navy;
+      color: $white;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: rgba($comiket-light-blue, 0.7);
+      box-shadow: 0 0 0 2px rgba($comiket-light-blue, 0.15);
+    }
+
+    &--section { width: 5.5rem; }
+    &--anchor  { width: 8rem; }
+  }
+
+  // Number range inputs
   .me-section-panel__num {
     font-size: 0.72rem;
     padding: 0.2rem 0.35rem;
@@ -318,6 +345,8 @@
     color: $white;
     height: 1.65rem;
     min-width: 0;
+    width: 3.4rem;
+    -moz-appearance: textfield;
 
     &::placeholder { color: rgba($white, 0.3); }
 
@@ -326,15 +355,7 @@
       border-color: rgba($comiket-light-blue, 0.7);
       box-shadow: 0 0 0 2px rgba($comiket-light-blue, 0.15);
     }
-  }
 
-  .me-section-panel__anchor {
-    width: 8rem;  // wider to accommodate "あ-01a" style strings
-  }
-
-  .me-section-panel__num {
-    width: 3.4rem;
-    -moz-appearance: textfield;
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   }
