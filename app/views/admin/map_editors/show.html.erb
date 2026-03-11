@@ -26,6 +26,43 @@
           <%= render "admin/map_editors/ai_placement_status",
                 status: @event.ai_placement_status || "",
                 message: ai_status_message(@event) %>
+          <%# Section placement panel — pure geometry, no LLM call %>
+          <div class="me-section-panel">
+            <div class="me-section-panel__fields">
+              <input type="text"
+                     placeholder="Anchor (e.g. あ-01a)"
+                     class="me-section-panel__anchor"
+                     data-map-editor-target="sectionAnchor">
+              <input type="number" min="1" placeholder="From"
+                     class="me-section-panel__num"
+                     data-map-editor-target="sectionRangeStart">
+              <span class="me-section-panel__sep">–</span>
+              <input type="number" min="1" placeholder="To"
+                     class="me-section-panel__num"
+                     data-map-editor-target="sectionRangeEnd">
+              <div class="me-section-panel__layout">
+                <button type="button"
+                        data-layout="side-by-side"
+                        class="me-section-panel__layout-btn me-section-panel__layout-btn--active"
+                        data-action="click->map-editor#setSectionLayout"
+                        title="Side-by-side (a/b horizontal)">↔</button>
+                <button type="button"
+                        data-layout="stacked"
+                        class="me-section-panel__layout-btn"
+                        data-action="click->map-editor#setSectionLayout"
+                        title="Stacked (a/b vertical)">↕</button>
+              </div>
+              <button type="button"
+                      class="btn btn-me-ai btn-me-ai--sm"
+                      data-action="click->map-editor#drawSectionArea"
+                      data-map-editor-target="sectionDrawBtn">
+                <i class="fa-solid fa-crosshairs btn-me-ai__icon"></i>
+                Draw Section
+              </button>
+            </div>
+            <span data-map-editor-target="sectionStatus"
+                  class="me-section-panel__status"></span>
+          </div>
         </div>
       <% end %>
       <button class="btn btn-me-save" data-action="click->map-editor#save">Save All</button>

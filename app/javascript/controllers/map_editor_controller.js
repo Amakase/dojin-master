@@ -9,6 +9,10 @@ export default class extends Controller {
     imageUrl: String     // URL of the floor plan image
   }
 
+  // Stimulus targets used by the section placement panel
+  static targets = ["sectionAnchor", "sectionRangeStart", "sectionRangeEnd",
+                    "sectionStatus", "sectionDrawBtn"]
+
   async connect() {
     // Dynamically import Fabric.js only on this page — not bundled into every page
     const { Canvas, Rect, FabricImage, Point } = await import("fabric")
@@ -22,6 +26,10 @@ export default class extends Controller {
     this._panning = false                 // true while alt+drag pan is active
     this._lastPanX = 0
     this._lastPanY = 0
+
+    // Section placement state
+    this.sectionPlacementDrawing = false  // true while drawing the section boundary rect
+    this.sectionLayout = "side-by-side"   // default layout; toggled by setSectionLayout()
 
     this.canvas = new Canvas(this.element.querySelector("canvas"), {
       selection: true
@@ -48,8 +56,15 @@ export default class extends Controller {
     this._onMouseUp = null
     this.canvas.defaultCursor = "default"
     this.canvas.hoverCursor = "move"
+    this.canvas.selection = true
     this.isDrawing = false
     this.selectedBoothSpace = null
+
+    // Reset section placement draw mode if it was active
+    if (this.sectionPlacementDrawing) {
+      this.sectionPlacementDrawing = false
+      this._resetSectionDrawBtn()
+    }
   }
 
   // Registers permanent zoom and pan handlers on the canvas.
@@ -292,6 +307,303 @@ export default class extends Controller {
     this.canvas.on("mouse:move", this._onMouseMove)
     this.canvas.on("mouse:up", this._onMouseUp)
   }
+
+  // ── Section Placement ─────────────────────────────────────────────────────
+  // User draws a rectangle over the section area on the canvas.
+  // The system then distributes all booths in the range uniformly within that
+  // rectangle, using the anchor booth's position to detect numbering direction
+  // and row orientation — no LLM call needed.
+
+  // Toggles the active layout button and updates the stored layout preference.
+  setSectionLayout(event) {
+    this.sectionLayout = event.currentTarget.dataset.layout
+    this.element.querySelectorAll("[data-layout]").forEach(btn => {
+      btn.classList.toggle(
+        "me-section-panel__layout-btn--active",
+        btn.dataset.layout === this.sectionLayout
+      )
+    })
+  }
+
+  // Enters (or cancels) section boundary draw mode.
+  // On mouse-up the drawn rectangle drives coordinate computation via _finalizeSectionDraw().
+  drawSectionArea() {
+    // Second click while drawing → cancel
+    if (this.sectionPlacementDrawing) {
+      this.cancelDrawing()
+      this._setSectionStatus("")
+      return
+    }
+
+    // Validate anchor input
+    const anchorSpace = this.hasSectionAnchorTarget
+      ? this.sectionAnchorTarget.value.trim()
+      : ""
+    if (!anchorSpace) {
+      this._setSectionStatus("Enter an anchor booth space first.")
+      return
+    }
+
+    const anchorObj = this.canvas.getObjects().find(o => o.boothSpace === anchorSpace)
+    if (!anchorObj) {
+      this._setSectionStatus(`Anchor "${anchorSpace}" not found on canvas.`)
+      return
+    }
+
+    // Cancel any in-progress booth draw before entering section draw mode
+    if (this.isDrawing) this.cancelDrawing()
+
+    this.sectionPlacementDrawing = true
+    this.isDrawing = true
+    this.canvas.selection = false
+    this.canvas.defaultCursor = "crosshair"
+    this.canvas.hoverCursor = "crosshair"
+
+    this._setSectionStatus("Draw a rectangle over the section area on the floor plan…")
+    if (this.hasSectionDrawBtnTarget) {
+      this.sectionDrawBtnTarget.innerHTML =
+        '<i class="fa-solid fa-xmark btn-me-ai__icon"></i> Cancel'
+    }
+
+    const { Rect } = this.fabricClasses
+    let startX, startY, tempRect
+
+    this._onMouseDown = (opt) => {
+      if (opt.e.altKey) return
+      const pointer = this.canvas.getScenePoint(opt.e)
+      startX = pointer.x
+      startY = pointer.y
+      // Distinct visual style: blue dashed outline so it's clearly not a booth rect
+      tempRect = new Rect({
+        left: startX,
+        top: startY,
+        width: 1,
+        height: 1,
+        fill: "rgba(30, 140, 255, 0.08)",
+        stroke: "#4da6ff",
+        strokeWidth: 2,
+        strokeDashArray: [8, 5],
+        selectable: false,
+        evented: false
+      })
+      this.canvas.add(tempRect)
+    }
+
+    this._onMouseMove = (opt) => {
+      if (!tempRect) return
+      const pointer = this.canvas.getScenePoint(opt.e)
+      tempRect.set({
+        width: Math.abs(pointer.x - startX),
+        height: Math.abs(pointer.y - startY),
+        left: Math.min(pointer.x, startX),
+        top: Math.min(pointer.y, startY)
+      })
+      this.canvas.renderAll()
+    }
+
+    this._onMouseUp = () => {
+      if (!tempRect) return
+      const boundary = tempRect
+      tempRect = null
+
+      // cancelDrawing resets isDrawing, removes listeners, resets the button label
+      this.cancelDrawing()
+
+      if (boundary.width < 5 || boundary.height < 5) {
+        this.canvas.remove(boundary)
+        this.canvas.renderAll()
+        this._setSectionStatus("Area too small — try again.")
+        return
+      }
+
+      this._finalizeSectionDraw(boundary, anchorObj)
+    }
+
+    this.canvas.on("mouse:down", this._onMouseDown)
+    this.canvas.on("mouse:move", this._onMouseMove)
+    this.canvas.on("mouse:up", this._onMouseUp)
+  }
+
+  // Called after the user finishes drawing the section boundary.
+  // Computes booth coordinates and adds them to the canvas.
+  _finalizeSectionDraw(boundaryRect, anchorObj) {
+    const W = this.canvas.width
+    const H = this.canvas.height
+
+    // Convert boundary and anchor to percentage coordinates
+    const sectionRect = {
+      x:      (boundaryRect.left                              / W) * 100,
+      y:      (boundaryRect.top                               / H) * 100,
+      width:  (boundaryRect.width  * (boundaryRect.scaleX || 1) / W) * 100,
+      height: (boundaryRect.height * (boundaryRect.scaleY || 1) / H) * 100
+    }
+    const anchor = {
+      x:      (anchorObj.left                            / W) * 100,
+      y:      (anchorObj.top                             / H) * 100,
+      width:  (anchorObj.width  * (anchorObj.scaleX || 1) / W) * 100,
+      height: (anchorObj.height * (anchorObj.scaleY || 1) / H) * 100
+    }
+
+    // Remove the boundary rect — it was only for visual feedback while drawing
+    this.canvas.remove(boundaryRect)
+
+    // Read range inputs
+    const rangeStart = parseInt(this.hasSectionRangeStartTarget
+      ? this.sectionRangeStartTarget.value : "1", 10) || 1
+    const rangeEnd   = parseInt(this.hasSectionRangeEndTarget
+      ? this.sectionRangeEndTarget.value   : rangeStart.toString(), 10) || rangeStart
+
+    // Derive the section prefix from the anchor booth space (everything before the first "-")
+    const sectionPrefix = anchorObj.boothSpace.split("-")[0]
+
+    // Find booths in this section + range that are not yet placed on the canvas
+    const alreadyPlaced = new Set(
+      this.canvas.getObjects().filter(o => o.boothSpace).map(o => o.boothSpace)
+    )
+    const boothsToPlace = this.boothSpacesValue.filter(bs => {
+      if (!bs.startsWith(sectionPrefix + "-")) return false
+      const m = bs.match(/-(\d+)/)
+      if (!m) return false
+      const num = parseInt(m[1], 10)
+      return num >= rangeStart && num <= rangeEnd && !alreadyPlaced.has(bs)
+    })
+
+    if (boothsToPlace.length === 0) {
+      this._setSectionStatus("No unplaced booths found in that range.")
+      this.canvas.renderAll()
+      return
+    }
+
+    // Compute coordinates purely from geometry
+    const coords = this.computeSectionCoords(sectionRect, anchor, boothsToPlace, this.sectionLayout)
+
+    // Stamp each computed booth onto the canvas as a standard gold rect
+    const { Rect } = this.fabricClasses
+    for (const c of coords) {
+      const rect = new Rect({
+        left:   (c.x      / 100) * W,
+        top:    (c.y      / 100) * H,
+        width:  (c.width  / 100) * W,
+        height: (c.height / 100) * H,
+        fill:   "rgba(255,200,0,0.3)",
+        stroke: "gold",
+        strokeWidth: 1
+      })
+      rect.boothSpace = c.boothSpace
+      this.canvas.add(rect)
+    }
+
+    this.canvas.renderAll()
+    this.updateSidebar()
+    this._setSectionStatus(`Placed ${coords.length} booth${coords.length !== 1 ? "s" : ""}. Save All to persist.`)
+  }
+
+  // Pure math: distributes boothsToPlace uniformly within sectionRect.
+  // The anchor's position within the rectangle is used to detect:
+  //   - number direction (LTR vs RTL based on anchor's x relative to rect midpoint)
+  //   - row orientation for stacked (top vs bottom based on anchor's y)
+  //   - a/b horizontal position for side-by-side (left vs right half of each pair column)
+  computeSectionCoords(sectionRect, anchor, boothsToPlace, layout) {
+    // Group booths by their numeric column index
+    const byNum = new Map()
+    for (const bs of boothsToPlace) {
+      // Match the numeric part and everything after (row suffix: "a", "b", "ab", or "")
+      const m = bs.match(/-(\d+)(.*)$/)
+      if (!m) continue
+      const num = parseInt(m[1], 10)
+      const row = m[2].trim()  // "a", "b", "ab", or ""
+      if (!byNum.has(num)) byNum.set(num, [])
+      byNum.get(num).push({ boothSpace: bs, row })
+    }
+
+    const sortedNums = [...byNum.keys()].sort((a, b) => a - b)
+    const N = sortedNums.length
+    if (N === 0) return []
+
+    // Detect horizontal direction: if the anchor's center is right of the section midpoint,
+    // numbers increase going left (RTL, like あ which has 01 at the far right).
+    const anchorMidX = anchor.x + anchor.width / 2
+    const isRTL = anchorMidX > sectionRect.x + sectionRect.width / 2
+
+    const results = []
+
+    if (layout === "side-by-side") {
+      // Each number occupies one "pair column" spanning the full section height.
+      // Within each pair column the a and b booths sit side by side horizontally.
+      const colWidth   = sectionRect.width / N
+      const boothWidth = colWidth / 2
+      const boothHeight = sectionRect.height
+
+      // Is 'a' in the right half of its pair column?
+      // Determine which column the anchor belongs to (it's the first booth in sortedNums).
+      const anchorColStartX = isRTL
+        ? sectionRect.x + (N - 1) * colWidth   // RTL: anchor's column is the rightmost
+        : sectionRect.x                          // LTR: anchor's column is the leftmost
+      const isARight = (anchor.x - anchorColStartX) > colWidth / 2
+
+      sortedNums.forEach((num, stepIdx) => {
+        // stepIdx = 0 is the anchor's number; stepIdx grows with num
+        const colFromLeft = isRTL ? (N - 1 - stepIdx) : stepIdx
+        const colStartX   = sectionRect.x + colFromLeft * colWidth
+
+        for (const { boothSpace, row } of byNum.get(num)) {
+          if (row === "ab") {
+            // Combined booth spans the full pair column
+            results.push({ boothSpace, x: colStartX, y: sectionRect.y, width: colWidth, height: boothHeight })
+          } else if (row === "a" || row === "") {
+            const x = isARight ? colStartX + boothWidth : colStartX
+            results.push({ boothSpace, x, y: sectionRect.y, width: boothWidth, height: boothHeight })
+          } else if (row === "b") {
+            const x = isARight ? colStartX : colStartX + boothWidth
+            results.push({ boothSpace, x, y: sectionRect.y, width: boothWidth, height: boothHeight })
+          }
+        }
+      })
+    } else {
+      // Stacked: each number occupies one column; a and b stacked vertically within it.
+      const colWidth  = sectionRect.width / N
+      const rowHeight = sectionRect.height / 2
+
+      // Is 'a' in the upper half of the section? (anchor is row 'a' of the first number)
+      const anchorMidY = anchor.y + anchor.height / 2
+      const isATop     = anchorMidY < sectionRect.y + sectionRect.height / 2
+      const rowA_y = isATop ? sectionRect.y : sectionRect.y + rowHeight
+      const rowB_y = isATop ? sectionRect.y + rowHeight : sectionRect.y
+
+      sortedNums.forEach((num, stepIdx) => {
+        const colFromLeft = isRTL ? (N - 1 - stepIdx) : stepIdx
+        const colX        = sectionRect.x + colFromLeft * colWidth
+
+        for (const { boothSpace, row } of byNum.get(num)) {
+          if (row === "ab") {
+            // Combined booth spans both rows
+            results.push({ boothSpace, x: colX, y: sectionRect.y, width: colWidth, height: sectionRect.height })
+          } else if (row === "a" || row === "") {
+            results.push({ boothSpace, x: colX, y: rowA_y, width: colWidth, height: rowHeight })
+          } else if (row === "b") {
+            results.push({ boothSpace, x: colX, y: rowB_y, width: colWidth, height: rowHeight })
+          }
+        }
+      })
+    }
+
+    return results
+  }
+
+  // ── Section panel helpers ─────────────────────────────────────────────────
+
+  _setSectionStatus(msg) {
+    if (this.hasSectionStatusTarget) this.sectionStatusTarget.textContent = msg
+  }
+
+  _resetSectionDrawBtn() {
+    if (this.hasSectionDrawBtnTarget) {
+      this.sectionDrawBtnTarget.innerHTML =
+        '<i class="fa-solid fa-crosshairs btn-me-ai__icon"></i> Draw Section'
+    }
+  }
+
+  // ── Sidebar and rendering ─────────────────────────────────────────────────
 
   updateSidebar() {
     // Collect all booth_spaces currently placed on the canvas

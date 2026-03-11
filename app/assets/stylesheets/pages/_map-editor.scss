@@ -136,6 +136,14 @@
       }
     }
 
+    // --canvas-selected: a rect on the canvas is selected (clicked).
+    // Highlighted in blue to distinguish from draw-mode selection (gold).
+    &--canvas-selected,
+    &--canvas-selected:hover {
+      background-color: rgba($comiket-light-blue, 0.18);
+      color: $comiket-light-blue;
+    }
+
     // --selected: admin clicked this item and is currently drawing its rect.
     // Shown with a gold background to indicate active draw mode.
     // Must also target &--selected:hover — otherwise the base :hover rule wins
@@ -272,6 +280,109 @@
       opacity: 0.35;
       cursor: not-allowed;
     }
+
+    // --sm: compact variant used in the section placement panel
+    &--sm {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.65rem;
+      height: 1.65rem;
+    }
+  }
+
+  // ── Section placement panel ─────────────────────────────────────
+  // The admin draws a rectangle over a section and the system computes
+  // booth coordinates mathematically from one anchor + the drawn bounds.
+  // Sits inside .me-ai-cluster below the AI Auto-place button.
+  .me-section-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+  }
+
+  // __fields — single-row flex strip: anchor input, range, layout toggle, draw button
+  .me-section-panel__fields {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  // Shared base for anchor text input and the number range inputs
+  .me-section-panel__anchor,
+  .me-section-panel__num {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.35rem;
+    border-radius: 0.125rem;
+    border: 1px solid rgba($comiket-light-blue, 0.35);
+    background-color: rgba($comiket-light-blue, 0.05);
+    color: $white;
+    height: 1.65rem;
+    min-width: 0;
+
+    &::placeholder { color: rgba($white, 0.3); }
+
+    &:focus {
+      outline: none;
+      border-color: rgba($comiket-light-blue, 0.7);
+      box-shadow: 0 0 0 2px rgba($comiket-light-blue, 0.15);
+    }
+  }
+
+  .me-section-panel__anchor {
+    width: 8rem;  // wider to accommodate "あ-01a" style strings
+  }
+
+  .me-section-panel__num {
+    width: 3.4rem;
+    -moz-appearance: textfield;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  }
+
+  // __sep — the "–" dash between From and To range inputs
+  .me-section-panel__sep {
+    font-size: 0.72rem;
+    color: $custom-gray;
+    flex-shrink: 0;
+  }
+
+  // __layout — ↔ / ↕ toggle pair
+  .me-section-panel__layout {
+    display: flex;
+    gap: 0;
+    border: 1px solid rgba($comiket-light-blue, 0.35);
+    border-radius: 0.125rem;
+    overflow: hidden;
+  }
+
+  .me-section-panel__layout-btn {
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+    height: 1.65rem;
+    background: transparent;
+    border: none;
+    color: rgba($white, 0.45);
+    cursor: pointer;
+    transition: background-color 0.1s ease, color 0.1s ease;
+
+    &:hover { color: $white; background-color: rgba($comiket-light-blue, 0.12); }
+
+    // --active: selected layout is shown in blue
+    &--active {
+      background-color: rgba($comiket-light-blue, 0.2);
+      color: $comiket-light-blue;
+    }
+  }
+
+  // __status — one-line feedback: errors, success count, draw instructions
+  .me-section-panel__status {
+    font-size: 0.68rem;
+    color: rgba($comiket-light-blue, 0.7);
+    font-style: italic;
+    min-height: 0.9rem;  // reserve space so the panel doesn't shift height
+
+    &:empty { display: none; }
   }
 
   // ── AI placement status indicator ──────────────────────────────
