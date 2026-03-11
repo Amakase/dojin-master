@@ -194,12 +194,8 @@ events.each do |this_event|
     end_date: this_event[:end_date]
   )
   file_path = "app/assets/images/events/#{event.name}.png"
-  if !File.exist?(file_path)
-    file_path = "app/assets/images/events/#{event.name}.jpg"
-  end
-  if File.exist?(file_path)
-    event.image = File.open(Rails.root.join(file_path))
-  end
+  file_path = "app/assets/images/events/#{event.name}.jpg" if !File.exist?(file_path)
+  event.image = File.open(Rails.root.join(file_path)) if File.exist?(file_path)
   event.save!
   puts "...“#{event.name}” event created"
   if event.name == "M3-2025春" || rand(0..1) == 0
