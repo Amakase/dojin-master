@@ -1,0 +1,9 @@
+<%= turbo_stream.append "favorites-list" do %>
+  <% @favorites.each do |favorite| %>
+    <%= render 'favorite_card', favorite: favorite %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "favorites_load_more" do %>
+  <%= render 'load_more_sentinel' %>
+<% end %>

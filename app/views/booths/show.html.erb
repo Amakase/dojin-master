@@ -18,7 +18,7 @@
                 role="tab"
                 aria-selected="<%= unread_exists %>">
           <i class="fa-solid fa-bell me-2"></i>Notifications
-          <% if @notifications.any? %>
+          <% if @notifications.where(read: false).exists? %>
             <span class="badge bg-danger ms-1 rounded-4"><%= @notifications.select {|notification| !notification.read }.count %></span>
           <% end %>
         </button>

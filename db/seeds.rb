@@ -278,21 +278,7 @@ events.each do |this_event|
       end
     end
     circle_works = works_list.select {|work| work[:circle] == booth.circle.name}
-    if circle_works
-      circle_works.each do |work|
-        booth_work = BoothWork.new(
-          title: work[:title],
-          circle: work[:circle],
-          price: [100, 500, 1000].sample,
-          new_release: work[:new_release],
-          limit: nil,
-          num_to_buy: rand(1..2),
-        )
-        booth_work.notes = "Buy 1 for friend" if booth_work.num_to_buy == 2
-        booth_work.booth = booth
-        booth_work.save!
-      end
-    else
+    if circle_works.empty?
       rand(1..5).times do
         booth_work = BoothWork.new(
           title: [Faker::Book.title].sample,
@@ -304,6 +290,20 @@ events.each do |this_event|
           num_bought: 0,
           notes: Faker::Lorem.paragraph
         )
+        booth_work.booth = booth
+        booth_work.save!
+      end
+    else
+      circle_works.each do |work|
+        booth_work = BoothWork.new(
+          title: work[:title],
+          circle: work[:circle],
+          price: [100, 500, 1000].sample,
+          new_release: work[:new_release],
+          limit: nil,
+          num_to_buy: rand(1..2),
+        )
+        booth_work.notes = "Buy 1 for friend" if booth_work.num_to_buy == 2
         booth_work.booth = booth
         booth_work.save!
       end
