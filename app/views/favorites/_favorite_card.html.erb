@@ -28,7 +28,7 @@
         prioritized = user_favorites.where.not(priority: nil).exists?
         if booth.notifications.where(read: true).exists? && prioritized
       %>
-        <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %></span>
+        <span class="badge rounded-5 notification-adjust"><%= booth.notifications.select {|notification| !notification.read }.count %></span>
       <% else %>
         <span class="badge bg-danger rounded-5 notification-adjust opacity-0"></span>
       <% end %>
