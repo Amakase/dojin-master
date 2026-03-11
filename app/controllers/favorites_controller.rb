@@ -5,7 +5,7 @@ class FavoritesController < ApplicationController
 
   def index
     @event = Event.find(params[:event_id])
-    @page = (params[:page] || 1).to_i
+    @page = [params[:page].to_i, 1].max
     base = policy_scope(Favorite)
              .joins(booth: :circle)
              .includes(booth: :circle)
@@ -13,6 +13,8 @@ class FavoritesController < ApplicationController
              .order("favorites.visited ASC, favorites.priority ASC, circles.name_reading ASC")
     @favorites = base.limit(PER_PAGE).offset((@page - 1) * PER_PAGE)
     @has_more = base.offset(@page * PER_PAGE).exists?
+
+    return render("load_more_favorites", formats: :turbo_stream) if append_favorites_request?
   end
 
   def create
@@ -53,6 +55,10 @@ class FavoritesController < ApplicationController
   def set_favorite
     @favorite = current_user.favorites.find(params[:id])
     authorize @favorite
+  end
+
+  def append_favorites_request?
+    request.format.turbo_stream? && params[:append] == "favorites"
   end
 
   def favorite_params

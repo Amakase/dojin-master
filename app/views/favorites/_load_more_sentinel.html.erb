@@ -1,4 +1,17 @@
-<div id="favorites-scroll-sentinel"
-     data-controller="infinite-scroll"
-     data-infinite-scroll-url-value="<%= event_favorites_path(@event, page: @page + 1) %>">
-</div>
+<% if @has_more %>
+  <div id="favorites_load_more"
+       class="favorites-load-more text-center pb-4"
+       data-controller="booths-infinite-scroll"
+       data-booths-infinite-scroll-url-value="<%= event_favorites_path(
+         @event,
+         page: @page + 1,
+         append: "favorites",
+         format: :turbo_stream
+       ) %>">
+    <div class="booths-load-more__status" aria-live="polite">
+      Loading more favorites...
+    </div>
+  </div>
+<% else %>
+  <div id="favorites_load_more"></div>
+<% end %>

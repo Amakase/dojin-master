@@ -6,6 +6,9 @@ export default class extends Controller {
   static targets = ["card"]
 
   connect() {
+    history.scrollRestoration = "manual"
+    window.scrollTo(0, 0)
+
     this.streamHandler = (event) => {
       const originalRender = event.detail.render
       event.detail.render = (streamElement) => {
@@ -31,6 +34,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    history.scrollRestoration = "auto"
     document.removeEventListener("turbo:before-stream-render", this.streamHandler)
   }
 
@@ -74,6 +78,9 @@ export default class extends Controller {
     })
 
     cards.forEach(card => this.element.appendChild(card))
+
+    const sentinel = this.element.querySelector("#favorites_load_more")
+    if (sentinel) this.element.appendChild(sentinel)
   }
 
   #getPriority(card) {

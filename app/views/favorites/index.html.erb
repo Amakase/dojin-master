@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+
 <div class="container d-flex justify-content-center">
   <div class="justify-content-center row w-100">
     <div class="pt-3">
@@ -24,9 +28,7 @@
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>
       <% end %>
-      <% if @has_more %>
-        <%= render 'load_more_sentinel' %>
-      <% end %>
+      <%= render 'load_more_sentinel' %>
     </div>
   </div>
 </div>
