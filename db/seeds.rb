@@ -48,9 +48,9 @@ CSV.foreach(filepath, headers: :first_row, converters: :date) do |row|
 end
 
 filepath = "app/assets/csv/works.csv"
-works_list = []
+booth_works_list = []
 CSV.foreach(filepath, headers: :first_row, converters: :date) do |row|
-  works_list << {
+  booth_works_list << {
     circle: row['circle'],
     title: row['title'],
     size: row['size'],
@@ -277,8 +277,8 @@ events.each do |this_event|
         notification.save!
       end
     end
-    circle_works = works_list.select {|work| work[:circle] == booth.circle.name}
-    if circle_works.empty?
+    booth_works = booth_works_list.select {|work| work[:circle] == booth.circle.name}
+    if booth_works.empty?
       rand(1..5).times do
         booth_work = BoothWork.new(
           title: [Faker::Book.title].sample,
