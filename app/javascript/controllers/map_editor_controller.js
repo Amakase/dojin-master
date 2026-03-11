@@ -14,16 +14,30 @@ export default class extends Controller {
                     "sectionStatus", "sectionDrawBtn"]
 
   async connect() {
-    // Dynamically import Fabric.js only on this page — not bundled into every page
+    // Fabric is imported dynamically so it's only bundled for pages that use this
+    // controller — keeps the default JS payload lean for all other pages.
     const { Canvas, Rect, FabricImage, Point } = await import("fabric")
     this.fabricClasses = { Canvas, Rect, FabricImage, Point }
     this.isDrawing = false
-    this.selectedBoothSpace = null        // sidebar draw-mode selection (gold highlight)
-    this.canvasSelectedBoothSpace = null  // canvas click selection (blue highlight)
-    this._onMouseDown = null              // stored handler refs so cancelDrawing() can remove them
+
+    // Two separate "selected" concepts exist simultaneously:
+    //   selectedBoothSpace      — gold highlight; set when admin clicks a sidebar item
+    //                             to enter draw mode for that booth.
+    //   canvasSelectedBoothSpace — blue highlight; set when admin clicks an existing
+    //                             rect on the canvas (Fabric's native selection).
+    // Both can be active at once (e.g. canvas-selecting one booth while drawing another
+    // is not possible in practice, but the state variables are independent).
+    this.selectedBoothSpace = null
+    this.canvasSelectedBoothSpace = null
+
+    // Handler refs are stored on the instance so cancelDrawing() can remove the exact
+    // same function objects that were registered. canvas.off() requires a reference —
+    // passing an anonymous function would never match what canvas.on() registered.
+    this._onMouseDown = null
     this._onMouseMove = null
     this._onMouseUp = null
-    this._panning = false                 // true while alt+drag pan is active
+
+    this._panning = false   // true while alt+drag is active
     this._lastPanX = 0
     this._lastPanY = 0
 
@@ -46,7 +60,9 @@ export default class extends Controller {
     this.updateSidebar()
   }
 
-  // Removes all canvas mouse handlers and resets drawing state cleanly
+  // Removes all canvas mouse handlers and resets drawing state cleanly.
+  // Called both when the admin explicitly cancels (clicks the same sidebar item again)
+  // and internally after a rect is committed — so it must be safe to call at any point.
   cancelDrawing() {
     if (this._onMouseDown) this.canvas.off("mouse:down", this._onMouseDown)
     if (this._onMouseMove) this.canvas.off("mouse:move", this._onMouseMove)
@@ -95,6 +111,8 @@ export default class extends Controller {
       this._lastPanY = opt.e.clientY
       this.canvas.defaultCursor = 'grabbing'
       this.canvas.hoverCursor = 'grabbing'
+      // Disable Fabric's rubber-band selection while panning so it doesn't
+      // accidentally start selecting objects that are under the cursor.
       this.canvas.selection = false
     })
 
@@ -163,7 +181,8 @@ export default class extends Controller {
     item?.scrollIntoView({ block: "nearest", behavior: "smooth" })
   }
 
-  // Called when a sidebar item is clicked — selects that booth space and enters draw mode
+  // Called when a sidebar item is clicked — selects that booth space and enters draw mode.
+  // Clicking a selected item again acts as a toggle (deselects and cancels draw mode).
   selectBoothSpace(space) {
     const previous = this.selectedBoothSpace
 
@@ -179,11 +198,15 @@ export default class extends Controller {
   }
 
   async save() {
-    // Serialize all labeled canvas objects to percentage-based coordinate objects
+    // Serialize all labeled canvas objects to percentage-based coordinate objects.
+    // Percentages are used so coordinates survive floor plan image rescaling —
+    // if the image is swapped for a higher-resolution version the rects stay in place.
     const coords = this.canvas.getObjects().filter(obj => obj.boothSpace).map(obj => ({
       booth_space: obj.boothSpace,
       x: (obj.left / this.canvas.width) * 100,
       y: (obj.top / this.canvas.height) * 100,
+      // obj.width/height are the unscaled dimensions; multiply by scale factors to get
+      // the actual rendered size before converting to a percentage.
       width: (obj.width * obj.scaleX / this.canvas.width) * 100,
       height: (obj.height * obj.scaleY / this.canvas.height) * 100
     }))
@@ -244,6 +267,8 @@ export default class extends Controller {
       startX = pointer.x
       startY = pointer.y
 
+      // Temporary preview rect shown while dragging; replaced with the final rect on mouse-up.
+      // We use a separate object so we can remove it cleanly without affecting any existing rects.
       drawingRect = new Rect({
         left: startX,
         top: startY,
@@ -260,6 +285,8 @@ export default class extends Controller {
     this._onMouseMove = (opt) => {
       if (!drawingRect) return
       const pointer = this.canvas.getScenePoint(opt.e)
+      // Math.min for left/top handles the case where the user drags up or left —
+      // Fabric rects don't support negative width/height, so we normalize the origin.
       drawingRect.set({
         width: Math.abs(pointer.x - startX),
         height: Math.abs(pointer.y - startY),
@@ -272,16 +299,20 @@ export default class extends Controller {
     this._onMouseUp = () => {
       if (!drawingRect) return
 
-      // Capture booth space before cancelDrawing() clears it
+      // Capture booth space before cancelDrawing() clears this.selectedBoothSpace.
+      // Falls back to a prompt so the tool can also place ad-hoc labeled rects
+      // without going through the sidebar.
       const boothSpace = this.selectedBoothSpace || prompt("Enter booth_space label (e.g. 東01a):")
 
-      // Clean up the temporary preview rect and all three event listeners
+      // Remove the temporary preview rect and deregister all three event listeners
       this.canvas.remove(drawingRect)
       this.cancelDrawing()
 
       if (boothSpace === null) { drawingRect = null; return }
 
-      // Plain Rect with boothSpace stored as a property — no visible text label
+      // Create the permanent rect with the same geometry as the preview rect.
+      // We create a fresh object rather than mutating drawingRect so we can set
+      // properties cleanly (boothSpace, selectability, etc.) from a known baseline.
       const finalRect = new Rect({
         left: drawingRect.left,
         top: drawingRect.top,
@@ -309,10 +340,17 @@ export default class extends Controller {
   }
 
   // ── Section Placement ─────────────────────────────────────────────────────
-  // User draws a rectangle over the section area on the canvas.
-  // The system then distributes all booths in the range uniformly within that
-  // rectangle, using the anchor booth's position to detect numbering direction
-  // and row orientation — no LLM call needed.
+  // The admin provides:
+  //   • An anchor booth — one already-placed rect whose position we trust.
+  //   • A numeric range — which booth numbers to fill (e.g. 1–30).
+  //   • A layout — "side-by-side" (a/b booths beside each other) or "stacked" (a/b above each other).
+  //
+  // The admin then draws a rectangle over the section area on the floor plan.
+  // The system distributes all booths in the range uniformly within that rectangle,
+  // using the anchor's position relative to the drawn rect to auto-detect:
+  //   • RTL vs LTR number direction
+  //   • which half (a vs b) is on which side or row
+  // No LLM call, no manual coordinate entry.
 
   // Toggles the active layout button and updates the stored layout preference.
   setSectionLayout(event) {
@@ -344,6 +382,8 @@ export default class extends Controller {
       return
     }
 
+    // The anchor must already be placed on the canvas so we can read its pixel position.
+    // Its position is what tells us whether numbers run left-to-right or right-to-left.
     const anchorObj = this.canvas.getObjects().find(o => o.boothSpace === anchorSpace)
     if (!anchorObj) {
       this._setSectionStatus(`Anchor "${anchorSpace}" not found on canvas.`)
@@ -383,6 +423,7 @@ export default class extends Controller {
         stroke: "#4da6ff",
         strokeWidth: 2,
         strokeDashArray: [8, 5],
+        // Non-interactive so it doesn't interfere with the draw gesture
         selectable: false,
         evented: false
       })
@@ -409,6 +450,7 @@ export default class extends Controller {
       // cancelDrawing resets isDrawing, removes listeners, resets the button label
       this.cancelDrawing()
 
+      // Reject tiny accidental clicks — require a meaningful area
       if (boundary.width < 5 || boundary.height < 5) {
         this.canvas.remove(boundary)
         this.canvas.renderAll()
@@ -425,12 +467,14 @@ export default class extends Controller {
   }
 
   // Called after the user finishes drawing the section boundary.
-  // Computes booth coordinates and adds them to the canvas.
+  // Converts everything to percentages, looks up unplaced booths, delegates to
+  // computeSectionCoords(), then stamps each result as a gold rect on the canvas.
   _finalizeSectionDraw(boundaryRect, anchorObj) {
     const W = this.canvas.width
     const H = this.canvas.height
 
-    // Convert boundary and anchor to percentage coordinates
+    // Convert boundary and anchor to percentage coordinates so computeSectionCoords()
+    // works in a normalized 0–100 space (matching how coords are saved to the DB).
     const sectionRect = {
       x:      (boundaryRect.left                              / W) * 100,
       y:      (boundaryRect.top                               / H) * 100,
@@ -453,10 +497,12 @@ export default class extends Controller {
     const rangeEnd   = parseInt(this.hasSectionRangeEndTarget
       ? this.sectionRangeEndTarget.value   : rangeStart.toString(), 10) || rangeStart
 
-    // Derive the section prefix from the anchor booth space (everything before the first "-")
+    // Derive the section prefix from the anchor booth space (everything before the first "-").
+    // e.g. anchor "あ-01a" → prefix "あ", so we only place booths in section "あ".
     const sectionPrefix = anchorObj.boothSpace.split("-")[0]
 
-    // Find booths in this section + range that are not yet placed on the canvas
+    // Only place booths that (a) belong to this section, (b) fall within the numeric range,
+    // and (c) are not already placed — avoids overwriting manually positioned booths.
     const alreadyPlaced = new Set(
       this.canvas.getObjects().filter(o => o.boothSpace).map(o => o.boothSpace)
     )
@@ -499,10 +545,25 @@ export default class extends Controller {
   }
 
   // Pure math: distributes boothsToPlace uniformly within sectionRect.
-  // The anchor's position within the rectangle is used to detect:
-  //   - number direction (LTR vs RTL based on anchor's x relative to rect midpoint)
-  //   - row orientation for stacked (top vs bottom based on anchor's y)
-  //   - a/b horizontal position for side-by-side (left vs right half of each pair column)
+  //
+  // Direction detection via anchor position:
+  //   RTL (right-to-left) — anchor's center is right of the section midpoint.
+  //     e.g. section "あ" where booth 01 is at the far right of the block.
+  //   LTR (left-to-right) — anchor's center is left of the section midpoint.
+  //
+  // Layout "side-by-side":  each booth number gets a "pair column" spanning the full
+  //   section height. Within each pair column the "a" and "b" variants sit beside each
+  //   other horizontally. Which half is "a" is detected from the anchor's x within its column.
+  //
+  // Layout "stacked":  each booth number gets a column spanning the full section width.
+  //   The "a" and "b" variants are placed in the upper or lower half of the column.
+  //   Which row is "a" is detected from the anchor's y relative to the section midpoint.
+  //
+  // Booth space naming conventions handled:
+  //   "あ-01a"  → num=1, row="a"
+  //   "あ-01b"  → num=1, row="b"
+  //   "あ-01ab" → num=1, row="ab" (combined booth, spans full column/row pair)
+  //   "あ-01"   → num=1, row=""   (treated same as "a")
   computeSectionCoords(sectionRect, anchor, boothsToPlace, layout) {
     // Group booths by their numeric column index
     const byNum = new Map()
@@ -534,15 +595,18 @@ export default class extends Controller {
       const boothWidth = colWidth / 2
       const boothHeight = sectionRect.height
 
-      // Is 'a' in the right half of its pair column?
-      // Determine which column the anchor belongs to (it's the first booth in sortedNums).
+      // Determine which half of the pair column "a" occupies by comparing the anchor
+      // rect's left edge to the midpoint of its own column.
+      // anchorColStartX is where the anchor's column begins (in percentage coords).
       const anchorColStartX = isRTL
         ? sectionRect.x + (N - 1) * colWidth   // RTL: anchor's column is the rightmost
         : sectionRect.x                          // LTR: anchor's column is the leftmost
       const isARight = (anchor.x - anchorColStartX) > colWidth / 2
 
       sortedNums.forEach((num, stepIdx) => {
-        // stepIdx = 0 is the anchor's number; stepIdx grows with num
+        // stepIdx = 0 is the anchor's number; stepIdx grows with num.
+        // colFromLeft translates stepIdx to a physical column index counting from the left
+        // edge of the section, accounting for RTL reversal.
         const colFromLeft = isRTL ? (N - 1 - stepIdx) : stepIdx
         const colStartX   = sectionRect.x + colFromLeft * colWidth
 
@@ -554,6 +618,7 @@ export default class extends Controller {
             const x = isARight ? colStartX + boothWidth : colStartX
             results.push({ boothSpace, x, y: sectionRect.y, width: boothWidth, height: boothHeight })
           } else if (row === "b") {
+            // b is always opposite to a within the pair column
             const x = isARight ? colStartX : colStartX + boothWidth
             results.push({ boothSpace, x, y: sectionRect.y, width: boothWidth, height: boothHeight })
           }
@@ -564,7 +629,7 @@ export default class extends Controller {
       const colWidth  = sectionRect.width / N
       const rowHeight = sectionRect.height / 2
 
-      // Is 'a' in the upper half of the section? (anchor is row 'a' of the first number)
+      // Is 'a' in the upper half of the section? Compare anchor center to vertical midpoint.
       const anchorMidY = anchor.y + anchor.height / 2
       const isATop     = anchorMidY < sectionRect.y + sectionRect.height / 2
       const rowA_y = isATop ? sectionRect.y : sectionRect.y + rowHeight
@@ -615,12 +680,13 @@ export default class extends Controller {
     if (!list) return
 
     // Rebuild the sidebar list with click handlers on each item.
-    // Gold  (--selected)        = currently in draw-mode for this space
-    // Blue  (--canvas-selected) = this rect is selected on the canvas
-    // Green (--placed)          = mapped but not actively selected
-    // Gray  (default)           = not yet placed
-    // Modifiers are applied in order; --selected overrides everything because it's
-    // checked first and returns early, preventing lower-priority classes from being added.
+    // CSS modifier priority (highest to lowest):
+    //   --selected        (gold)  = active draw-mode target; overrides everything
+    //   --canvas-selected (blue)  = rect is selected on canvas
+    //   --placed          (green) = mapped but not actively targeted
+    //   (none)            (gray)  = not yet placed
+    // --selected is checked first and short-circuits so lower-priority modifiers
+    // are never added simultaneously.
     list.innerHTML = this.boothSpacesValue.map(space => {
       const isPlaced   = placed.has(space)
       const isSelected = this.selectedBoothSpace === space
@@ -638,7 +704,9 @@ export default class extends Controller {
       return `<li class="${classes}" data-space="${space}">${icon} ${space}</li>`
     }).join("")
 
-    // Only attach click handlers to unplaced items — placed items are not interactive
+    // Only attach click handlers to unplaced items — placed items are not interactive.
+    // Clicking a placed rect on the canvas (via initCanvasSelection) is how the admin
+    // selects it for deletion or inspection without re-entering draw mode.
     list.querySelectorAll("li[data-space]:not(.me-sidebar__space--placed)").forEach(li => {
       li.addEventListener("click", () => this.selectBoothSpace(li.dataset.space))
     })
@@ -652,7 +720,8 @@ export default class extends Controller {
     const { Rect } = this.fabricClasses
 
     // Convert each saved percentage-based coordinate back to canvas pixels and draw it.
-    // Plain Rect with boothSpace property — no text label rendered on the canvas.
+    // This is the inverse of the percentage conversion in save() — multiplying by
+    // canvas.width/height converts the 0–100 range back to pixel positions.
     this.coordsValue.forEach(coord => {
       const rect = new Rect({
         left: (coord.x / 100) * this.canvas.width,
@@ -676,7 +745,8 @@ export default class extends Controller {
     const img = await FabricImage.fromURL(this.imageUrlValue)
 
     // Scale the canvas down to a max of 1000px wide, preserving aspect ratio.
-    // All coordinate math uses canvas.width/height so percentages stay correct at any scale.
+    // The canvas element is resized to match so there's no blank padding and
+    // percentage coordinate math stays correct (we always divide by canvas.width/height).
     const maxWidth = 1000
     const scale = img.width > maxWidth ? maxWidth / img.width : 1
     img.scaleX = scale
