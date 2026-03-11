@@ -9,10 +9,16 @@ export default class extends Controller {
     this.saveTick.classList.add("save-tick")
   }
 
+  autoResize(textarea) {
+    textarea.style.height = "auto"
+    textarea.style.height = textarea.scrollHeight + "px"
+  }
+
   autoSaveType(event) {
     const input = event.currentTarget
     const form = input.closest("form")
 
+    this.autoResize(input)
     this.timeOut && clearTimeout(this.timeOut);
 
     this.timeOut = setTimeout(() => {
@@ -25,6 +31,7 @@ export default class extends Controller {
   openEditor() {
     this.editBtnTarget.classList.add("d-none")
     this.editorTarget.classList.remove("d-none")
+    this.autoResize(this.inputTarget)
     this.inputTarget.focus()
   }
 
