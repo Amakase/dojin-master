@@ -22,13 +22,10 @@ class Admin::MapEditorsController < Admin::BaseController
   # existing records — simpler and keeps the DB in sync with exactly what the
   # admin sees on the canvas.
   def update
-    # transaction ensures atomicity: if any create! fails, the delete_all is
-    # rolled back and no coordinates are lost.
+    # Booth coordinates + wall rects — submitted as JSON by the Fabric.js canvas.
     @event.transaction do
       @event.event_map_coordinates.delete_all
 
-      # params.expect raises ParameterMissing on an empty array, so only call it
-      # when coordinates are actually present (clearing all rects is a valid save)
       if params[:coordinates].present?
         coord_list = params.expect(coordinates: [[:booth_space, :x, :y, :width, :height]])
         coord_list.each do |coord_params|
@@ -41,12 +38,17 @@ class Admin::MapEditorsController < Admin::BaseController
           )
         end
       end
+
+      if params.key?(:wall_rects)
+        walls = Array(params[:wall_rects]).map do |r|
+          r.permit(:x, :y, :w, :h).transform_values(&:to_f).to_h
+        end
+        @event.update!(wall_rects: walls)
+      end
     end
 
     render json: { status: "ok" }
   rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
-    # RecordInvalid covers model-level validation failures (e.g. duplicate booth_space).
-    # StatementInvalid covers DB-level constraint violations as a safety net.
     render json: { status: "error", message: e.message }, status: :unprocessable_entity
   end
 

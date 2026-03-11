@@ -15,6 +15,12 @@ class FavoritesController < ApplicationController
     @has_more = base.offset(@page * PER_PAGE).exists?
 
     return render("load_more_favorites", formats: :turbo_stream) if append_favorites_request?
+
+    @map_priorities = policy_scope(Favorite)
+                        .joins(:booth)
+                        .where(booths: { event_id: @event.id })
+                        .pluck("booths.booth_space", "favorites.priority")
+                        .to_h
   end
 
   def create
