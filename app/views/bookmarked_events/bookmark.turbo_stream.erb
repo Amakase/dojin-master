@@ -1,0 +1,9 @@
+<%= turbo_stream.replace dom_id(@event, :bookmark) do %>
+  <% if @bookmarked_event&.errors&.any? %>
+    <div class="bookmark-error">
+      Unable to update bookmark for this event. Please try again.
+    </div>
+  <% else %>
+    <%= render "shared/bookmark_button", event: @event %>
+  <% end %>
+<% end %>

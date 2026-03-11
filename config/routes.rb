@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
   resources :events, only: [:index, :show] do
     resources :favorites, only: [:index]
+    resources :bookmarked_events, only: [:create, :destroy]
   end
   resources :booths, only: [:show] do
     resources :favorites, only: [:create]

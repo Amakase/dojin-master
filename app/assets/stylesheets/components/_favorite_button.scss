@@ -1,27 +1,249 @@
-.favorite-priority-btn {
-  font-size: 0.8em;
-  // flex: 0 0 clamp(6.6rem, 20vw, 50vw);
-  color: unset;
-  border: none;
-  // width: 6.5rem;
+// ── Favorite Button ────────────────────────────────────────────────────────────
+//
+// Three contexts:
+//   1. Booth show sidebar   — full label + priority number visible
+//   2. Event index card     — compact, no label (overridden by _event-show-index)
+//   3. Favorites index card — compact, priority-span hidden (overridden by _favorite_card)
+//
+// Priority color classes (background) are defined below and shared across
+// the button trigger AND the dropdown cells.
+
+// ── Trigger button ─────────────────────────────────────────────────────────────
+
+.fav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($dark-goldenrod, 0.45);
+  }
 }
 
-.priority-btn-1, .priority-1 { background: $comiket-orange !important; }
-.priority-btn-2, .priority-btn-2:focus:not(:focus-visible), .priority-2 { background: $comiket-pink; }
-.priority-btn-3, .priority-btn-3:focus:not(:focus-visible), .priority-3 { background: $comiket-yellow; }
-.priority-btn-4, .priority-btn-4:focus:not(:focus-visible), .priority-4 { background: $comiket-green; }
-.priority-btn-5, .priority-btn-5:focus:not(:focus-visible), .priority-5 { background: $comiket-light-blue; }
-.priority-btn-6, .priority-btn-6:focus:not(:focus-visible), .priority-6 { background: $comiket-purple; }
-.priority-btn-7, .priority-btn-7:focus:not(:focus-visible), .priority-7 { background: $comiket-blue; color: $light-gray }
-.priority-btn-8, .priority-btn-8:focus:not(:focus-visible), .priority-8 { background: $comiket-light-green; }
-.priority-btn-9, .priority-btn-9:focus:not(:focus-visible), .priority-9 { background: $comiket-red; }
+// Idle (unfavorited) — ghost style with a subtle border
+.fav-btn--idle {
+  color: rgba($deep-navy, 0.65);
+  background: transparent;
+  border: 1.5px solid rgba($deep-navy, 0.25);
 
-.priority-btn-1:hover, .dropdown-priority-1:hover { background: #e15e00 !important; }
-.priority-btn-2:hover, .dropdown-priority-2:hover { background: #a300a3 }
-.priority-btn-3:hover, .dropdown-priority-3:hover { background: #d4cd00 }
-.priority-btn-4:hover, .dropdown-priority-4:hover { background: #007430 }
-.priority-btn-5:hover, .dropdown-priority-5:hover { background: #0077a6 }
-.priority-btn-6:hover, .dropdown-priority-6:hover { background: #5f0c5f; color: $light-gray }
-.priority-btn-7:hover, .dropdown-priority-7:hover { background: #15157d; color: $light-gray }
-.priority-btn-8:hover, .dropdown-priority-8:hover { background: #007a00 }
-.priority-btn-9:hover, .dropdown-priority-9:hover { background: #8a0000 }
+  &:hover {
+    color: $deep-navy;
+    background: rgba($deep-navy, 0.06);
+    border-color: rgba($deep-navy, 0.45);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($deep-navy, 0.2);
+  }
+}
+
+// Active (favorited) — solid filled using the priority color (applied via priority-btn-N)
+.fav-btn--active {
+  border: 1.5px solid transparent;
+  color: $deep-navy;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($dark-goldenrod, 0.5);
+  }
+}
+
+// Icon sizing
+.fav-btn__icon {
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.fav-btn__label {
+  letter-spacing: 0.01em;
+}
+
+.fav-btn__num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.fav-btn__chevron {
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+// Rotate chevron when dropdown is open
+.dropdown.show .fav-btn__chevron {
+  transform: rotate(180deg);
+}
+
+// ── Priority color — button trigger ───────────────────────────────────────────
+
+// Keep legacy class names so existing code (favorite_card, event show) still works
+.priority-btn-1,  .priority-1  { background: $comiket-orange !important; }
+.priority-btn-2,  .priority-2  { background: $comiket-pink; }
+.priority-btn-3,  .priority-3  { background: $comiket-yellow; }
+.priority-btn-4,  .priority-4  { background: $comiket-green; }
+.priority-btn-5,  .priority-5  { background: $comiket-light-blue; }
+.priority-btn-6,  .priority-6  { background: $comiket-purple; color: $light-gray; }
+.priority-btn-7,  .priority-7  { background: $comiket-blue;   color: $light-gray; }
+.priority-btn-8,  .priority-8  { background: $comiket-light-green; }
+.priority-btn-9,  .priority-9  { background: $comiket-red; color: $light-gray; }
+
+// Hover — darken each priority color on the trigger button
+.priority-btn-1:hover { background: #e15e00 !important; }
+.priority-btn-2:hover { background: #a300a3; }
+.priority-btn-3:hover { background: #d4cd00; }
+.priority-btn-4:hover { background: #007430; }
+.priority-btn-5:hover { background: #0077a6; }
+.priority-btn-6:hover { background: #5f0c5f; color: $light-gray; }
+.priority-btn-7:hover { background: #15157d; color: $light-gray; }
+.priority-btn-8:hover { background: #007a00; }
+.priority-btn-9:hover { background: #8a0000; color: $light-gray; }
+
+// ── Dropdown menu ──────────────────────────────────────────────────────────────
+
+.fav-dropdown__menu {
+  width: 200px;
+  min-width: 200px;
+  border-radius: 0.9rem;
+  border: 1px solid rgba($deep-navy, 0.12);
+  box-shadow:
+    0 12px 28px rgba(9, 11, 36, 0.18),
+    0 4px 10px rgba(9, 11, 36, 0.1);
+  overflow: hidden;
+  background: $custom-card-bg;
+}
+
+// Header row inside the dropdown
+.fav-dropdown__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.8rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba($deep-navy, 0.55);
+  border-bottom: 1px solid rgba($deep-navy, 0.08);
+  list-style: none;
+}
+
+.fav-dropdown__hint {
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.7rem;
+  color: rgba($deep-navy, 0.4);
+}
+
+// 3-column grid of priority cells
+.fav-dropdown__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.fav-dropdown__cell {
+  display: flex;
+  align-items: stretch;
+
+  // Subtle grid lines between cells
+  &:nth-child(n+4) {
+    border-top: 1px solid rgba($deep-navy, 0.07);
+  }
+  &:not(:nth-child(3n+1)) {
+    border-left: 1px solid rgba($deep-navy, 0.07);
+  }
+}
+
+// Individual priority link
+.fav-dropdown__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  color: $deep-navy;
+  transition: filter 0.15s ease, transform 0.1s ease;
+  padding: 0;
+
+  &:hover {
+    filter: brightness(0.85) saturate(1.1);
+    transform: scale(1.06);
+    z-index: 1;
+    position: relative;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($deep-navy, 0.5);
+    outline-offset: -3px;
+    z-index: 2;
+    position: relative;
+  }
+}
+
+// Current priority indicator — inner ring
+.fav-dropdown__item--current {
+  box-shadow: inset 0 0 0 2.5px rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 1;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+  }
+}
+
+// Priority colors on dropdown items (re-using the same color vars)
+.dropdown-priority-1 { background: $comiket-orange; }
+.dropdown-priority-2 { background: $comiket-pink;   color: $light-gray; }
+.dropdown-priority-3 { background: $comiket-yellow; }
+.dropdown-priority-4 { background: $comiket-green;  color: $light-gray; }
+.dropdown-priority-5 { background: $comiket-light-blue; }
+.dropdown-priority-6 { background: $comiket-purple; color: $light-gray; }
+.dropdown-priority-7 { background: $comiket-blue;   color: $light-gray; }
+.dropdown-priority-8 { background: $comiket-light-green; }
+.dropdown-priority-9 { background: $comiket-red;    color: $light-gray; }
+
+// ── Favorites card context overrides ──────────────────────────────────────────
+// When inside .favorite-card-category, the "Priority" label is hidden
+// and the button is more compact — just the number in a rounded square
+
+.favorite-card-category .favorite-priority-span {
+  display: none;
+}
+
+.favorite-card-category .fav-btn {
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  min-width: 2.4rem;
+  justify-content: center;
+}
+
+// Keep legacy class name working
+.favorite-priority-btn {
+  // Alias — the actual styles are on .fav-btn above
+}

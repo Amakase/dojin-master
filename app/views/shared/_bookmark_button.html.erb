@@ -1,0 +1,23 @@
+<div id="<%= dom_id(event, :bookmark) %>">
+    <% bookmark =
+       if defined?(bookmarked_events_by_event_id) && bookmarked_events_by_event_id
+         bookmarked_events_by_event_id[event.id]
+       else
+         current_user.bookmarked_events.find { |b| b.event_id == event.id }
+       end %>
+  <% if bookmark %>
+    <%= button_to event_bookmarked_event_path(event, bookmark),
+                  method: :delete,
+                  class: "btn btn-link p-0 border-0",
+                  aria: { label: "Remove bookmark" } do %>
+      <i class="fa-solid fa-star fa-2xl event-bookmark"></i>
+    <% end %>
+  <% else %>
+    <%= button_to event_bookmarked_events_path(event),
+                  method: :post,
+                  class: "btn btn-link p-0 border-0",
+                  aria: { label: "Bookmark event" } do %>
+      <i class="fa-regular fa-star fa-2xl event-bookmark"></i>
+    <% end %>
+  <% end %>
+</div>
