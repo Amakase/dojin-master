@@ -128,6 +128,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_045232) do
   end
 
   create_table "events", force: :cascade do |t|
+    t.text "ai_placement_error"
+    t.string "ai_placement_status"
     t.datetime "created_at", null: false
     t.text "description", default: ""
     t.date "end_date"
