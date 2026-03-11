@@ -22,7 +22,7 @@ export default class extends Controller {
     this.timeOut && clearTimeout(this.timeOut);
 
     this.timeOut = setTimeout(() => {
-      console.log(form);
+      // console.log(form);
       form.requestSubmit();
       this.showTick(form)
     }, 1500);
@@ -38,6 +38,21 @@ export default class extends Controller {
   closeEditor() {
     this.editorTarget.classList.add("d-none")
     this.editBtnTarget.classList.remove("d-none")
+    this.updatePreview()
+  }
+
+  updatePreview() {
+    const value = this.inputTarget.value.trim()
+    const span = this.editBtnTarget.querySelector(".favorite-notes-preview, .favorite-notes-placeholder")
+    if (!span) return
+
+    if (value) {
+      span.className = "favorite-notes-preview"
+      span.textContent = value.length > 50 ? value.slice(0, 47) + "..." : value
+    } else {
+      span.className = "favorite-notes-placeholder"
+      span.textContent = "Add notes..."
+    }
   }
 
   autoSaveBlur(event) {
@@ -45,7 +60,7 @@ export default class extends Controller {
     const form = input.closest("form")
 
     if (this.timeOut) {
-      console.log(form);
+      // console.log(form);
       clearTimeout(this.timeOut);
       form.requestSubmit();
       this.showTick(form);
