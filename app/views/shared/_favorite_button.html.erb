@@ -1,36 +1,47 @@
 <% favorite = local_assigns.fetch(:favorite) { current_user.favorites.find_by(booth: booth) } %>
 
-<div class="dropdown">
-  <button class="btn favorite-priority-btn <%= favorite ? "priority-btn-#{favorite.priority}" : "priority-btn-default" %>"
+<div class="dropdown fav-dropdown">
+  <button class="btn fav-btn <%= favorite ? "fav-btn--active priority-btn-#{favorite.priority}" : "fav-btn--idle" %>"
           type="button"
           data-bs-toggle="dropdown"
-          aria-expanded="false">
+          aria-expanded="false"
+          aria-label="<%= favorite ? "Priority #{favorite.priority} — change" : "Add to favorites" %>">
 
     <% if favorite.present? %>
-      <span class="favorite-priority-span">Priority </span><%= favorite.priority %>
+      <i class="fa-solid fa-heart fav-btn__icon" aria-hidden="true"></i>
+      <span class="favorite-priority-span">Priority </span><span class="fav-btn__num"><%= favorite.priority %></span>
+      <i class="fa-solid fa-chevron-down fav-btn__chevron" aria-hidden="true"></i>
     <% else %>
-      Add favorite
+      <i class="fa-regular fa-heart fav-btn__icon" aria-hidden="true"></i>
+      <span class="fav-btn__label">Favorite</span>
+      <i class="fa-solid fa-chevron-down fav-btn__chevron" aria-hidden="true"></i>
     <% end %>
 
   </button>
 
-  <ul class="dropdown-menu w-25 p-0">
-    <div class="row row-cols-3 g-0">
+  <ul class="dropdown-menu fav-dropdown__menu p-0" aria-label="Select priority">
+    <li class="fav-dropdown__header">
+      <span>Set priority</span>
+      <span class="fav-dropdown__hint">1 = highest</span>
+    </li>
+    <div class="fav-dropdown__grid">
       <% (1..9).each do |level| %>
-        <div class="col text-center">
-          <li class="priority-item priority-<%= level %>">
-            <% if favorite.present? %>
-              <%= link_to level,
-                          favorite_path(favorite, favorite: { priority: level }),
-                          data: { turbo_method: :patch },
-                          class: "dropdown-item dropdown-priority-#{level}" %>
-            <% else %>
-              <%= link_to level,
-                          booth_favorites_path(booth, favorite: { priority: level }),
-                          data: { turbo_method: :post },
-                          class: "dropdown-item dropdown-priority-#{level}" %>
+        <div class="fav-dropdown__cell">
+          <% if favorite.present? %>
+            <%= link_to favorite_path(favorite, favorite: { priority: level }),
+                        data: { turbo_method: :patch },
+                        class: "fav-dropdown__item priority-item priority-#{level} dropdown-priority-#{level} #{"fav-dropdown__item--current" if favorite.priority == level}",
+                        aria: { label: "Priority #{level}" } do %>
+              <%= level %>
             <% end %>
-          </li>
+          <% else %>
+            <%= link_to booth_favorites_path(booth, favorite: { priority: level }),
+                        data: { turbo_method: :post },
+                        class: "fav-dropdown__item priority-item priority-#{level} dropdown-priority-#{level}",
+                        aria: { label: "Priority #{level}" } do %>
+              <%= level %>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
     </div>

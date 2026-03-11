@@ -20,6 +20,13 @@ class EventsController < ApplicationController
       @events = @events.where(sql_subquery, query: "%#{params[:query]}%")
     end
 
+    if user_signed_in?
+      event_ids = @events.pluck(:id)
+      @bookmarked_events_by_event_id = current_user.bookmarked_events
+                                                   .where(event_id: event_ids)
+                                                   .index_by(&:event_id)
+    end
+
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -50,6 +57,49 @@ class EventsController < ApplicationController
           b.description&.downcase&.include?(q) ||
           b.booth_day.to_s.include?(q) ||
           b.circle.name.downcase.include?(q)
+      end
+    end
+
+    if params[:filter_by].present?
+      filter = params[:filter_by]
+      if @booths.is_a?(ActiveRecord::Relation)
+        if filter.start_with?("space:")
+          prefix = filter.sub("space:", "")
+          @booths = @booths.where("booth_space LIKE ?", "#{prefix}%")
+        elsif filter == "inventory"
+          circle_ids = current_user.works
+                                   .joins(:circle_works)
+                                   .pluck("circle_works.circle_id")
+          @booths = @booths.where(circle_id: circle_ids)
+        else
+          @booths = @booths.where(genre: filter)
+        end
+      elsif filter.start_with?("space:")
+        prefix = filter.sub("space:", "")
+        @booths = @booths.select { |b| b.booth_space&.start_with?(prefix) }
+      elsif filter == "inventory"
+        circle_ids = current_user.works
+                                 .joins(:circle_works)
+                                 .pluck("circle_works.circle_id")
+                                 .to_set
+        @booths = @booths.select { |b| circle_ids.include?(b.circle_id) }
+      else
+        @booths = @booths.select { |b| b.genre == filter }
+      end
+    end
+
+    # Sort: by day ASC, then booth_space natural order (A-01a < A-01b < A-02…), カタログ last
+    @booths = @booths.sort_by do |b|
+      space = b.booth_space.to_s
+      if space.include?("カタログ")
+        [1, Date.new(9999), "", 999, ""]
+      else
+        day = b.booth_day || Date.new(9999, 12, 31)
+        if (m = space.match(/\A([A-Za-z]+)-(\d+)([a-zA-Z]*)\z/))
+          [0, day, m[1].upcase, m[2].to_i, m[3].downcase]
+        else
+          [0, day, space, 0, ""]
+        end
       end
     end
 

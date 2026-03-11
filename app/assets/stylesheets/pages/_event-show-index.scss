@@ -12,11 +12,6 @@
   }
 }
 
-.page-search-row {
-  margin-right: 0;
-  margin-left: 0;
-}
-
 .event-page-title {
   font-size: clamp(1.8rem, 3vw, 2.4rem);
   font-weight: 700;
@@ -118,8 +113,91 @@
 .favorite-button-size {
   position: relative;
   width: fit-content;
-  border: 1px solid;
   margin-top: auto;
+}
+
+// Shared wrapper — constrains both the results bar and the cards grid to the
+// same width so the dropdown's right edge lines up with the cards' right edge.
+.booths-grid-wrapper {
+  width: 100%;
+  max-width: 1140px;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media (min-width: 1400px) {
+    max-width: 1320px;
+  }
+}
+
+// Booth results bar — replaces the raw "Booth: N" h1
+.booths-results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.5rem 0 1rem;
+  position: relative;
+
+  form {
+    margin-right: 16px;
+  }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: static;
+
+    form {
+      margin-right: 0;
+    }
+  }
+}
+
+.booths-results-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  @media (max-width: 767px) {
+    position: static;
+    transform: none;
+  }
+}
+
+// Booth card meta row (location + day chips)
+.booth-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.booth-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $deep-navy;
+  background: rgba(14, 16, 61, 0.08);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+}
+
+// Genre tag — replaces the misused h6
+.booth-genre-tag {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $deep-navy;
+  margin: 0.45rem 0 0;
 }
 
 /* on the show page only, force the menu to open upward, 4px from the bottom border of .favorite-button-size */
@@ -158,11 +236,16 @@
   }
 
   .card-product {
-    width: 92vw;
-    max-width: 34rem;
+    width: 320px;
     flex-direction: column;
     align-items: stretch;
     min-height: auto;
+
+    h2,
+    h3,
+    p {
+      font-size: 80%;
+    }
   }
 
   .card-product img {
@@ -172,7 +255,7 @@
   }
 
   .bookmark_link {
-    margin-right: 0;
+    margin-right: 16px;
   }
 }
 

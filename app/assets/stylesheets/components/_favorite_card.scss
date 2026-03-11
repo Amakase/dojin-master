@@ -14,11 +14,25 @@
   position: relative;
 }
 
-.favorite-card-category .favorite-priority-span {
+.favorite-card-category .favorite-priority-span, .favorite-card-category .fa-heart {
   display: none;
 }
 
+.toggle-text-color.favorite-show-map-span {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+// .favorite-show-map-btn {
+
+// }
+
+.favorites-map-container {
+  display: none
+}
+
 .favorite-card-category .favorite-priority-btn {
+  width: 30px;
   border-radius: 10px;
 }
 
@@ -27,7 +41,11 @@
   // min-width: 15vw;
   // text-wrap: wrap;
   height: 80px;
-  // font-size: 0.8em;
+  font-size: 0.8rem;
+}
+
+.favorite-circle-details .favorite-circle-name {
+  font-size: 0.9rem;
   overflow-wrap: break-word;
 }
 
@@ -40,7 +58,7 @@
 .favorite-circle-details > .badge.rounded-5.notification-adjust {
   font-size: 0.6em;
   width: 1.3rem !important;
-  height: 1.1rem !important;
+  height: 0.9rem !important;
   position: absolute;
   top: -5px;
   left: -10px;
