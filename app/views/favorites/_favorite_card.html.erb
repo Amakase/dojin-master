@@ -1,96 +1,98 @@
 <% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
-<%# <div class="favorite-card-category d-flex justify-content-between align-items-center mb-2 rounded-5"> %>
-<div class="favorite-card-category d-flex justify-content-start align-items-center mb-2 rounded-5">
+<div class="favorite-card-category d-flex flex-column mb-2 rounded-5"
+     data-favorites-list-target="card"
+     data-name-reading="<%= circle.name_reading %>">
+
+  <%# === Main info row === %>
+  <div class="d-flex align-items-center ps-1 pt-2 pb-1 pe-3">
+
+    <%# Priority / favorite button %>
     <%= turbo_frame_tag dom_id(booth, :favorite) do %>
       <%= render "shared/favorite_button", booth: booth %>
     <% end %>
 
-  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative col-5 col-lg-5">
-    <% if booth.image.attached? %>
-      <%= link_to booth_path(booth) do %>
-        <%= image_tag booth.image,
-              id: "circle-image",
-              alt: "Booth Circle-Cut Image",
-              class: "favorite-circle-image object-fit-cover border rounded"
-            %>
-      <% end %>
-    <% elsif circle.image.attached? %>
-      <%= link_to booth_path(booth) do %>
-        <%= image_tag circle.image,
-              id: "circle-image",
-              alt: "Circle Image",
-              class: "favorite-circle-image object-fit-cover border rounded"
-            %>
-      <% end %>
-    <% else %>
-      <%= link_to booth_path(booth) do %>
-        <%= image_tag "blank_circle_cut.png",
-              id: "circle-image",
-              alt: "Default Image",
-              class: "favorite-circle-image object-fit-cover border rounded"
-            %>
-      <% end %>
-    <% end %>
-
-    <%
-    user_favorites = booth.favorites.where(user: current_user)
-    prioritized = user_favorites.where.not(priority: nil).exists?
-    if booth.notifications.where(read: true).exists? && prioritized
-    %>
-      <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %>
-      </span>
+    <%# Circle image with notification badge %>
+    <div class="favorite-circle-image-wrap position-relative ms-1 flex-shrink-0">
+      <% if booth.image.attached? %>
+        <%= link_to image_tag(booth.image, alt: "Booth Circle-Cut Image", class: "favorite-circle-image object-fit-cover border rounded"), booth_path(booth) %>
+      <% elsif circle.image.attached? %>
+        <%= link_to image_tag(circle.image, alt: "Circle Image", class: "favorite-circle-image object-fit-cover border rounded"), booth_path(booth) %>
       <% else %>
-      <span class="badge bg-danger rounded-5 notification-adjust opacity-0">
-      </span>
-    <% end %>
+        <%= link_to image_tag("blank_circle_cut.png", alt: "Default Image", class: "favorite-circle-image object-fit-cover border rounded"), booth_path(booth) %>
+      <% end %>
 
-    <div class="favorite-booth-details ms-1 me-1">
-      <%= link_to circle.name,
-                booth_path(booth),
-                class: "favorite-circle-name text-decoration-none text-wrap"
-              %>
-      <div class="booth-space-and-day d-flex">
-        <div class="favorite-booth-space me-1"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
+      <%
+        user_favorites = booth.favorites.where(user: current_user)
+        prioritized = user_favorites.where.not(priority: nil).exists?
+        if booth.notifications.where(read: true).exists? && prioritized
+      %>
+        <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %></span>
+      <% else %>
+        <span class="badge bg-danger rounded-5 notification-adjust opacity-0"></span>
+      <% end %>
+    </div>
+
+    <%# Circle + booth details — grows to fill remaining space %>
+    <div class="favorite-booth-details ms-2 flex-grow-1">
+      <%= link_to circle.name, booth_path(booth), class: "favorite-circle-name text-decoration-none" %>
+      <div class="booth-space-and-day d-flex mt-1">
+        <div class="favorite-booth-space me-2">
+          <i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %>
+        </div>
         <% if booth.event.single_day? == false %>
-          <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
+          <div class="favorite-booth-day">
+            <i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %>
+          </div>
         <% end %>
       </div>
       <div class="booth-genre"><i class="fa-solid fa-tag me-1"></i><%= booth.genre %></div>
     </div>
+
+    <%# Visited — prominent and easy to reach on event day %>
+    <div class="d-flex flex-column align-items-center ms-2 flex-shrink-0">
+      <span class="favorite-visited-label">Visited</span>
+      <%= simple_form_for favorite, html: { class: "p-0" } do |f| %>
+        <%= f.input :visited, as: :boolean, label: false, wrapper: false,
+            input_html: {
+              id: dom_id(favorite, :visited),
+              autocomplete: "off",
+              data: { action: "change->favorites-list#visitedChanged" }
+            } %>
+      <% end %>
+    </div>
   </div>
 
-  <div class="d-flex align-items-center col-3 col-lg-4">
-    <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-2 align-items-end", data: { controller: "notes" } } do |f| %>
+  <%# === Notes + nav footer strip === %>
+  <div class="favorite-card-footer d-flex align-items-center px-2 pb-2" data-controller="notes">
+    <button type="button"
+            class="btn favorite-notes-edit-btn d-flex align-items-center flex-grow-1 text-start"
+            data-notes-target="editBtn"
+            data-action="click->notes#openEditor">
+      <i class="fa-solid fa-pencil me-2 flex-shrink-0"></i>
+      <% if favorite.notes.present? %>
+        <span class="favorite-notes-preview"><%= truncate(favorite.notes, length: 50) %></span>
+      <% else %>
+        <span class="favorite-notes-placeholder">Add notes...</span>
+      <% end %>
+    </button>
+    <%= simple_form_for favorite, html: { class: "favorite-notes-form flex-grow-1 d-none", data: { notes_target: "editor" } } do |f| %>
       <%= f.input :notes,
         as: :text,
         label: false,
         wrapper: false,
         input_html: {
           id: dom_id(favorite, :notes),
-          class: "favorite-notes-input",
+          class: "favorite-notes-input w-100",
           data: { action: "input->notes#autoSaveType blur->notes#autoSaveBlur",
                   notes_target: "input" },
           "data-turbo-permanent": true }
         %>
     <% end %>
+    <button type="button" class="btn favorite-nav-btn flex-shrink-0" disabled title="Navigation coming soon">
+      <i class="fa-solid fa-ellipsis-vertical"></i>
+    </button>
   </div>
-  <div class="form-check d-flex flex-column justify-content-center col-auto p-0">
-    <p class="form-check-label ms-2 mb-0">Visited</p>
-    <%= simple_form_for favorite, html: { class: "col-2 p-0" } do |f| %>
-      <%= f.input :visited,
-      as: :boolean,
-      label: false,
-      wrapper: false,
-      input_html: {
-        id: dom_id(favorite, :visited),
-        class: "ms-1",
-        onchange: "this.form.requestSubmit(); setTimeout(() => location.reload(), 300);",
-        autocomplete: "off",
-      } %>
-    <% end %>
-  </div>
-  <%# <i class="fa-solid fa-trash favorite-delete-btn me-2"></i> %>
 
 </div>
