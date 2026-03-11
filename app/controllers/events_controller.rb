@@ -1,4 +1,6 @@
 class EventsController < ApplicationController
+  ALL_LAYOUT_PAGE_SIZE = 75
+
   def index
     @filter = params[:filter].presence
 
@@ -39,6 +41,8 @@ class EventsController < ApplicationController
 
     load_booths if request.headers["Turbo-Frame"] == "booths_frame" ||
                    request.format.turbo_stream?
+
+    return render("load_more_booths", formats: :turbo_stream) if append_booths_request?
   end
 
   private
@@ -52,106 +56,96 @@ class EventsController < ApplicationController
                       nil
                     end
 
-    event_booth_ids = Rails.cache.fetch(cache_key_for(@event)) do
+    booths_scope = Booth
+                   .where(id: event_booth_ids)
+                   .includes({ image_attachment: :blob },
+                             circle: { image_attachment: :blob })
+
+    booths_scope = apply_search_filter(booths_scope)
+    booths_scope = apply_booth_filter(booths_scope)
+    booths_scope = apply_quick_filter(booths_scope)
+
+    sorted_booths = sort_booths(booths_scope.load)
+    @booths_total_count = sorted_booths.size
+
+    if @layout_mode == "rows"
+      prepare_row_layout(sorted_booths)
+    else
+      prepare_all_layout(sorted_booths)
+    end
+  end
+
+  def event_booth_ids
+    @event_booth_ids ||= Rails.cache.fetch(cache_key_for(@event)) do
       @event.booths
             .joins(:circle)
+            .distinct
             .pluck(:id)
     end
-
-    @booths = Booth
-              .where(id: event_booth_ids)
-              .includes({ image_attachment: :blob },
-                        circle: { image_attachment: :blob })
-
-    apply_search_filter
-    apply_booth_filter
-    apply_quick_filter(event_booth_ids)
-    sort_booths!
-    load_user_booth_state
-
-    @booth_rows = build_booth_rows(@booths) if @layout_mode == "rows"
   end
 
-  def apply_search_filter
-    return unless params[:query].present?
+  def apply_search_filter(scope)
+    return scope unless params[:query].present?
 
-    query = params[:query].downcase
+    query = "%#{ActiveRecord::Base.sanitize_sql_like(params[:query].to_s.downcase)}%"
 
-    @booths = @booths.select do |booth|
-      booth.genre&.downcase&.include?(query) ||
-        booth.booth_space&.downcase&.include?(query) ||
-        booth.description&.downcase&.include?(query) ||
-        booth.booth_day.to_s.include?(query) ||
-        booth.circle.name.downcase.include?(query)
-    end
+    scope.joins(:circle).where(
+      <<~SQL.squish,
+        LOWER(COALESCE(booths.genre, '')) LIKE :query
+        OR LOWER(COALESCE(booths.booth_space, '')) LIKE :query
+        OR LOWER(COALESCE(booths.description, '')) LIKE :query
+        OR CAST(booths.booth_day AS TEXT) LIKE :query
+        OR LOWER(COALESCE(circles.name, '')) LIKE :query
+      SQL
+      query: query
+    )
   end
 
-  def apply_booth_filter
-    return unless params[:filter_by].present?
+  def apply_booth_filter(scope)
+    return scope unless params[:filter_by].present?
 
     filter = params[:filter_by]
 
-    if @booths.is_a?(ActiveRecord::Relation)
-      apply_relation_filter(filter)
-    else
-      apply_array_filter(filter)
-    end
+    apply_relation_filter(scope, filter)
   end
 
-  def apply_relation_filter(filter)
+  def apply_relation_filter(scope, filter)
     if filter.start_with?("space:")
-      prefix = filter.delete_prefix("space:")
-      @booths = @booths.where("booth_space LIKE ?", "#{prefix}%")
+      prefix = "#{ActiveRecord::Base.sanitize_sql_like(filter.delete_prefix('space:'))}%"
+      scope.where("booths.booth_space LIKE ?", prefix)
     elsif filter == "inventory"
-      @booths = @booths.where(circle_id: inventory_circle_ids)
+      circle_ids = inventory_circle_ids
+      circle_ids.empty? ? scope.none : scope.where(circle_id: circle_ids)
     else
-      @booths = @booths.where(genre: filter)
+      scope.where(genre: filter)
     end
   end
 
-  def apply_array_filter(filter)
-    if filter.start_with?("space:")
-      prefix = filter.delete_prefix("space:")
-      @booths = @booths.select { |booth| booth.booth_space&.start_with?(prefix) }
-    elsif filter == "inventory"
-      visible_circle_ids = inventory_circle_ids.to_set
-      @booths = @booths.select { |booth| visible_circle_ids.include?(booth.circle_id) }
-    else
-      @booths = @booths.select { |booth| booth.genre == filter }
-    end
-  end
-
-  def apply_quick_filter(event_booth_ids)
-    return unless @quick_filter.present?
+  def apply_quick_filter(scope)
+    return scope unless @quick_filter.present?
 
     case @quick_filter
     when "inventory"
-      if @booths.is_a?(ActiveRecord::Relation)
-        @booths = @booths.where(circle_id: inventory_circle_ids)
-      else
-        visible_circle_ids = inventory_circle_ids.to_set
-        @booths = @booths.select { |booth| visible_circle_ids.include?(booth.circle_id) }
-      end
+      circle_ids = inventory_circle_ids
+      circle_ids.empty? ? scope.none : scope.where(circle_id: circle_ids)
     when "favorites"
-      favorite_booth_ids = current_user.favorites.where(booth_id: event_booth_ids).pluck(:booth_id)
-
-      if @booths.is_a?(ActiveRecord::Relation)
-        @booths = @booths.where(id: favorite_booth_ids)
-      else
-        visible_favorite_ids = favorite_booth_ids.to_set
-        @booths = @booths.select { |booth| visible_favorite_ids.include?(booth.id) }
-      end
+      scope.where(id: current_user.favorites.select(:booth_id))
+    else
+      scope
     end
   end
 
   def inventory_circle_ids
+    return [] unless user_signed_in?
+
     @inventory_circle_ids ||= current_user.works
                                           .joins(:circle_works)
+                                          .distinct
                                           .pluck("circle_works.circle_id")
   end
 
-  def sort_booths!
-    @booths = @booths.sort_by do |booth|
+  def sort_booths(booths)
+    booths.sort_by do |booth|
       booth_space = booth.booth_space.to_s
 
       if booth_space.include?("カタログ")
@@ -168,30 +162,62 @@ class EventsController < ApplicationController
     end
   end
 
-  def load_user_booth_state
-    visible_booth_ids = @booths.map(&:id)
+  def prepare_row_layout(sorted_booths)
+    @booths = sorted_booths
+    @all_booths_next_page = nil
+    @all_booths_request_params = nil
 
+    load_recommendation_state(@booths.map(&:id))
+    @booth_rows = build_booth_rows(@booths)
+
+    visible_booth_ids = @booth_rows.flat_map { |row| row[:booths].map(&:id) }.uniq
+    load_visible_booth_state(visible_booth_ids)
+  end
+
+  def prepare_all_layout(sorted_booths)
+    @booth_rows = []
+    @favorite_counts_by_booth_id = {}
+    @all_booths_page = [params[:page].to_i, 1].max
+
+    offset = (@all_booths_page - 1) * ALL_LAYOUT_PAGE_SIZE
+
+    @booths = sorted_booths.slice(offset, ALL_LAYOUT_PAGE_SIZE) || []
+    @all_booths_next_page = offset + ALL_LAYOUT_PAGE_SIZE < @booths_total_count ? @all_booths_page + 1 : nil
+    @all_booths_request_params = request.query_parameters.symbolize_keys.except(:page, :append, :format)
+
+    if user_signed_in?
+      @favorites_by_booth_id = current_user.favorites.where(booth_id: @booths.map(&:id)).index_by(&:booth_id)
+    else
+      @favorites_by_booth_id = {}
+    end
+
+    load_visible_booth_state(@booths.map(&:id))
+  end
+
+  def load_recommendation_state(booth_ids)
     @favorite_counts_by_booth_id = Favorite
-                                   .where(booth_id: visible_booth_ids)
+                                   .where(booth_id: booth_ids)
                                    .group(:booth_id)
                                    .count
 
-    unless user_signed_in?
+    if user_signed_in?
+      @favorites_by_booth_id = current_user.favorites.where(booth_id: booth_ids).index_by(&:booth_id)
+    else
       @favorites_by_booth_id = {}
-      @prioritized_booth_ids = []
-      @notified_booth_ids = []
+    end
+  end
+
+  def load_visible_booth_state(visible_booth_ids)
+    if visible_booth_ids.empty? || !user_signed_in?
+      @prioritized_booth_ids = {}
       @notification_counts = {}
       return
     end
 
-    @favorites_by_booth_id = current_user.favorites
-                                         .where(booth_id: visible_booth_ids)
-                                         .index_by(&:booth_id)
-    @prioritized_booth_ids = @favorites_by_booth_id
-                             .filter_map { |id, favorite| id unless favorite.priority.nil? }
-    @notified_booth_ids = Notification
-                          .where(booth_id: visible_booth_ids, read: false)
-                          .pluck(:booth_id)
+    visible_favorites = @favorites_by_booth_id.slice(*visible_booth_ids)
+    @prioritized_booth_ids = visible_favorites.each_with_object({}) do |(booth_id, favorite), prioritized|
+      prioritized[booth_id] = true if favorite.priority.present?
+    end
     @notification_counts = Notification
                            .where(booth_id: visible_booth_ids, read: false)
                            .group(:booth_id)
@@ -351,6 +377,10 @@ class EventsController < ApplicationController
 
   def favorite_count_for(booth)
     @favorite_counts_by_booth_id[booth.id].to_i
+  end
+
+  def append_booths_request?
+    request.format.turbo_stream? && params[:append] == "booths" && @layout_mode == "all"
   end
 
   def cache_key_for(event)

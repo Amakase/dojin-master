@@ -1,0 +1,7 @@
+<%= turbo_stream.append "booths_all_grid" do %>
+  <%= render partial: "booth_card", collection: @booths, as: :booth %>
+<% end %>
+
+<%= turbo_stream.replace "booths_load_more" do %>
+  <%= render "booths_load_more" %>
+<% end %>

@@ -1,5 +1,5 @@
 <%
-  current_params = request.query_parameters.symbolize_keys.except(:page)
+  current_params = request.query_parameters.symbolize_keys.except(:page, :append, :format)
   current_layout = @layout_mode.presence || "rows"
 
   clean_params = ->(hash) do
@@ -25,59 +25,6 @@
   inventory_active = @quick_filter == "inventory"
   row_active = current_layout == "rows" && @quick_filter.blank?
   all_active = current_layout == "all" && @quick_filter.blank?
-
-  booth_card = lambda do |booth|
-    capture do
-%>
-      <div class="netflix-card">
-        <div class="favorite-button-size favorite-button-size--overlay event-show-favorite-overlay">
-          <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-            <%= render "shared/favorite_button",
-              booth: booth,
-              favorite: @favorites_by_booth_id[booth.id] %>
-          <% end %>
-        </div>
-
-        <%= link_to booth_path(booth.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
-          <div class="netflix-image position-relative">
-            <%= render "shared/circle_cut",
-              booth: booth,
-              circle: booth.circle,
-              width: 180,
-              height: 256 %>
-
-            <% if @notified_booth_ids.include?(booth.id) && @prioritized_booth_ids.include?(booth.id) %>
-              <span class="badge rounded-pill position-absolute notification-adjust event-show-notification-badge">
-                <%= @notification_counts[booth.id] %>
-              </span>
-            <% end %>
-          </div>
-
-          <div class="netflix-hover">
-            <h5 class="netflix-title">
-              <%= booth.circle.name %>
-            </h5>
-
-            <div class="netflix-meta">
-              <% if @event.end_date - @event.start_date != 0 %>
-                <span>
-                  <i class="fa-solid fa-calendar-day"></i>
-                  Day <%= (booth.booth_day - @event.start_date + 1).to_i %>
-                </span>
-              <% end %>
-            </div>
-
-            <div class="netflix-genre">
-              <%= booth.genre %>
-            </div>
-
-
-          </div>
-        <% end %>
-      </div>
-<%
-    end
-  end
 %>
 
 <div class="booths-grid-wrapper booths-grid-wrapper--<%= current_layout %>">
@@ -117,7 +64,7 @@
     </div>
 
     <span class="booths-results-count">
-      <%= @booths.count %> <%= "booth".pluralize(@booths.count) %>
+      <%= @booths_total_count %> <%= "booth".pluralize(@booths_total_count) %>
     </span>
 
     <%= form_with url: event_path(@event), method: :get, data: { turbo_frame: "booths_frame" }, class: "booths-filter-form" do %>
@@ -176,11 +123,11 @@
   </div>
 
   <% if current_layout == "all" %>
-    <div class="booths-all-grid">
-      <% @booths.each do |booth| %>
-        <%= booth_card.call(booth) %>
-      <% end %>
+    <div class="booths-all-grid" id="booths_all_grid">
+      <%= render partial: "booth_card", collection: @booths, as: :booth %>
     </div>
+
+    <%= render "booths_load_more" %>
   <% else %>
     <% @booth_rows.to_a.each do |row| %>
       <% next if row[:booths].blank? %>
@@ -196,9 +143,7 @@
           </button>
 
           <div class="netflix-row">
-            <% row[:booths].each do |booth| %>
-              <%= booth_card.call(booth) %>
-            <% end %>
+            <%= render partial: "booth_card", collection: row[:booths], as: :booth %>
           </div>
 
           <button class="netflix-arrow right" onclick="scrollRow(this,1)">
