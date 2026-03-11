@@ -213,18 +213,22 @@
   margin-bottom: 0.1rem;
 }
 
-.favorite-nav-btn {
+.favorite-card-nav {
+  flex-shrink: 0;
+}
+
+.favorite-tab-link {
   color: $custom-gray;
-  font-size: 0.85rem;
-  padding: 0.25rem 0.4rem;
-  border-radius: 50%;
-  opacity: 0.4;
-  cursor: default;
+  font-size: 0.8rem;
   line-height: 1;
+  padding: 0.2rem 0.3rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
 
   &:hover {
-    background-color: transparent;
-    color: $custom-gray;
+    color: $deep-navy;
+    background-color: $custom-card-bg-hover;
   }
 }
 

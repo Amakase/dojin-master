@@ -90,9 +90,17 @@
           "data-turbo-permanent": true }
         %>
     <% end %>
-    <button type="button" class="btn favorite-nav-btn flex-shrink-0" disabled title="Navigation coming soon">
-      <i class="fa-solid fa-ellipsis-vertical"></i>
-    </button>
+    <div class="favorite-card-nav d-flex align-items-center gap-2 flex-shrink-0 ps-1">
+      <%= link_to "#{booth_path(booth)}#notifications-panel", class: "favorite-tab-link", title: "Notifications", data: { turbo: false } do %>
+        <i class="fa-solid fa-bell"></i>
+      <% end %>
+      <%= link_to "#{booth_path(booth)}#booth-works-panel", class: "favorite-tab-link", title: "Booth Works", data: { turbo: false } do %>
+        <i class="fa-solid fa-book"></i>
+      <% end %>
+      <%= link_to "#{booth_path(booth)}#inventory-panel", class: "favorite-tab-link", title: "My Inventory", data: { turbo: false } do %>
+        <i class="fa-solid fa-box-archive"></i>
+      <% end %>
+    </div>
   </div>
 
 </div>
