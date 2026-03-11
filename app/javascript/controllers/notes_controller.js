@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "input" ]
+  static targets = [ "input", "editBtn", "editor" ]
 
   connect() {
     this.saveTick = document.createElement("div")
@@ -22,6 +22,17 @@ export default class extends Controller {
     }, 1500);
   }
 
+  openEditor() {
+    this.editBtnTarget.classList.add("d-none")
+    this.editorTarget.classList.remove("d-none")
+    this.inputTarget.focus()
+  }
+
+  closeEditor() {
+    this.editorTarget.classList.add("d-none")
+    this.editBtnTarget.classList.remove("d-none")
+  }
+
   autoSaveBlur(event) {
     const input = event.currentTarget
     const form = input.closest("form")
@@ -32,6 +43,8 @@ export default class extends Controller {
       form.requestSubmit();
       this.showTick(form);
     }
+
+    this.closeEditor()
   }
 
   showTick(form) {

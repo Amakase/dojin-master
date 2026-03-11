@@ -5,13 +5,12 @@
 }
 
 .favorite-card-category {
-  // font-size: 0.9rem;
-  // width: clamp(5vw, 70vw, 70vw);
-  // flex: 0 0 80vw;
   background-color: $custom-card-bg;
   color: $deep-navy;
-  height: 95px;
   position: relative;
+  box-shadow: 0 1px 4px rgba($deep-navy, 0.08);
+  width: 100%;
+  overflow: hidden;
 }
 
 .favorite-card-category .favorite-priority-span, .favorite-card-category .fa-heart {
@@ -23,10 +22,6 @@
   font-weight: 400;
 }
 
-// .favorite-show-map-btn {
-
-// }
-
 .favorites-map-container {
   display: none
 }
@@ -36,67 +31,100 @@
   border-radius: 10px;
 }
 
-.favorite-circle-details {
-  // flex: 0 0 15em;
-  // min-width: 15vw;
-  // text-wrap: wrap;
-  height: 80px;
-  font-size: 0.8rem;
-}
-
-.favorite-circle-details .favorite-circle-name {
-  font-size: 0.9rem;
-  overflow-wrap: break-word;
+// Circle image wrapper (position-relative parent for notification badge)
+.favorite-circle-image-wrap {
+  flex-shrink: 0;
 }
 
 .favorite-circle-image {
-  // width: 80px;
-  height: 80px;
-  position: relative;
+  height: 72px;
+  width: 72px;
 }
 
-.favorite-circle-details > .badge.rounded-5.notification-adjust {
+.favorite-circle-image-wrap > .badge.notification-adjust {
   font-size: 0.6em;
   width: 1.3rem !important;
   height: 0.9rem !important;
   position: absolute;
   top: -5px;
-  left: -10px;
+  left: -5px;
+}
+
+// Text info column — grows to fill remaining space
+.favorite-booth-details {
+  font-size: 0.82rem;
+  min-width: 0;
+  overflow: hidden;
+
+  .booth-genre,
+  .favorite-booth-space,
+  .favorite-booth-day {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .favorite-circle-name {
   color: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
   overflow-wrap: break-word;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.favorite-booth-details {
-  // flex: 0 0 clamp(5vw, 5vw, 10vw);
-  // text-wrap: wrap;
-  font-size: 0.9em;
-  overflow-wrap: break-word;
+// Notes + nav footer strip
+.favorite-card-footer {
+  border-top: 1px solid rgba($deep-navy, 0.07);
+  margin-top: 0.1rem;
+}
+
+.favorite-notes-edit-btn {
+  color: $custom-gray;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  line-height: 1.3;
+  min-width: 0;
+
+  &:hover {
+    color: $deep-navy;
+    background-color: $custom-card-bg-hover;
+  }
+}
+
+.favorite-notes-preview {
+  color: $deep-navy;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   min-width: 0;
 }
 
-.required.favorite-notes {
-  margin: 0
+.favorite-notes-placeholder {
+  color: $custom-gray;
+  font-style: italic;
+  min-width: 0;
 }
 
 .favorite-notes-form {
   flex: 1;
+  min-width: 0;
 }
 
 .favorite-notes-input.form-control {
   color: $deep-navy;
-  font-size: 0.8em;
-  line-height: 1.2;
-  padding: 0.25rem;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  padding: 0.3rem 0.4rem;
   background-color: $custom-card-bg-hover-strong;
   resize: none;
   overflow-y: auto;
   border-color: transparent;
   height: 5rem;
-  // width: clamp(5em, 20em, 40vw);
-  // flex: 0 0 clamp(1vw, 40vw, 40em);
 }
 
 .favorite-notes-input.form-control:focus {
@@ -110,7 +138,6 @@
 
 .favorite-notes-btn {
   font-size: 0.8em;
-  // flex: 0 0 clamp(2em, 5svw, 5em);
   text-wrap: wrap;
   color: inherit;
   border-color: $deep-navy;
@@ -141,4 +168,58 @@
 
 .save-tick.visible {
   opacity: 1;
+}
+
+// Cancel Bootstrap .row's negative gutter margins so cards don't overflow viewport
+.favorite-cards-container {
+  --bs-gutter-x: 0;
+}
+
+.favorite-card-actions {
+  flex-shrink: 0;
+}
+
+.favorite-visited-label {
+  font-size: 0.65rem;
+  color: $custom-gray;
+  margin-bottom: 0.1rem;
+}
+
+.favorite-nav-btn {
+  color: $custom-gray;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 50%;
+  opacity: 0.4;
+  cursor: default;
+  line-height: 1;
+
+  &:hover {
+    background-color: transparent;
+    color: $custom-gray;
+  }
+}
+
+@media (max-width: 575px) {
+  .favorite-circle-image {
+    height: 64px;
+    width: 64px;
+  }
+
+  .favorite-booth-details {
+    font-size: 0.75rem;
+  }
+
+  .favorite-circle-name {
+    font-size: 0.82rem;
+  }
+
+  // Prevent iOS auto-zoom on textarea focus (iOS zooms when font-size < 16px)
+  .favorite-notes-input.form-control {
+    font-size: 1rem;
+  }
+
+  .favorite-visited-label {
+    font-size: 0.6rem;
+  }
 }
