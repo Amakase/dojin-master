@@ -1,0 +1,12 @@
+<%# Reused by both the initial Turbo Stream response and the job's broadcast on completion %>
+<span id="ai-placement-status" class="me-ai-status me-ai-status--<%= status %>">
+  <% if status == "running" || status == "pending" %>
+    <i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i>
+  <% elsif status == "done" %>
+    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+    <span data-controller="auto-reload" aria-hidden="true"></span>
+  <% elsif status == "failed" %>
+    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+  <% end %>
+  <%= message %>
+</span>
