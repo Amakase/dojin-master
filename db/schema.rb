@@ -114,29 +114,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_045232) do
     t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
-  create_table "event_floor_plans", force: :cascade do |t|
-    t.text "ai_placement_error"
-    t.string "ai_placement_status"
-    t.datetime "created_at", null: false
-    t.bigint "event_id", null: false
-    t.string "name", null: false
-    t.integer "position", default: 0, null: false
-    t.datetime "updated_at", null: false
-    t.index ["event_id", "position"], name: "index_event_floor_plans_on_event_id_and_position"
-    t.index ["event_id"], name: "index_event_floor_plans_on_event_id"
-  end
-
   create_table "event_map_coordinates", force: :cascade do |t|
     t.string "booth_space", null: false
     t.datetime "created_at", null: false
-    t.bigint "event_floor_plan_id"
     t.bigint "event_id", null: false
     t.float "height", null: false
     t.datetime "updated_at", null: false
     t.float "width", null: false
     t.float "x", null: false
     t.float "y", null: false
-    t.index ["event_floor_plan_id"], name: "index_event_map_coordinates_on_event_floor_plan_id"
     t.index ["event_id", "booth_space"], name: "index_event_map_coordinates_on_event_id_and_booth_space", unique: true
     t.index ["event_id"], name: "index_event_map_coordinates_on_event_id"
   end
@@ -369,8 +355,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_045232) do
   add_foreign_key "collection_works", "collections"
   add_foreign_key "collection_works", "works"
   add_foreign_key "collections", "users"
-  add_foreign_key "event_floor_plans", "events"
-  add_foreign_key "event_map_coordinates", "event_floor_plans"
   add_foreign_key "event_map_coordinates", "events"
   add_foreign_key "favorites", "booths"
   add_foreign_key "favorites", "users"
