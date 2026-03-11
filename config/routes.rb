@@ -18,7 +18,8 @@ Rails.application.routes.draw do
   # controllers under this namespace via the regex in ApplicationController#skip_pundit?.
   namespace :admin do
     resources :events, only: [] do
-      resource :map_editor, only: [:show, :update]
+      resource :map_editor,   only: [:show, :update]
+      resource :ai_placement, only: [:create], controller: "ai_placements"
     end
   end
 

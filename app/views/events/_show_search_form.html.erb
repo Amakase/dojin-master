@@ -1,15 +1,18 @@
-<div class="row justify-content-center">
-  <div class="col-sm-8 my-3">
-    <%= form_with url: event_path(@event), method: :get, class: "d-flex event-search-form",
-        data: { controller: "search", search_target: "form", action: "submit->search#prevent" } do %>
-      <%= hidden_field_tag :filter_by, params[:filter_by] %>
-      <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
-      <%= text_field_tag :query,
-            params[:query],
-            class: "form-control bg-white",
-            placeholder: "Type a keyword",
-            data: { search_target: "input", action: "input->search#search" } %>
-      <%= submit_tag "Search", name: "", class: "btn btn-primary visually-hidden" %>
-    <% end %>
-  </div>
+<div class="event-search-shell">
+  <%= form_with url: event_path(@event), method: :get, class: "event-search-form",
+      data: { controller: "search", search_target: "form", action: "submit->search#prevent" } do %>
+    <%= hidden_field_tag :filter_by, params[:filter_by] %>
+    <%= hidden_field_tag :layout, @layout_mode %>
+    <%= hidden_field_tag :quick_filter, @quick_filter %>
+    <span class="event-search-form__icon" aria-hidden="true">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </span>
+    <%= label_tag :query, "Search Booth", class: "visually-hidden" %>
+    <%= text_field_tag :query,
+          params[:query],
+          class: "form-control event-search-form__input",
+          placeholder: "Search booths, circles, genre...",
+          data: { search_target: "input", action: "input->search#search" } %>
+    <%= submit_tag "Search", name: "", class: "btn btn-primary visually-hidden" %>
+  <% end %>
 </div>

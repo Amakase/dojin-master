@@ -1,3 +1,4 @@
+<%= turbo_stream_from "ai_placement_#{@event.id}" %>
 <div class="container-fluid py-3 map-editor-page"
      data-controller="map-editor"
      data-map-editor-coords-value="<%= @existing_coords.to_json %>"
@@ -13,6 +14,62 @@
     </div>
     <div class="d-flex align-items-center gap-3">
       <span data-map-editor-status class="me-status"></span>
+      <% if @event.floor_plan.attached? %>
+        <div class="me-ai-cluster">
+          <%= button_to admin_event_ai_placement_path(@event),
+                method: :post,
+                class: "btn btn-me-ai",
+                disabled: @event.ai_placement_status.in?(%w[pending running]) do %>
+            <i class="fa-solid fa-wand-magic-sparkles btn-me-ai__icon"></i>
+            AI Auto-place
+          <% end %>
+          <%= render "admin/map_editors/ai_placement_status",
+                status: @event.ai_placement_status || "",
+                message: ai_status_message(@event) %>
+          <%# Section placement panel — pure geometry, no LLM call %>
+          <div class="me-section-panel">
+            <div class="me-section-panel__fields">
+              <select class="me-section-panel__select me-section-panel__select--section"
+                      data-map-editor-target="sectionSelect"
+                      data-action="change->map-editor#onSectionChange">
+                <option value="">Section…</option>
+              </select>
+              <select class="me-section-panel__select me-section-panel__select--anchor"
+                      data-map-editor-target="sectionAnchor">
+                <option value="">Anchor…</option>
+              </select>
+              <input type="number" min="1" placeholder="From"
+                     class="me-section-panel__num"
+                     data-map-editor-target="sectionRangeStart">
+              <span class="me-section-panel__sep">–</span>
+              <input type="number" min="1" placeholder="To"
+                     class="me-section-panel__num"
+                     data-map-editor-target="sectionRangeEnd">
+              <div class="me-section-panel__layout">
+                <button type="button"
+                        data-layout="side-by-side"
+                        class="me-section-panel__layout-btn me-section-panel__layout-btn--active"
+                        data-action="click->map-editor#setSectionLayout"
+                        title="Side-by-side (a/b horizontal)">↔</button>
+                <button type="button"
+                        data-layout="stacked"
+                        class="me-section-panel__layout-btn"
+                        data-action="click->map-editor#setSectionLayout"
+                        title="Stacked (a/b vertical)">↕</button>
+              </div>
+              <button type="button"
+                      class="btn btn-me-ai btn-me-ai--sm"
+                      data-action="click->map-editor#drawSectionArea"
+                      data-map-editor-target="sectionDrawBtn">
+                <i class="fa-solid fa-crosshairs btn-me-ai__icon"></i>
+                Draw Section
+              </button>
+            </div>
+            <span data-map-editor-target="sectionStatus"
+                  class="me-section-panel__status"></span>
+          </div>
+        </div>
+      <% end %>
       <button class="btn btn-me-save" data-action="click->map-editor#save">Save All</button>
     </div>
   </div>

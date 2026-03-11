@@ -1,26 +1,49 @@
 <%# Renders a floor plan image with an SVG overlay highlighting specific booth spaces.
     Locals:
-      event                  — Event record (must have floor_plan attached and event_map_coordinates)
-      highlight_booth_spaces — Array of booth_space strings to highlight (e.g. the user's favorites) %>
+      event                 — Event record (must have floor_plan attached and event_map_coordinates)
+      booth_space_priorities — Hash of booth_space => priority (Integer 1–9 or nil).
+                               Booth spaces absent from the hash are rendered as unselected. %>
+<%# Renders a floor plan image with an SVG overlay highlighting specific booth spaces.
+    Locals:
+      event                 — Event record (must have floor_plan attached and event_map_coordinates)
+      booth_space_priorities — Hash of booth_space => priority (Integer 1–9 or nil).
+                               Booth spaces absent from the hash are rendered as unselected. %>
 <% if event.floor_plan.attached? && event.event_map_coordinates.any? %>
-  <div class="event-map-wrapper" style="position: relative; display: inline-block; width: 100%;">
-    <%= image_tag event.floor_plan, style: "width: 100%; display: block;" %>
-    <%# SVG is absolutely positioned over the image. viewBox matches the coordinate system
-        (0–100 in both axes, same as the stored percentages). preserveAspectRatio="none"
-        ensures the SVG stretches to exactly match the image at any display size. %>
-    <svg style="position: absolute; inset: 0; width: 100%; height: 100%;"
-         viewBox="0 0 100 100"
-         preserveAspectRatio="none">
-      <% event.event_map_coordinates.each do |coord| %>
-        <% highlighted = highlight_booth_spaces.include?(coord.booth_space) %>
-        <rect x="<%= coord.x %>"
-              y="<%= coord.y %>"
-              width="<%= coord.width %>"
-              height="<%= coord.height %>"
-              fill="<%= highlighted ? 'rgba(255,200,0,0.5)' : 'rgba(255,255,255,0.1)' %>"
-              stroke="<%= highlighted ? 'gold' : 'rgba(255,255,255,0.2)' %>"
-              stroke-width="0.3" />
-      <% end %>
-    </svg>
+  <%# .event-map-viewport clips the transformed content and handles zoom/pan input.
+      .event-map-wrapper is the CSS-transformed layer (translate + scale).
+      transform-origin: 0 0 means all transforms are anchored to the top-left corner,
+      which is required for the zoom-toward-cursor math in map_viewer_controller.js. %>
+  <div class="event-map-viewport" data-controller="map-viewer">
+    <div class="event-map-wrapper" data-map-viewer-target="content"
+         style="position: relative; display: inline-block; width: 100%; transform-origin: 0 0;">
+      <%= image_tag event.floor_plan, style: "width: 100%; display: block;", draggable: false %>
+      <%# SVG is absolutely positioned over the image. viewBox matches the coordinate system
+          (0–100 in both axes, same as the stored percentages). preserveAspectRatio="none"
+          ensures the SVG stretches to exactly match the image at any display size. %>
+      <svg style="position: absolute; inset: 0; width: 100%; height: 100%;"
+           viewBox="0 0 100 100"
+           preserveAspectRatio="none">
+        <% event.event_map_coordinates.each do |coord| %>
+          <% modifier = if !booth_space_priorities.key?(coord.booth_space)
+                          "unselected"
+                        elsif booth_space_priorities[coord.booth_space]
+                          "priority-#{booth_space_priorities[coord.booth_space]}"
+                        else
+                          "no-priority"
+                        end %>
+          <rect x="<%= coord.x %>"
+                y="<%= coord.y %>"
+                width="<%= coord.width %>"
+                height="<%= coord.height %>"
+                class="map-rect map-rect--<%= modifier %>" />
+        <% end %>
+      </svg>
+    </div>
+    <button class="event-map-reset-btn"
+            data-action="click->map-viewer#reset"
+            type="button"
+            title="Reset zoom (double-click map to reset)">
+      Reset zoom
+    </button>
   </div>
 <% end %>
