@@ -177,6 +177,13 @@
   --bs-gutter-x: 0;
 }
 
+// Visited-pending: card dims in place before sliding to the bottom
+.favorite-card--visited-pending {
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
 .favorite-card-actions {
   flex-shrink: 0;
 }
