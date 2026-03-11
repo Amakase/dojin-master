@@ -25,6 +25,8 @@
   inventory_active = @quick_filter == "inventory"
   row_active = current_layout == "rows" && @quick_filter.blank?
   all_active = current_layout == "all" && @quick_filter.blank?
+  unread_updates_count = @unread_notifications_total.to_i
+  unread_updates_label = unread_updates_count > 99 ? "99+" : unread_updates_count.to_s
 %>
 
 <div class="booths-grid-wrapper booths-grid-wrapper--<%= current_layout %>">
@@ -35,7 +37,10 @@
         data: { turbo_frame: "booths_frame" },
         aria: { current: ("page" if favorites_active) } do %>
         <i class="fa-solid fa-heart booths-view-button__icon" aria-hidden="true"></i>
-        <span class="booths-view-button__label"></span>
+        <span class="booths-view-button__label">New Updates</span>
+        <% if unread_updates_count.positive? %>
+          <span class="booths-view-button__counter" aria-label="<%= unread_updates_count %> unread updates"><%= unread_updates_label %></span>
+        <% end %>
       <% end %>
 
       <%= link_to event_path(@event, inventory_params),

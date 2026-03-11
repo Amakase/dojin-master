@@ -281,6 +281,32 @@
   line-height: 1;
 }
 
+.booths-view-button--favorites {
+  position: relative;
+}
+
+.booths-view-button__counter {
+  position: absolute;
+  top: -0.38rem;
+  right: -0.38rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid rgba(14, 16, 61, 0.94);
+  background: linear-gradient(180deg, #ff6b72 0%, #e11937 100%);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  box-shadow: 0 6px 12px rgba(225, 25, 55, 0.36);
+  pointer-events: none;
+}
+
 .booths-results-count {
   display: inline-flex;
   align-items: center;
