@@ -5,7 +5,7 @@
     </div>
     <%= render "shared/event_header", event: @event %>
 
-    <div class="favorite-cards-container d-flex justify-content-center col-12 row" data-controller="favorites-list">
+    <div id="favorites-list" class="favorite-cards-container d-flex justify-content-center col-12 row" data-controller="favorites-list">
       <div class="favorite-show-map-span d-flex justify-content-end align-content-center">
         <span class="toggle-text-color favorite-show-map-span">Show map</span>
         <%= check_box_tag :show_map,
@@ -23,6 +23,9 @@
       </div>
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>
+      <% end %>
+      <% if @has_more %>
+        <%= render 'load_more_sentinel' %>
       <% end %>
     </div>
   </div>
