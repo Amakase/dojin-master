@@ -301,7 +301,11 @@
 }
 
 .booth-row-section {
-  margin-top: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.booths-grid-wrapper--rows .booths-results-count {
+  display: none;
 }
 
 .booth-row-header {
@@ -309,15 +313,16 @@
   align-items: center;
   justify-content: flex-start;
   padding: 0 clamp(12px, 1.8vw, 24px);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.15rem;
 }
 
 .booth-row-title {
   margin: 0;
   color: #fff;
-  font-size: 1rem;
+  font-size: clamp(1.45rem, 2.4vw, 1.85rem);
   font-weight: 700;
   letter-spacing: 0.02em;
+  line-height: 1.15;
 }
 
 .booths-all-grid {
@@ -489,7 +494,7 @@
   width: 100%;
   overflow: visible;
   padding-inline: clamp(12px, 1.8vw, 24px);
-  margin-bottom: 1rem;
+  margin-bottom: 0.35rem;
 }
 
 .event-show .booths-grid-wrapper {
@@ -500,7 +505,7 @@
 }
 
 .event-show .booths-results-bar {
-  padding: 0.5rem clamp(12px, 1.8vw, 24px) 1rem;
+  padding: 0.35rem clamp(12px, 1.8vw, 24px) 0.55rem;
 }
 
 .event-show .netflix-row {
@@ -512,7 +517,7 @@
   overflow-x: auto;
   overflow-y: visible;
   scroll-snap-type: x mandatory;
-  padding: 28px 0 96px;
+  padding: 10px 0 38px;
 }
 
 .event-show .netflix-row::-webkit-scrollbar {
@@ -544,10 +549,21 @@
 
   border-radius: 1.35rem;
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  // border: 1px solid rgba(255, 255, 255, 0.08);
+
+  // background:
+  //   linear-gradient(180deg, #161A4A 0%, #12153A 100%);
+
+  // box-shadow:
+  //   0 20px 40px rgba(0, 0, 0, 0.45);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
   background:
-    linear-gradient(180deg, #161A4A 0%, #12153A 100%);
+    linear-gradient(180deg, #3B3F4A 0%, #242731 100%);
+  // linear-gradient(180deg, #254B4A 0%, #162C2C 100%); dark green
+  // linear-gradient(180deg, #2F3346 0%, #1C1F2D 100%); little bit dark gray
+  // linear-gradient(180deg, #3A2A63 0%, #22183D 100%); purple
 
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.45);
@@ -566,8 +582,10 @@
   border-radius: inherit;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(120, 43, 24, 0.14), rgba(120, 43, 24, 0) 32%),
+    linear-gradient(180deg, rgba(80, 110, 255, 0.14), rgba(80, 110, 255, 0) 32%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 48%);
+  // linear-gradient(180deg, rgba(120, 43, 24, 0.14), rgba(120, 43, 24, 0) 32%),
+  // linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 48%);
   opacity: 1;
 }
 
@@ -631,7 +649,7 @@
   border-color: rgba(192, 138, 51, 0.45);
 
   background:
-    linear-gradient(180deg, #1B2060 0%, #141850 100%);
+    linear-gradient(180deg, #464B57 0%, #2C303A 100%);
 
   box-shadow:
     0 30px 50px rgba(0, 0, 0, 0.6),
@@ -705,10 +723,15 @@
 }
 
 .event-show .netflix-title {
-  font-size: 0.98rem;
+  font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.3;
   margin-bottom: 0.4rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  color: #ffffff;
 }
 
 .event-show .netflix-meta {
@@ -716,13 +739,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.82);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 0.45rem;
+
+  i {
+    opacity: 0.6;
+  }
 }
 
 .event-show .netflix-genre {
   font-size: 0.8rem;
-  color: lighten($dark-goldenrod, 12%);
+  // color: lighten($dark-goldenrod, 12%);
+  color: #FFC857;
   margin-bottom: 0.5rem;
   font-weight: 600;
 }
@@ -730,9 +759,11 @@
 .event-show .netflix-hover small {
   display: block;
   margin-top: auto;
-  color: rgba(255, 255, 255, 0.72);
+  // color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 0.8rem;
   line-height: 1.55;
+  opacity: 0.65;
 }
 
 .event-show .netflix-arrow {
@@ -796,6 +827,14 @@
     padding-inline: 8px;
   }
 
+  .booth-row-section {
+    margin-top: 0.35rem;
+  }
+
+  .booth-row-title {
+    font-size: 1.3rem;
+  }
+
   .booths-results-actions {
     justify-content: center;
   }
@@ -816,9 +855,9 @@
   }
 
   .event-show .netflix-row {
-    min-height: 460px;
-    padding-top: 20px;
-    padding-bottom: 72px;
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: 32px;
   }
 
   .event-show .netflix-card {
