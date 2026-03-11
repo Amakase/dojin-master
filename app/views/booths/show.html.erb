@@ -19,7 +19,7 @@
                 aria-selected="<%= unread_exists %>">
           <i class="fa-solid fa-bell me-2"></i>Notifications
           <% if @notifications.any? %>
-            <span class="badge bg-danger ms-1 rounded-4"><%= @notifications.count %></span>
+            <span class="badge bg-danger ms-1 rounded-4"><%= @notifications.select {|notification| !notification.read }.count %></span>
           <% end %>
         </button>
       </li>

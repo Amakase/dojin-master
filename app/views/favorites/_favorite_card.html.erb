@@ -7,22 +7,31 @@
       <%= render "shared/favorite_button", booth: booth %>
     <% end %>
 
-  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative col-5 col-lg-4">
+  <div class="favorite-circle-details d-flex align-items-center ms-2 me-1 position-relative col-5 col-lg-5">
     <% if booth.image.attached? %>
-      <%= image_tag booth.image,
-            id: "circle-image",
-            alt: "Booth Circle-Cut Image",
-            class: "favorite-circle-image object-fit-cover border rounded" %>
+      <%= link_to booth_path(booth) do %>
+        <%= image_tag booth.image,
+              id: "circle-image",
+              alt: "Booth Circle-Cut Image",
+              class: "favorite-circle-image object-fit-cover border rounded"
+            %>
+      <% end %>
     <% elsif circle.image.attached? %>
-      <%= image_tag circle.image,
-            id: "circle-image",
-            alt: "Circle Image",
-            class: "favorite-circle-image object-fit-cover border rounded" %>
+      <%= link_to booth_path(booth) do %>
+        <%= image_tag circle.image,
+              id: "circle-image",
+              alt: "Circle Image",
+              class: "favorite-circle-image object-fit-cover border rounded"
+            %>
+      <% end %>
     <% else %>
-      <%= image_tag "blank_circle_cut.png",
-            id: "circle-image",
-            alt: "Default Image",
-            class: "favorite-circle-image object-fit-cover border rounded" %>
+      <%= link_to booth_path(booth) do %>
+        <%= image_tag "blank_circle_cut.png",
+              id: "circle-image",
+              alt: "Default Image",
+              class: "favorite-circle-image object-fit-cover border rounded"
+            %>
+      <% end %>
     <% end %>
 
     <%
@@ -40,13 +49,19 @@
     <div class="favorite-booth-details ms-1 me-1">
       <%= link_to circle.name,
                 booth_path(booth),
-                class: "favorite-circle-name text-decoration-none text-wrap" %>
-      <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
-      <div class="favorite-booth-space"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
+                class: "favorite-circle-name text-decoration-none text-wrap"
+              %>
+      <div class="booth-space-and-day d-flex">
+        <div class="favorite-booth-space me-1"><i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %></div>
+        <% if booth.event.single_day? == false %>
+          <div class="favorite-booth-day"><i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %></div>
+        <% end %>
+      </div>
+      <div class="booth-genre"><i class="fa-solid fa-tag me-1"></i><%= booth.genre %></div>
     </div>
   </div>
 
-  <div class="d-flex align-items-center col-6 col-lg-7">
+  <div class="d-flex align-items-center col-3 col-lg-4">
     <%= simple_form_for favorite, html: { class: "favorite-notes-form d-flex mx-2 align-items-end", data: { controller: "notes" } } do |f| %>
       <%= f.input :notes,
         as: :text,
@@ -61,6 +76,21 @@
         %>
     <% end %>
   </div>
-  <i class="fa-solid fa-trash favorite-delete-btn me-2"></i>
+  <div class="form-check d-flex flex-column justify-content-center col-auto p-0">
+    <p class="form-check-label ms-2 mb-0">Visited</p>
+    <%= simple_form_for favorite, html: { class: "col-2 p-0" } do |f| %>
+      <%= f.input :visited,
+      as: :boolean,
+      label: false,
+      wrapper: false,
+      input_html: {
+        id: dom_id(favorite, :visited),
+        class: "ms-1",
+        onchange: "this.form.requestSubmit(); setTimeout(() => location.reload(), 300);",
+        autocomplete: "off",
+      } %>
+    <% end %>
+  </div>
+  <%# <i class="fa-solid fa-trash favorite-delete-btn me-2"></i> %>
 
 </div>

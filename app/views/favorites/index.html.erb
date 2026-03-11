@@ -6,7 +6,21 @@
     <%= render "shared/event_header", event: @event %>
 
     <div class="favorite-cards-container d-flex justify-content-center col-12 col-lg-6 row">
-      <p class="priority-hint">↑ lower number is higher priority</p>
+      <div class="favorite-show-map-span d-flex justify-content-end align-content-center">
+        <span class="toggle-text-color favorite-show-map-span">Show map</span>
+        <%= check_box_tag :show_map,
+          nil,
+          false,
+          id: "show_map_toggle_input",
+          class: "toggle-input",
+          onchange: "document.querySelector('#show-map').style.display = this.checked ? 'block' : 'none'" %>
+        <%= label_tag :show_map_toggle_input, class: "toggle-switch align-content-end h-75 " do %>
+          <span class="toggle-knob"></span>
+        <% end %>
+      </div>
+      <div class="favorites-map-container" id="show-map">
+        <%= render "map", event: @event %>
+      </div>
       <% @favorites.each do |favorite| %>
         <%= render 'favorite_card', favorite: favorite %>
       <% end %>

@@ -82,7 +82,8 @@
   box-shadow:
     0 10px 20px rgba(9, 11, 36, 0.12),
     0 4px 10px rgba(9, 11, 36, 0.08);
-  overflow: hidden;
+  // temporary fix to the priority dropdown overflow issue
+  // overflow: hidden;
   color: $deep-navy;
 }
 
@@ -117,6 +118,10 @@
   font-size: 0.9rem;
   color: rgba($deep-navy, 0.65);
   line-height: 1.6;
+}
+
+.booth-description-white-space-pre {
+  white-space: pre;
 }
 
 .booth-meta-text {

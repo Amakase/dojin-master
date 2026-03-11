@@ -2,25 +2,22 @@
 
 <% if booth.image.attached? %>
   <%= image_tag booth.image,
-        id: "circle-image",
+        class: "circle-cut-img object-fit-contain border",
         alt: "Booth Circle-Cut Image",
-        class: "object-fit-contain border",
         width: width,
         height: height,
         loading: "lazy" %>
 <% elsif circle.image.attached? %>
   <%= image_tag circle.image,
-        id: "circle-image",
+        class: "circle-cut-img object-fit-contain border",
         alt: "Circle Image",
-        class: "object-fit-contain border",
         width: width,
         height: height,
         loading: "lazy" %>
 <% else %>
   <%= image_tag "blank_circle_cut.png",
-        id: "circle-image",
+        class: "circle-cut-img object-fit-contain border",
         alt: "Default Image",
-        class: "object-fit-contain border",
         width: width,
         height: height,
         loading: "lazy" %>

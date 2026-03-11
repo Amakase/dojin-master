@@ -36,7 +36,7 @@
             </span>
           <% end %>
           <span class="booth-badge">
-            <i class="fa-regular fa-calendar me-1"></i><%= booth.booth_day %>
+            <i class="fa-regular fa-calendar me-1"></i><%= booth.booth_day.strftime("%b %-d, %Y") %>
           </span>
         </div>
 
@@ -47,8 +47,9 @@
 
       <%# Favorite button %>
       <div class="col-12 col-md-auto d-flex flex-column align-items-center justify-content-center p-3 booth-info-sidebar">
+        <p class="booth-notes mb-2">Your Priority</p>
         <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-          <%= render "shared/favorite_button", booth: booth %>
+          <%= render "shared/favorite_button", booth: booth, favorite: favorite %>
         <% end %>
       </div>
 
