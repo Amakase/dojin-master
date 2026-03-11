@@ -37,12 +37,9 @@
     <%
     user_favorites = booth.favorites.where(user: current_user)
     prioritized = user_favorites.where.not(priority: nil).exists?
-    if booth.notifications.where(read: true).exists? && prioritized
+    if booth.notifications.where(read: false).exists? && prioritized
     %>
-      <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %>
-      </span>
-      <% else %>
-      <span class="badge bg-danger rounded-5 notification-adjust opacity-0">
+      <span class="badge rounded-5 notification-adjust"><%= booth.notifications.select {|notification| !notification.read }.count %>
       </span>
     <% end %>
 
@@ -91,6 +88,16 @@
       } %>
     <% end %>
   </div>
-  <%# <i class="fa-solid fa-trash favorite-delete-btn me-2"></i> %>
+  <div class="favorite-card-nav d-flex flex-column align-items-center justify-content-center gap-2 ps-1 pe-2">
+    <%= link_to "#{booth_path(booth)}#notifications-panel", class: "favorite-tab-link", title: "Notifications", data: { turbo: false } do %>
+      <i class="fa-solid fa-bell"></i>
+    <% end %>
+    <%= link_to "#{booth_path(booth)}#booth-works-panel", class: "favorite-tab-link", title: "Booth Works", data: { turbo: false } do %>
+      <i class="fa-solid fa-book"></i>
+    <% end %>
+    <%= link_to "#{booth_path(booth)}#inventory-panel", class: "favorite-tab-link", title: "My Inventory", data: { turbo: false } do %>
+      <i class="fa-solid fa-box-archive"></i>
+    <% end %>
+  </div>
 
 </div>
