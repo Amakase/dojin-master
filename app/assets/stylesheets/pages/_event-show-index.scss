@@ -976,7 +976,7 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 28%);
 }
 
-.events-index > * {
+.events-index>* {
   position: relative;
   z-index: 1;
 }
@@ -1015,8 +1015,13 @@
   display: block;
 }
 
+.event-show__breadcrumbs,
 .events-index__breadcrumbs {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0;
+}
+
+.events-index__breadcrumbs {
+  margin-top: -0.35rem;
 }
 
 .events-index__search-shell {

@@ -7,8 +7,6 @@
 
 <section class="events-index">
   <div class="events-index__header">
-    <h1 class="event-page-title events-index__title">Event List</h1>
-
     <%= turbo_frame_tag "search_frame", class: "events-index__search" do %>
       <%= render "search_form" %>
     <% end %>
