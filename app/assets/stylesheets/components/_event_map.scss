@@ -1,0 +1,67 @@
+// Styles for shared/_event_map.html.erb — the zoomable floor plan viewer.
+// Priority rect colors mirror the $comiket-* variables used by _favorite_button.scss.
+
+// Viewport: clips the transformed content and shows grab/grabbing cursors.
+// touch-action: none lets our touchmove handler call preventDefault() without
+// the browser dropping the listener for being non-passive.
+.event-map-viewport {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+
+  &.is-panning {
+    cursor: grabbing;
+  }
+}
+
+// Reset zoom button — fixed to the bottom-right corner of the viewport.
+// It sits above the transformed content layer via z-index.
+.event-map-reset-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 10;
+  padding: 2px 10px;
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.55);
+  color: $white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1.6;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+
+.map-rect {
+  stroke-width: 0.08;
+
+  // Unselected / not favorited
+  &--unselected {
+    fill:   rgba(255, 255, 255, 0.05);
+    stroke: rgba(255, 255, 255, 0.15);
+  }
+
+  // Favorited but no priority set
+  &--no-priority {
+    fill:   rgba(255, 200, 0, 0.2);
+    stroke: rgba(255, 200, 0, 0.4);
+  }
+
+  // Priority 1–9: fill at 20% opacity so booth numbers are clearly readable;
+  // stroke at 40% for a subtle but identifiable border.
+  &--priority-1 { fill: rgba($comiket-orange,     0.2); stroke: rgba($comiket-orange,     0.4); }
+  &--priority-2 { fill: rgba($comiket-pink,        0.2); stroke: rgba($comiket-pink,        0.4); }
+  &--priority-3 { fill: rgba($comiket-yellow,      0.2); stroke: rgba($comiket-yellow,      0.4); }
+  &--priority-4 { fill: rgba($comiket-green,       0.2); stroke: rgba($comiket-green,       0.4); }
+  &--priority-5 { fill: rgba($comiket-light-blue,  0.2); stroke: rgba($comiket-light-blue,  0.4); }
+  &--priority-6 { fill: rgba($comiket-purple,      0.2); stroke: rgba($comiket-purple,      0.4); }
+  &--priority-7 { fill: rgba($comiket-blue,        0.2); stroke: rgba($comiket-blue,        0.4); }
+  &--priority-8 { fill: rgba($comiket-light-green, 0.2); stroke: rgba($comiket-light-green, 0.4); }
+  &--priority-9 { fill: rgba($comiket-red,         0.2); stroke: rgba($comiket-red,         0.4); }
+}
