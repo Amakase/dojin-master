@@ -57,6 +57,21 @@ CSV.foreach(filepath, headers: :first_row, converters: :date) do |row|
     new_release: row['new_release'] == 'true' }
 end
 
+filepath = "app/assets/csv/inventory.csv"
+collection_works_list = []
+CSV.foreach(filepath, headers: :first_row, converters: :date) do |row|
+  collection_works_list << {
+    circle: row['circle'],
+    title: row['title'],
+    title_reading: row['title'],
+    published_on: row['published_on'],
+    medium: row['medium'],
+    size: row['size'],
+    digital: row['digital'] == 'true',
+    adult: row['adult'] == 'true',
+    notes: row['notes'] }
+end
+
 filepath = "app/assets/csv/notifications.csv"
 notifications_list = []
 CSV.foreach(filepath, headers: :first_row) do |row|
@@ -122,6 +137,25 @@ puts "...#{Circle.count - num_circles} circles created"
 #
 # puts "...#{Circle.count - num_circles} circles created"
 puts "...#{Circle.count} total circles created"
+puts "Creating real Works and Circle Works"
+
+collection_works_list.each do |collection_work|
+  work = Work.new(
+    title: collection_work[:title],
+    title_reading: collection_work[:title_reading],
+    published_on: collection_work[:published_on],
+    medium: collection_work[:medium],
+    size: collection_work[:size],
+    digital: collection_work[:digital],
+    adult: collection_work[:adult]
+  )
+  work.save!
+  circle_work = CircleWork.new
+  circle_work.work = work
+  circle_work.circle = Circle.find { |circle| circle.name == collection_work[:circle] }
+  circle_work.save!
+end
+
 puts "Creating fully-fake Works and Circle Works..."
 
 200.times do |i|
@@ -143,17 +177,17 @@ puts "Creating fully-fake Works and Circle Works..."
   work.save!
   circle_work = CircleWork.new
   circle_work.work = work
-  if i == 0
-    circle_work.circle = Circle.find { |circle| circle.name == UNFAVORITED_CIRCLE }
-  else
-    circle_work.circle = Circle.all.sample
+  random_circle = Circle.all.sample
+  until collection_works_list.select {|work| work[:circle] == random_circle.name}.empty?
+    random_circle = Circle.all.sample
   end
+  circle_work.circle = random_circle
   circle_work.save!
 end
 
 puts "...#{Work.count} works created"
 puts "...#{CircleWork.count} circle works created"
-puts "Creating fully-fake Users, Collections, and Collection Works..."
+puts "Creating Users, Collections, and Collection Works..."
 
 5.times do |i|
   user = User.create!(
@@ -167,13 +201,15 @@ puts "Creating fully-fake Users, Collections, and Collection Works..."
   )
   collection.user = user
   collection.save!
-
-  works = Work.all.sample(49)
-  works.union([Work.all.find { |work| work.circles.first.name == UNFAVORITED_CIRCLE }])
+  collection_works_list.each_with_index do |work, i|
+    collection_work = CollectionWork.new(notes: work[:notes])
+    collection_work.collection = collection
+    collection_work.work = Work.all[i]
+    collection_work.save!
+  end
+  works = Work.all.last(200).sample(50)
   works.each do |work|
-    collection_work = CollectionWork.new(
-      notes: Faker::Lorem.paragraph
-    )
+    collection_work = CollectionWork.new(notes: Faker::Lorem.paragraph)
     collection_work.collection = collection
     collection_work.work = work
     collection_work.save!
@@ -294,7 +330,7 @@ events.each do |this_event|
         booth_work.save!
       end
     else
-      circle_works.each do |work|
+      booth_works.each do |work|
         booth_work = BoothWork.new(
           title: work[:title],
           circle: work[:circle],
