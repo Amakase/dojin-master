@@ -10,6 +10,7 @@
 Faker::Config.locale = 'ja'
 
 KATAKANA = ["ブレーキ", "アップル", "ヱヴァンゲリオン", "ビックカメラ", "エクスプロージョン", "プラスアルファ", "イッセキニチョウ", "ガンダム", "メグロ", "アオイトリ"]
+UNFAVORITED_CIRCLE = "Neotopia Sounds"
 
 filepath = "app/assets/csv/events.csv"
 events = []
@@ -58,12 +59,21 @@ end
 
 filepath = "app/assets/csv/notifications.csv"
 notifications_list = []
-CSV.foreach(filepath, headers: :first_row, converters: :date) do |row|
+CSV.foreach(filepath, headers: :first_row) do |row|
   notifications_list << {
     circle: row['circle'],
     source: row['source'],
     content: row['content'],
     read: row['read'] == 'true' }
+end
+
+filepath = "app/assets/csv/favorites.csv"
+favorites_list = []
+CSV.foreach(filepath, headers: :first_row) do |row|
+  favorites_list << {
+    circle: row['circle'],
+    priority: row['priority'].to_i,
+    notes: row['notes'] }
 end
 
 puts "Clearing Circle DB..."
@@ -114,7 +124,7 @@ puts "...#{Circle.count - num_circles} circles created"
 puts "...#{Circle.count} total circles created"
 puts "Creating fully-fake Works and Circle Works..."
 
-200.times do
+200.times do |i|
   medium = ["book", "CD", "DVD", "USB", "PDF"].sample
   digital = [true, false].sample
   work = Work.new(
@@ -133,7 +143,11 @@ puts "Creating fully-fake Works and Circle Works..."
   work.save!
   circle_work = CircleWork.new
   circle_work.work = work
-  circle_work.circle = Circle.all.first(20).sample
+  if i == 0
+    circle_work.circle = Circle.find { |circle| circle.name == UNFAVORITED_CIRCLE }
+  else
+    circle_work.circle = Circle.all.sample
+  end
   circle_work.save!
 end
 
@@ -153,7 +167,9 @@ puts "Creating fully-fake Users, Collections, and Collection Works..."
   )
   collection.user = user
   collection.save!
-  works = Work.all.sample(50)
+
+  works = Work.all.sample(49)
+  works.union([Work.all.find { |work| work.circles.first.name == UNFAVORITED_CIRCLE }])
   works.each do |work|
     collection_work = CollectionWork.new(
       notes: Faker::Lorem.paragraph
@@ -178,16 +194,17 @@ events.each do |this_event|
     end_date: this_event[:end_date]
   )
   file_path = "app/assets/images/events/#{event.name}.png"
-  if File.exist?(file_path)
-    event.image = File.open(Rails.root.join(file_path))
-  end
+  file_path = "app/assets/images/events/#{event.name}.jpg" if !File.exist?(file_path)
+  event.image = File.open(Rails.root.join(file_path)) if File.exist?(file_path)
   event.save!
   puts "...“#{event.name}” event created"
-  User.all.each do |user|
-    bookmarked_event = BookmarkedEvent.new
-    bookmarked_event.user = user
-    bookmarked_event.event = event
-    bookmarked_event.save!
+  if event.name == "M3-2025春" || rand(0..1) == 0
+    User.all.each do |user|
+      bookmarked_event = BookmarkedEvent.new
+      bookmarked_event.user = user
+      bookmarked_event.event = event
+      bookmarked_event.save!
+    end
   end
   if event.name == "M3-2025春"
     seed_circles = m3_circles
@@ -216,13 +233,24 @@ events.each do |this_event|
       booth.image = File.open(Rails.root.join(file_path))
     end
     booth.save!
-    if i % 10 == 0
+    fav_info = favorites_list.find {|favorite| favorite[:circle] == booth.circle.name}
+    if fav_info.present?
+      User.all.each do |user|
+        favorite = Favorite.new(
+          priority: fav_info[:priority],
+          notes: fav_info[:notes]
+        )
+        favorite.booth = booth
+        favorite.user = user
+        favorite.save!
+      end
+    elsif rand(0..4) == 0 && booth.circle.name != UNFAVORITED_CIRCLE
       favorite = Favorite.new(
         priority: rand(1..9),
         notes: Faker::Lorem.paragraph
       )
       favorite.booth = booth
-      favorite.user = User.all.first
+      favorite.user = User.all.sample
       favorite.save!
     end
     booth_notifications = notifications_list.select {|notification_item| notification_item[:circle] == booth.circle.name }
@@ -283,76 +311,76 @@ events.each do |this_event|
   end
   puts "...“#{event.name}” bookmarked events, booths, favorites, notifications, and booth works created"
 end
-puts "...#{Event.count} events created"
-puts "...#{BookmarkedEvent.count} bookmarked events created"
-puts "...#{Booth.count} booths created"
-puts "...#{Favorite.count} favorites created"
-puts "...#{Notification.count} notifications created"
-puts "...#{BoothWork.count} booth works created"
+# puts "...#{Event.count} events created"
+# puts "...#{BookmarkedEvent.count} bookmarked events created"
+# puts "...#{Booth.count} booths created"
+# puts "...#{Favorite.count} favorites created"
+# puts "...#{Notification.count} notifications created"
+# puts "...#{BoothWork.count} booth works created"
 
-puts "Creating fully fake Events, Bookmarked Events, Booths, Favorites, Notifications, and Booth Works..."
+# puts "Creating fully fake Events, Bookmarked Events, Booths, Favorites, Notifications, and Booth Works..."
 
-10.times do
-  event = Event.create!(
-    name: Faker::FunnyName.unique.name,
-    venue: Faker::Company.name,
-    description: Faker::Lorem.paragraph,
-    start_date: Date.today,
-    end_date: Date.today + 1
-  )
-  puts "...“#{event.name}” event created"
-  # bookmarked_event = BookmarkedEvent.new
-  # bookmarked_event.user = User.all.sample
-  # bookmarked_event.event = event
-  # bookmarked_event.save!
-  num = rand(20..30)
-  sample_arr = Circle.all.sample(num)
-  booth_num = (10..50).to_a.sample(num)
-  num.times do |i|
-    booth = Booth.new(
-      booth_day: [event.start_date, event.end_date].sample,
-      booth_space: ("A".."z").to_a.sample + booth_num[i].to_s + %w(a b).sample,
-      genre: Faker::Book.genre,
-      description: Faker::Lorem.paragraph,
-    )
-    booth.event = event
-    booth.circle = sample_arr[i]
-    booth.save!
-    if i % 3 == 0
-      favorite = Favorite.new(
-        priority: rand(1..9),
-        notes: Faker::Lorem.paragraph
-      )
-      favorite.booth = booth
-      favorite.user = User.all.sample
-      favorite.save!
-    end
-    rand(3..5).times do
-      notification = Notification.new(
-        source: Faker::Bank.name,
-        content: Faker::Lorem.paragraph,
-        url: Faker::Internet.url,
-        read: [true, false].sample
-      )
-      notification.booth = booth
-      notification.save!
-    end
-    rand(1..5).times do
-      booth_work = BoothWork.new(
-        title: Faker::FunnyName.name,
-        circle: booth.circle.name,
-        price: rand(1..15) * 100,
-        new_release: [true, false].sample,
-        limit: [nil, rand(1..2)].sample,
-        num_to_buy: rand(1..3),
-        num_bought: 0,
-        notes: Faker::Lorem.paragraph
-      )
-      booth_work.booth = booth
-      booth_work.save!
-    end
-  end
-end
+# 10.times do
+#   event = Event.create!(
+#     name: Faker::FunnyName.unique.name,
+#     venue: Faker::Company.name,
+#     description: Faker::Lorem.paragraph,
+#     start_date: Date.today,
+#     end_date: Date.today + 1
+#   )
+#   puts "...“#{event.name}” event created"
+#   # bookmarked_event = BookmarkedEvent.new
+#   # bookmarked_event.user = User.all.sample
+#   # bookmarked_event.event = event
+#   # bookmarked_event.save!
+#   num = rand(20..30)
+#   sample_arr = Circle.all.sample(num)
+#   booth_num = (10..50).to_a.sample(num)
+#   num.times do |i|
+#     booth = Booth.new(
+#       booth_day: [event.start_date, event.end_date].sample,
+#       booth_space: ("A".."z").to_a.sample + booth_num[i].to_s + %w(a b).sample,
+#       genre: Faker::Book.genre,
+#       description: Faker::Lorem.paragraph,
+#     )
+#     booth.event = event
+#     booth.circle = sample_arr[i]
+#     booth.save!
+#     if i % 3 == 0
+#       favorite = Favorite.new(
+#         priority: rand(1..9),
+#         notes: Faker::Lorem.paragraph
+#       )
+#       favorite.booth = booth
+#       favorite.user = User.all.sample
+#       favorite.save!
+#     end
+#     rand(3..5).times do
+#       notification = Notification.new(
+#         source: Faker::Bank.name,
+#         content: Faker::Lorem.paragraph,
+#         url: Faker::Internet.url,
+#         read: [true, false].sample
+#       )
+#       notification.booth = booth
+#       notification.save!
+#     end
+#     rand(1..5).times do
+#       booth_work = BoothWork.new(
+#         title: Faker::FunnyName.name,
+#         circle: booth.circle.name,
+#         price: rand(1..15) * 100,
+#         new_release: [true, false].sample,
+#         limit: [nil, rand(1..2)].sample,
+#         num_to_buy: rand(1..3),
+#         num_bought: 0,
+#         notes: Faker::Lorem.paragraph
+#       )
+#       booth_work.booth = booth
+#       booth_work.save!
+#     end
+#   end
+# end
 
 puts "...#{Event.count} total events created"
 puts "...#{BookmarkedEvent.count} total bookmarked events created"
