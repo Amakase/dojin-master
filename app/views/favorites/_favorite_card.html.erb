@@ -28,7 +28,7 @@
         prioritized = user_favorites.where.not(priority: nil).exists?
         if booth.notifications.where(read: true).exists? && prioritized
       %>
-        <span class="badge rounded-5 notification-adjust"><%= booth.notifications.count %></span>
+        <span class="badge rounded-5 notification-adjust"><%= booth.notifications.select {|notification| !notification.read }.count %></span>
       <% else %>
         <span class="badge bg-danger rounded-5 notification-adjust opacity-0"></span>
       <% end %>
@@ -90,9 +90,21 @@
           "data-turbo-permanent": true }
         %>
     <% end %>
-    <button type="button" class="btn favorite-nav-btn flex-shrink-0" disabled title="Navigation coming soon">
-      <i class="fa-solid fa-ellipsis-vertical"></i>
-    </button>
+    <div class="favorite-card-nav d-flex align-items-center gap-2 flex-shrink-0 ps-1">
+      <%= link_to "#{booth_path(booth)}#notifications-panel", class: "favorite-tab-link", title: "Notifications", data: { turbo: false } do %>
+        <i class="fa-solid fa-bell"></i>
+      <% end %>
+      <%= link_to "#{booth_path(booth)}#booth-works-panel", class: "favorite-tab-link", title: "Booth Works", data: { turbo: false } do %>
+        <i class="fa-solid fa-book"></i>
+      <% end %>
+      <%= link_to "#{booth_path(booth)}#inventory-panel", class: "favorite-tab-link", title: "My Inventory", data: { turbo: false } do %>
+        <i class="fa-solid fa-box-archive"></i>
+      <% end %>
+      <%# TODO: replace "#" with the map link once map functionality is implemented %>
+      <%= link_to "#", class: "favorite-tab-link", title: "Map", data: { turbo: false } do %>
+        <i class="fa-solid fa-map"></i>
+      <% end %>
+    </div>
   </div>
 
 </div>

@@ -6,6 +6,9 @@ export default class extends Controller {
   static targets = ["card"]
 
   connect() {
+    history.scrollRestoration = "manual"
+    window.scrollTo(0, 0)
+
     this.streamHandler = (event) => {
       const originalRender = event.detail.render
       event.detail.render = (streamElement) => {
@@ -23,6 +26,12 @@ export default class extends Controller {
           this.scrollToCard = null
           requestAnimationFrame(() => {
             card.scrollIntoView({ behavior: "smooth", block: "center" })
+            setTimeout(() => {
+              card.classList.add("favorite-card--spotlight")
+              card.addEventListener("animationend", () => {
+                card.classList.remove("favorite-card--spotlight")
+              }, { once: true })
+            }, 1500)
           })
         }
       }
@@ -31,6 +40,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    history.scrollRestoration = "auto"
     document.removeEventListener("turbo:before-stream-render", this.streamHandler)
   }
 
@@ -57,7 +67,7 @@ export default class extends Controller {
   }
 
   sort() {
-    const cards = [...this.cardTargets]
+    const cards = [...this.element.querySelectorAll("[data-favorites-list-target='card']")]
 
     cards.sort((a, b) => {
       const aVisited = a.querySelector("input[id^='visited_favorite_']")?.checked ? 1 : 0
@@ -73,7 +83,18 @@ export default class extends Controller {
       return aName.localeCompare(bName, "ja")
     })
 
-    cards.forEach(card => this.element.appendChild(card))
+    const sentinel = this.element.querySelector("#favorites_load_more")
+    const hasMore = sentinel && sentinel.children.length > 0
+
+    cards.forEach(card => {
+      // While more pages are pending, hide visited cards so they don't appear
+      // ahead of unvisited favorites that haven't loaded yet.
+      const isVisited = card.querySelector("input[id^='visited_favorite_']")?.checked
+      card.classList.toggle("favorite-card--deferred", hasMore && isVisited)
+      this.element.appendChild(card)
+    })
+
+    if (sentinel) this.element.appendChild(sentinel)
   }
 
   #getPriority(card) {

@@ -1,16 +1,28 @@
 .priority-hint {
   font-size: 0.7em;
-  color: $custom-gray;
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 0.5em;
 }
 
 .favorite-card-category {
-  background-color: $custom-card-bg;
-  color: $deep-navy;
+  background: linear-gradient(180deg, #3B3F4A 0%, #242731 100%);
+  color: #ffffff;
   position: relative;
-  box-shadow: 0 1px 4px rgba($deep-navy, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   width: 100%;
   // overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(80, 110, 255, 0.07), rgba(80, 110, 255, 0) 40%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 50%);
+  }
 }
 
 .favorite-card-category .favorite-priority-span, .favorite-card-category .fa-heart {
@@ -42,12 +54,27 @@
 }
 
 .favorite-circle-image-wrap > .badge.notification-adjust {
-  font-size: 0.6em;
-  width: 1.3rem !important;
-  height: 0.9rem !important;
   position: absolute;
-  top: -5px;
-  left: -5px;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+  width: auto !important;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(180deg, #ff5b63 0%, #e11937 100%);
+  border: 2px solid #2c303a;
+  box-shadow: 0 4px 10px rgba(225, 25, 55, 0.4), 0 2px 6px rgba(9, 11, 36, 0.2);
+  transform: translate(50%, -50%);
+  pointer-events: none;
 }
 
 // Text info column — grows to fill remaining space
@@ -66,7 +93,7 @@
 }
 
 .favorite-circle-name {
-  color: inherit;
+  color: #ffffff;
   font-size: 0.9rem;
   font-weight: 500;
   display: inline-block;
@@ -79,12 +106,12 @@
 
 // Notes + nav footer strip
 .favorite-card-footer {
-  border-top: 1px solid rgba($deep-navy, 0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 0.1rem;
 }
 
 .favorite-notes-edit-btn {
-  color: $custom-gray;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.78rem;
   padding: 0.25rem 0.4rem;
   border-radius: 6px;
@@ -92,13 +119,13 @@
   min-width: 0;
 
   &:hover {
-    color: $deep-navy;
-    background-color: $custom-card-bg-hover;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }
 
 .favorite-notes-preview {
-  color: $deep-navy;
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -106,7 +133,7 @@
 }
 
 .favorite-notes-placeholder {
-  color: $custom-gray;
+  color: rgba(255, 255, 255, 0.4);
   font-style: italic;
   min-width: 0;
 }
@@ -117,11 +144,11 @@
 }
 
 .favorite-notes-input.form-control {
-  color: $deep-navy;
+  color: #ffffff;
   font-size: 0.85rem;
   line-height: 1.3;
   padding: 0.3rem 0.4rem;
-  background-color: rgba($deep-navy, 0.05);
+  background-color: rgba(255, 255, 255, 0.08);
   resize: none;
   overflow-y: hidden;
   border-color: transparent;
@@ -141,20 +168,39 @@
 .favorite-notes-btn {
   font-size: 0.8em;
   text-wrap: wrap;
-  color: inherit;
-  border-color: $deep-navy;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
   border-width: 1px;
   height: 2.289rem
 }
 
 .favorite-notes-btn:hover {
-  background-color: $custom-card-bg-hover;
-  border-color: $deep-navy;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
   border-width: 1px;
 }
 
 .favorite-delete-btn {
   display: none;
+}
+
+.favorite-card-nav {
+  flex-shrink: 0;
+}
+
+.favorite-tab-link {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0.2rem 0.3rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.12);
+  }
 }
 
 .save-tick {
@@ -177,11 +223,28 @@
   --bs-gutter-x: 0;
 }
 
+// Deferred: visited card hidden until all unvisited favorites have loaded
+.favorite-card--deferred {
+  display: none;
+}
+
 // Visited-pending: card dims in place before sliding to the bottom
 .favorite-card--visited-pending {
   opacity: 0.4;
   pointer-events: none;
   transition: opacity 0.35s ease;
+}
+
+// Spotlight: briefly pulses a golden ring to show where the card landed after unvisit
+@keyframes card-spotlight {
+  0%   { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+  20%  { box-shadow: 0 0 0 3px rgba(192, 138, 51, 0.9), 0 4px 22px rgba(192, 138, 51, 0.45); }
+  70%  { box-shadow: 0 0 0 3px rgba(192, 138, 51, 0.35), 0 4px 18px rgba(192, 138, 51, 0.2); }
+  100% { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+}
+
+.favorite-card--spotlight {
+  animation: card-spotlight 1s ease-out forwards;
 }
 
 .favorite-card-actions {
@@ -190,23 +253,8 @@
 
 .favorite-visited-label {
   font-size: 0.65rem;
-  color: $custom-gray;
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 0.1rem;
-}
-
-.favorite-nav-btn {
-  color: $custom-gray;
-  font-size: 0.85rem;
-  padding: 0.25rem 0.4rem;
-  border-radius: 50%;
-  opacity: 0.4;
-  cursor: default;
-  line-height: 1;
-
-  &:hover {
-    background-color: transparent;
-    color: $custom-gray;
-  }
 }
 
 @media (max-width: 575px) {
