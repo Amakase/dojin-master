@@ -1,95 +1,156 @@
-<div class="booths-grid-wrapper">
-<div class="booths-results-bar">
-  <span class="booths-results-count">
-    <%= @booths.count %> <%= "booth".pluralize(@booths.count) %>
-  </span>
-   <%= form_with url: event_path(@event), method: :get, data: { turbo_frame: "_top" } do %>
-    <%= hidden_field_tag :query, params[:query] %>
-    <%= select_tag :filter_by,
-          grouped_options_for_select(
-            [
-              ["Booth Space", [
-                ["一展",     "space:一展"],
-                ["二展",     "space:二展"]
-              ]],
-              ["My Collection", [
-                ["Owned Works", "inventory"]
-              ]],
-              ["アニメ・ゲーム", [
-                ["PC・ネットゲーム",       "［アニメ・ゲーム］PC・ネットゲーム"],
-                ["VOCALOID",             "［アニメ・ゲーム］VOCALOID"],
-                ["アニメソング",           "［アニメ・ゲーム］アニメソング"],
-                ["コンシューマ・アーケード", "［アニメ・ゲーム］コンシューマ・アーケード"],
-                ["レトロゲーム",           "［アニメ・ゲーム］レトロゲーム"],
-                ["東方 Project",          "［アニメ・ゲーム］東方 Project"],
-                ["音ゲー",               "［アニメ・ゲーム］音ゲー"]
-              ]],
-              ["マルチメディア", [
-                ["YouTuber/VTuber",          "［マルチメディア］YouTuber/VTuber"],
-                ["その他ノンジャンル",         "［マルチメディア］その他ノンジャンル"],
-                ["ソフトウエア・ゲームソフト", "［マルチメディア］ソフトウエア・ゲームソフト"],
-                ["ハードウエア・楽譜・書籍",   "［マルチメディア］ハードウエア・楽譜・書籍"]
-              ]],
-              ["映像", [
-                ["アニメ（セル・CG 等）",    "［映像］アニメ（セル・CG 等）"],
-                ["その他（実験映像等）",      "［映像］その他（実験映像等）"],
-                ["静止画（2D・3D データ等）", "［映像］静止画（2D・3D データ等）"]
-              ]],
-              ["音楽", [
-                ["クラシック・ジャズ・環境音楽等", "［音楽］クラシック・ジャズ・環境音楽等"],
-                ["テクノ・クラブ",              "［音楽］テクノ・クラブ"],
-                ["ポップス",                  "［音楽］ポップス"],
-                ["ロック",                    "［音楽］ロック"]
-              ]],
-              ["音響", [
-                ["その他",                      "［音響］その他"],
-                ["ドラマ・トーク（放送劇・声優等）", "［音響］ドラマ・トーク（放送劇・声優等）"]
-              ]]
-            ],
-            params[:filter_by]
-          ),
-          include_blank: "-- Filter --",
-          class: "form-select form-select-sm bg-white rounded-5",
-          style: "min-width: 200px;",
-          aria: { label: "Filter booths" },
-          onchange: "this.form.requestSubmit()" %>
-  <% end %>
-</div>
-<div class="cards">
-  <% @booths.each do |booth| %>
-    <div class="card">
-      <div class="card-body card-fixed-width">
-        <%= link_to booth_path(booth.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
-          <h5 class="card-title text-black text-center fw-bolder">
-              <%= booth.circle.name %>
-          </h5>
-          <div class="position-relative">
-            <%= render "shared/circle_cut", booth: booth, circle: booth.circle, width: 180, height: 256 %>
-            <div class="booth-card-meta">
-              <span class="booth-meta-chip"><i class="fa-solid fa-location-dot"></i> <%= booth.booth_space %></span>
-              <% if @event.end_date - @event.start_date != 0 %>
-                <span class="booth-meta-chip"><i class="fa-solid fa-calendar-day"></i> Day <%= (booth.booth_day - @event.start_date + 1).to_i %></span>
-              <% end %>
-            </div>
-            <p class="booth-genre-tag"><i class="fa-solid fa-tag"></i> <%= booth.genre %></p>
-            <small class="card-text text-muted d-block mt-1"><i class="fa-solid fa-comment-dots"></i> <%= truncate(booth.description, length: 30) %></small>
-            <% if @notified_booth_ids.include?(booth.id) && @prioritized_booth_ids.include?(booth.id) %>
-              <span class="badge rounded-5 position-absolute notification-adjust">
-                <%= @notification_counts[booth.id] %>
-              </span>
-            <% else %>
-              <span class="badge bg-danger rounded-5 position-absolute notification-adjust opacity-0">
-              </span>
-            <% end %>
-          </div>
-        <% end %>
-        <div class="favorite-button-size">
-          <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-            <%= render "shared/favorite_button", booth: booth, favorite: @favorites_by_booth_id[booth.id] %>
-          <% end %>
-        </div>
-      </div>
+<%
+  current_params = request.query_parameters.symbolize_keys.except(:page, :append, :format)
+  current_layout = @layout_mode.presence || "rows"
+
+  clean_params = ->(hash) do
+    hash.reject { |_key, value| value.blank? }
+  end
+
+  row_params = clean_params.call(current_params.except(:quick_filter, :layout).merge(layout: "rows"))
+  all_params = clean_params.call(current_params.except(:quick_filter, :layout).merge(layout: "all"))
+  favorites_params = clean_params.call(
+    current_params.except(:filter_by, :layout, :quick_filter).merge(
+      layout: "all",
+      quick_filter: (@quick_filter == "favorites" ? nil : "favorites")
+    )
+  )
+  inventory_params = clean_params.call(
+    current_params.except(:filter_by, :layout, :quick_filter).merge(
+      layout: "all",
+      quick_filter: (@quick_filter == "inventory" ? nil : "inventory")
+    )
+  )
+
+  favorites_active = @quick_filter == "favorites"
+  inventory_active = @quick_filter == "inventory"
+  row_active = current_layout == "rows" && @quick_filter.blank?
+  all_active = current_layout == "all" && @quick_filter.blank?
+%>
+
+<div class="booths-grid-wrapper booths-grid-wrapper--<%= current_layout %>">
+  <div class="booths-results-bar">
+    <div class="booths-results-actions">
+      <%= link_to event_path(@event, favorites_params),
+        class: "booths-view-button booths-view-button--favorites #{'is-active' if favorites_active}",
+        data: { turbo_frame: "booths_frame" },
+        aria: { current: ("page" if favorites_active) } do %>
+        <i class="fa-solid fa-heart booths-view-button__icon" aria-hidden="true"></i>
+        <span class="booths-view-button__label"></span>
+      <% end %>
+
+      <%= link_to event_path(@event, inventory_params),
+        class: "booths-view-button booths-view-button--inventory #{'is-active' if inventory_active}",
+        data: { turbo_frame: "booths_frame" },
+        aria: { current: ("page" if inventory_active) } do %>
+        <i class="fa-solid fa-box-archive booths-view-button__icon" aria-hidden="true"></i>
+        <span class="booths-view-button__label">Owned Works</span>
+      <% end %>
+
+      <%= link_to event_path(@event, row_params),
+        class: "booths-view-button booths-view-button--rows #{'is-active' if row_active}",
+        data: { turbo_frame: "booths_frame" },
+        aria: { current: ("page" if row_active) } do %>
+        <i class="fa-solid fa-film booths-view-button__icon" aria-hidden="true"></i>
+        <span class="booths-view-button__label">Recommend</span>
+      <% end %>
+
+      <%= link_to event_path(@event, all_params),
+        class: "booths-view-button booths-view-button--all #{'is-active' if all_active}",
+        data: { turbo_frame: "booths_frame" },
+        aria: { current: ("page" if all_active) } do %>
+        <i class="fa-solid fa-table-cells-large booths-view-button__icon" aria-hidden="true"></i>
+        <span class="booths-view-button__label">All</span>
+      <% end %>
     </div>
+
+    <span class="booths-results-count">
+      <%= @booths_total_count %> <%= "booth".pluralize(@booths_total_count) %>
+    </span>
+
+    <%= form_with url: event_path(@event), method: :get, data: { turbo_frame: "booths_frame" }, class: "booths-filter-form" do %>
+      <%= hidden_field_tag :query, params[:query] %>
+      <%= hidden_field_tag :layout, current_layout %>
+      <%= hidden_field_tag :quick_filter, @quick_filter %>
+      <%= select_tag :filter_by,
+        grouped_options_for_select(
+          [
+            ["Booth Space", [
+              ["一展", "space:一展"],
+              ["二展", "space:二展"]
+            ]],
+            ["My Collection", [
+              ["Owned Works", "inventory"]
+            ]],
+            ["アニメ・ゲーム", [
+              ["PC・ネットゲーム", "［アニメ・ゲーム］PC・ネットゲーム"],
+              ["VOCALOID", "［アニメ・ゲーム］VOCALOID"],
+              ["アニメソング", "［アニメ・ゲーム］アニメソング"],
+              ["コンシューマ・アーケード", "［アニメ・ゲーム］コンシューマ・アーケード"],
+              ["レトロゲーム", "［アニメ・ゲーム］レトロゲーム"],
+              ["東方 Project", "［アニメ・ゲーム］東方 Project"],
+              ["音ゲー", "［アニメ・ゲーム］音ゲー"]
+            ]],
+            ["マルチメディア", [
+              ["YouTuber/VTuber", "［マルチメディア］YouTuber/VTuber"],
+              ["その他ノンジャンル", "［マルチメディア］その他ノンジャンル"],
+              ["ソフトウエア・ゲームソフト", "［マルチメディア］ソフトウエア・ゲームソフト"],
+              ["ハードウエア・楽譜・書籍", "［マルチメディア］ハードウエア・楽譜・書籍"]
+            ]],
+            ["映像", [
+              ["アニメ（セル・CG 等）", "［映像］アニメ（セル・CG 等）"],
+              ["その他（実験映像等）", "［映像］その他（実験映像等）"],
+              ["静止画（2D・3D データ等）", "［映像］静止画（2D・3D データ等）"]
+            ]],
+            ["音楽", [
+              ["クラシック・ジャズ・環境音楽等", "［音楽］クラシック・ジャズ・環境音楽等"],
+              ["テクノ・クラブ", "［音楽］テクノ・クラブ"],
+              ["ポップス", "［音楽］ポップス"],
+              ["ロック", "［音楽］ロック"]
+            ]],
+            ["音響", [
+              ["その他", "［音響］その他"],
+              ["ドラマ・トーク（放送劇・声優等）", "［音響］ドラマ・トーク（放送劇・声優等）"]
+            ]]
+          ],
+          params[:filter_by]
+        ),
+        include_blank: "-- Filter --",
+        class: "form-select form-select-sm bg-white rounded-5",
+        style: "min-width: 200px;",
+        aria: { label: "Filter booths" },
+        onchange: "this.form.requestSubmit()" %>
     <% end %>
-</div>
+  </div>
+
+  <% if current_layout == "all" %>
+    <div class="booths-all-grid" id="booths_all_grid">
+      <%= render partial: "booth_card", collection: @booths, as: :booth %>
+    </div>
+
+    <%= render "booths_load_more" %>
+  <% else %>
+    <% @booth_rows.to_a.each do |row| %>
+      <% next if row[:booths].blank? %>
+
+      <section class="booth-row-section">
+        <div class="booth-row-header">
+          <h3 class="booth-row-title"><%= row[:title] %></h3>
+        </div>
+
+        <div class="netflix-wrapper">
+          <button class="netflix-arrow left" onclick="scrollRow(this,-1)">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+
+          <div class="netflix-row">
+            <%= render partial: "booth_card", collection: row[:booths], as: :booth %>
+          </div>
+
+          <button class="netflix-arrow right" onclick="scrollRow(this,1)">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+    <% end %>
+  <% end %>
 </div>

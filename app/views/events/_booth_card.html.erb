@@ -1,0 +1,71 @@
+<% favorite = @favorites_by_booth_id[booth.id] %>
+<% show_notification_badge = @notification_counts.key?(booth.id) && @prioritized_booth_ids.key?(booth.id) %>
+<%
+  image_attachment = if booth.image.attached?
+                       booth.image
+                     elsif booth.circle.image.attached?
+                       booth.circle.image
+                     end
+  image_src = image_attachment ? url_for(image_attachment) : asset_path("blank_circle_cut.png")
+%>
+
+<div class="netflix-card">
+  <div class="favorite-button-size favorite-button-size--overlay event-show-favorite-overlay">
+    <%= turbo_frame_tag dom_id(booth, :favorite) do %>
+      <%= render "shared/favorite_button", booth: booth, favorite: favorite %>
+    <% end %>
+  </div>
+
+  <%= link_to booth_path(booth.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
+    <div class="netflix-image position-relative" style="--booth-image: url('<%= image_src %>')">
+      <% cache [booth, booth.circle, booth.image.attachment&.blob_id, booth.circle.image.attachment&.blob_id, "event-booth-card-image-v3"] do %>
+        <% if image_attachment.present? %>
+          <%= image_tag image_attachment,
+            class: "circle-cut-img object-fit-contain border",
+            alt: "#{booth.circle.name} image",
+            width: 180,
+            height: 256,
+            loading: "lazy",
+            decoding: "async",
+            sizes: "(max-width: 768px) 45vw, 180px" %>
+        <% else %>
+          <%= image_tag "blank_circle_cut.png",
+            class: "circle-cut-img object-fit-contain border",
+            alt: "Default image",
+            width: 180,
+            height: 256,
+            loading: "lazy",
+            decoding: "async",
+            sizes: "(max-width: 768px) 45vw, 180px" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if show_notification_badge %>
+      <span class="badge rounded-pill position-absolute notification-adjust event-show-notification-badge">
+        <%= @notification_counts[booth.id] %>
+      </span>
+    <% end %>
+
+    <% cache [booth, booth.circle, "event-booth-card-copy-v1"] do %>
+      <div class="netflix-hover">
+        <h5 class="netflix-title">
+          <%= booth.circle.name %>
+        </h5>
+
+        <div class="netflix-meta">
+          <% if @event.end_date - @event.start_date != 0 %>
+            <span>
+              <i class="fa-solid fa-calendar-day"></i>
+              Day <%= (booth.booth_day - @event.start_date + 1).to_i %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="netflix-genre">
+          <i class="fa-solid fa-tag"></i><%= booth.genre %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
