@@ -1,5 +1,5 @@
-<%# Renders the event floor plan with the user's favorited booths highlighted.
+<%# Renders the event floor plan with favorited booths highlighted in their priority color.
     Include this partial from favorites/index.html.erb once the teammate's branch is merged. %>
 <%= render "shared/event_map",
       event: @event,
-      highlight_booth_spaces: @favorites.map { |f| f.booth.booth_space } %>
+      booth_space_priorities: @favorites.each_with_object({}) { |f, h| h[f.booth.booth_space] = f.priority } %>
