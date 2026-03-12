@@ -74,23 +74,31 @@
       <div class="tab-pane fade" id="inventory-panel" role="tabpanel">
         <%= render "booths/user_inventory", { user_inventory: @user_inventory, booth: @booth } %>
       </div>
-      <div class="tab-pane fade" id="notes-panel" role="tabpanel">
-        <% if @favorite&.notes.present? %>
+      <div class="tab-pane fade" id="notes-panel" role="tabpanel" data-controller="notes">
+        <% if @favorite %>
           <div class="booth-panel-card">
             <div class="d-flex align-items-start gap-3">
               <div class="booth-notif-icon flex-shrink-0">
                 <i class="fa-solid fa-note-sticky"></i>
               </div>
-              <div>
+              <div class="flex-grow-1 me-5">
                 <p class="mb-1 fw-semibold booth-meta-text">Your notes for this booth</p>
-                <p class="mb-0"><%= @favorite.notes %></p>
+                  <%= simple_form_for @favorite, html: { class: "favorite-notes-form", data: { notes_target: "editor" } } do |f| %>
+                  <%= f.input :notes,
+                    as: :text,
+                    label: false,
+                    wrapper: false,
+                    placeholder: "Add notes...",
+                    input_html: {
+                      id: dom_id(@favorite, :notes),
+                      class: "favorite-notes-input w-100 my-3",
+                      data: { action: "input->notes#autoSaveTypeOpen blur->notes#autoSaveBlurOpen keydown->notes#handleKeydownOpen",
+                              notes_target: "input" },
+                      "data-turbo-permanent": true }
+                    %>
+                <% end %>
               </div>
             </div>
-          </div>
-        <% elsif @favorite %>
-          <div class="booth-empty-state">
-            <i class="fa-regular fa-note-sticky fa-2x mb-3"></i>
-            <p class="mb-0">No notes added yet. Edit your favorite to add notes.</p>
           </div>
         <% else %>
           <div class="booth-empty-state">

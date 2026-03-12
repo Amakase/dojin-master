@@ -207,6 +207,11 @@
       linear-gradient(180deg, rgba(80, 110, 255, 0.09), rgba(80, 110, 255, 0) 40%),
       linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 50%);
   }
+  ::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-style: italic;
+    min-width: 0;
+  }
 
   &:hover {
     background: linear-gradient(180deg, #525769 0%, #3C4058 100%);
