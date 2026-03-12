@@ -76,7 +76,7 @@
 // ── Booth Show — Info Hero ────────────────────────────────────────────────────
 
 .booth-info-card {
-  background: linear-gradient(180deg, #545968 0%, #3E4353 100%);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.25rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -188,7 +188,7 @@
 // ── Panel Cards (notifications, works, inventory) ─────────────────────────────
 
 .booth-panel-card {
-  background: linear-gradient(180deg, #545968 0%, #3E4353 100%);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.4rem;
   padding: 1rem 1.25rem;
@@ -209,7 +209,7 @@
   }
 
   &:hover {
-    background: linear-gradient(180deg, #5E6475 0%, #474C5E 100%);
+    background: linear-gradient(180deg, #525769 0%, #3C4058 100%);
     transform: translateY(-4px);
     border-color: rgba(192, 138, 51, 0.5);
     box-shadow:
@@ -275,7 +275,7 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 1rem;
-  background: linear-gradient(180deg, #545968 0%, #3E4353 100%);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.4rem;
   color: rgba(255, 255, 255, 0.55);
