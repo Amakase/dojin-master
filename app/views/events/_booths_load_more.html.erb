@@ -1,4 +1,4 @@
-<% if @all_booths_next_page.present? %>
+<% if @layout_mode == "all" && @all_booths_next_page.present? %>
   <div id="booths_load_more"
     class="booths-load-more text-center pb-4"
     data-controller="booths-infinite-scroll"
@@ -16,6 +16,26 @@
     </div>
     <span class="booths-load-more__count">
       Showing <%= [@all_booths_page * EventsController::ALL_LAYOUT_PAGE_SIZE, @booths_total_count].min %> of <%= @booths_total_count %>
+    </span>
+  </div>
+<% elsif @layout_mode == "rows" && @rows_next_offset.present? %>
+  <div id="booths_load_more"
+    class="booths-load-more text-center pb-4"
+    data-controller="booths-infinite-scroll"
+    data-booths-infinite-scroll-url-value="<%= event_path(
+      @event,
+      @rows_request_params.merge(
+        layout: "rows",
+        rows_offset: @rows_next_offset,
+        append: "rows",
+        format: :turbo_stream
+      )
+    ) %>">
+    <div class="booths-load-more__status" aria-live="polite">
+      Loading more rows...
+    </div>
+    <span class="booths-load-more__count">
+      Showing <%= [@rows_next_offset, @rows_total_count].min %> of <%= @rows_total_count %> rows
     </span>
   </div>
 <% else %>

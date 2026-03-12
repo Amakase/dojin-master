@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   end
 
   resources :events, only: [:index, :show] do
+    get "booths/:booth_id/favorite_button", to: "events#favorite_button", as: :booth_favorite_button
     resources :favorites, only: [:index]
     resources :bookmarked_events, only: [:create, :destroy]
   end

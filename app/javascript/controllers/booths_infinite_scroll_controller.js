@@ -10,6 +10,15 @@ export default class extends Controller {
     if (!this.hasUrlValue) return
 
     this.loading = false
+    this.observe()
+  }
+
+  disconnect() {
+    this.observer?.disconnect()
+  }
+
+  observe() {
+    this.observer?.disconnect()
     this.observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return
@@ -21,29 +30,30 @@ export default class extends Controller {
     this.observer.observe(this.element)
   }
 
-  disconnect() {
-    this.observer?.disconnect()
-  }
-
   async loadNextPage() {
     if (this.loading || !this.hasUrlValue) return
 
     this.loading = true
     this.observer?.disconnect()
 
-    const response = await fetch(this.urlValue, {
-      headers: {
-        Accept: "text/vnd.turbo-stream.html, text/html, application/xhtml+xml",
-      },
-      credentials: "same-origin",
-    })
+    try {
+      const response = await fetch(this.urlValue, {
+        headers: {
+          Accept: "text/vnd.turbo-stream.html, text/html, application/xhtml+xml",
+        },
+        credentials: "same-origin",
+      })
 
-    if (!response.ok) {
+      if (!response.ok) {
+        throw new Error(`Infinite scroll request failed with status ${response.status}`)
+      }
+
+      Turbo.renderStreamMessage(await response.text())
+    } catch (error) {
+      console.error(error)
+      this.observe()
+    } finally {
       this.loading = false
-      this.observer?.observe(this.element)
-      return
     }
-
-    Turbo.renderStreamMessage(await response.text())
   }
 }

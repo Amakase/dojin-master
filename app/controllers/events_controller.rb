@@ -1,5 +1,11 @@
+require "digest"
+
 class EventsController < ApplicationController
-  ALL_LAYOUT_PAGE_SIZE = 75
+  ALL_LAYOUT_PAGE_SIZE = 24
+  ALL_LAYOUT_FIXED_LIMIT = 100
+  ROW_LAYOUT_INITIAL_ROWS = 3
+  ROW_LAYOUT_APPEND_ROWS = 3
+  ROW_LAYOUT_CACHE_TTL = 10.minutes
   FIXED_RECOMMENDED_CIRCLE_NAME = "Neotopia Sounds"
 
   def index
@@ -40,10 +46,22 @@ class EventsController < ApplicationController
     @event = policy_scope(Event).find(params[:id])
     authorize @event, :show?
 
-    load_booths if request.headers["Turbo-Frame"] == "booths_frame" ||
+    load_booths if request.format.html? ||
+                   request.headers["Turbo-Frame"] == "booths_frame" ||
                    request.format.turbo_stream?
 
     return render("load_more_booths", formats: :turbo_stream) if append_booths_request?
+  end
+
+  def favorite_button
+    event_id = params[:event_id] || params[:id]
+    @event = policy_scope(Event).find(event_id)
+    authorize @event, :show?
+
+    @booth = @event.booths.includes(:circle).find(params[:booth_id])
+    @favorite = user_signed_in? ? current_user.favorites.find_by(booth_id: @booth.id) : nil
+
+    render partial: "shared/favorite_button", locals: { booth: @booth, favorite: @favorite }
   end
 
   private
@@ -57,23 +75,34 @@ class EventsController < ApplicationController
                       nil
                     end
 
-    booths_scope = Booth
-                   .where(id: event_booth_ids)
-                   .includes({ image_attachment: :blob },
-                             circle: { image_attachment: :blob })
+    source_booth_ids = source_booth_ids_for_layout
+
+    booths_scope = Booth.where(id: source_booth_ids)
 
     booths_scope = apply_search_filter(booths_scope)
     booths_scope = apply_booth_filter(booths_scope)
     booths_scope = apply_quick_filter(booths_scope)
 
-    sorted_booths = sort_booths(booths_scope.load)
-    @booths_total_count = sorted_booths.size
-    @unread_notifications_total = if user_signed_in?
-                                    prioritized_booth_ids = current_user.favorites
-                                                                        .where(priority: 1..9, booth_id: event_booth_ids)
-                                                                        .select(:booth_id)
+    if @layout_mode == "rows"
+      sorted_booths = sort_booths(booths_scope.includes(:circle).load)
+      @booths_total_count = sorted_booths.size
+    else
+      sorted_booths = nil
+      all_layout_booths = booths_scope.includes({ image_attachment: :blob },
+                                                circle: { image_attachment: :blob })
+                                      .order(:id)
+                                      .to_a
+      @booths_total_count = all_layout_booths.size
+    end
 
-                                    Notification.where(booth_id: prioritized_booth_ids, read: false).count
+    @unread_notifications_total = if user_signed_in?
+                                    Notification
+                                      .joins(:booth)
+                                      .joins("INNER JOIN favorites ON favorites.booth_id = booths.id")
+                                      .where(booths: { event_id: @event.id })
+                                      .where(favorites: { user_id: current_user.id, priority: 1..9 })
+                                      .where(notifications: { read: false })
+                                      .count
                                   else
                                     0
                                   end
@@ -81,7 +110,7 @@ class EventsController < ApplicationController
     if @layout_mode == "rows"
       prepare_row_layout(sorted_booths)
     else
-      prepare_all_layout(sorted_booths)
+      prepare_all_layout(all_layout_booths)
     end
   end
 
@@ -90,8 +119,20 @@ class EventsController < ApplicationController
       @event.booths
             .joins(:circle)
             .distinct
+            .order(:id)
             .pluck(:id)
     end
+  end
+
+  def all_layout_booth_ids
+    @all_layout_booth_ids ||= event_booth_ids.first(ALL_LAYOUT_FIXED_LIMIT)
+  end
+
+  def source_booth_ids_for_layout
+    return event_booth_ids unless @layout_mode == "all"
+    return event_booth_ids if @quick_filter.present? || params[:query].present? || params[:filter_by].present?
+
+    all_layout_booth_ids
   end
 
   def apply_search_filter(scope)
@@ -176,22 +217,36 @@ class EventsController < ApplicationController
     @booths = sorted_booths
     @all_booths_next_page = nil
     @all_booths_request_params = nil
+    @rows_request_params = request.query_parameters.symbolize_keys.except(:rows_offset, :append, :format)
 
     load_recommendation_state(@booths.map(&:id))
-    @booth_rows = build_booth_rows(@booths)
+    serialized_rows = Rails.cache.fetch(row_layout_cache_key(@booths), expires_in: ROW_LAYOUT_CACHE_TTL) do
+      serialize_booth_rows(build_booth_rows(@booths))
+    end
+    all_rows = deserialize_booth_rows(serialized_rows, @booths)
+
+    row_offset = [params[:rows_offset].to_i, 0].max
+    row_batch_size = append_rows_request? ? ROW_LAYOUT_APPEND_ROWS : ROW_LAYOUT_INITIAL_ROWS
+    @rows_total_count = all_rows.size
+    @booth_rows = all_rows.slice(row_offset, row_batch_size) || []
+    loaded_rows_count = row_offset + @booth_rows.size
+    @rows_next_offset = loaded_rows_count < @rows_total_count ? loaded_rows_count : nil
 
     visible_booth_ids = @booth_rows.flat_map { |row| row[:booths].map(&:id) }.uniq
     load_visible_booth_state(visible_booth_ids)
+    hydrate_row_booths!(visible_booth_ids)
   end
 
-  def prepare_all_layout(sorted_booths)
+  def prepare_all_layout(booths)
     @booth_rows = []
     @favorite_counts_by_booth_id = {}
-    @all_booths_page = [params[:page].to_i, 1].max
+    @rows_total_count = nil
+    @rows_next_offset = nil
 
+    @all_booths_page = [params[:page].to_i, 1].max
     offset = (@all_booths_page - 1) * ALL_LAYOUT_PAGE_SIZE
 
-    @booths = sorted_booths.slice(offset, ALL_LAYOUT_PAGE_SIZE) || []
+    @booths = booths.slice(offset, ALL_LAYOUT_PAGE_SIZE) || []
     @all_booths_next_page = offset + ALL_LAYOUT_PAGE_SIZE < @booths_total_count ? @all_booths_page + 1 : nil
     @all_booths_request_params = request.query_parameters.symbolize_keys.except(:page, :append, :format)
 
@@ -232,6 +287,55 @@ class EventsController < ApplicationController
                            .where(booth_id: visible_booth_ids, read: false)
                            .group(:booth_id)
                            .count
+  end
+
+  def row_layout_cache_key(booths)
+    booth_ids_digest = Digest::SHA256.hexdigest(booths.map(&:id).join(","))
+    favorites_digest = if user_signed_in?
+                         digest_source = @favorites_by_booth_id.values
+                                                               .sort_by(&:booth_id)
+                                                               .map { |favorite| "#{favorite.booth_id}:#{favorite.priority}:#{favorite.updated_at.to_f}" }
+                                                               .join("|")
+                         Digest::SHA256.hexdigest(digest_source)
+                       else
+                         "guest"
+                       end
+
+    ["event", @event.id, "rows_v3", params[:query].to_s.downcase.strip, params[:filter_by].to_s, favorites_digest,
+     booth_ids_digest]
+  end
+
+  def serialize_booth_rows(rows)
+    rows.map do |row|
+      { title: row[:title], booth_ids: row[:booths].map(&:id) }
+    end
+  end
+
+  def deserialize_booth_rows(serialized_rows, booths)
+    booths_by_id = booths.index_by(&:id)
+
+    Array(serialized_rows).map do |row|
+      booth_ids = Array(row[:booth_ids] || row["booth_ids"])
+      title = row[:title] || row["title"]
+
+      {
+        title: title,
+        booths: booth_ids.filter_map { |booth_id| booths_by_id[booth_id] }
+      }
+    end
+  end
+
+  def hydrate_row_booths!(visible_booth_ids)
+    return if visible_booth_ids.empty?
+
+    visible_booths = Booth.where(id: visible_booth_ids)
+                          .includes({ image_attachment: :blob }, circle: { image_attachment: :blob })
+                          .index_by(&:id)
+
+    @booth_rows = @booth_rows.map do |row|
+      hydrated = row[:booths].filter_map { |booth| visible_booths[booth.id] }
+      row.merge(booths: hydrated)
+    end
   end
 
   def build_booth_rows(booths)
@@ -406,7 +510,19 @@ class EventsController < ApplicationController
   end
 
   def append_booths_request?
-    request.format.turbo_stream? && params[:append] == "booths" && @layout_mode == "all"
+    return false unless request.format.turbo_stream?
+
+    if params[:append] == "booths"
+      @layout_mode == "all"
+    elsif params[:append] == "rows"
+      @layout_mode == "rows"
+    else
+      false
+    end
+  end
+
+  def append_rows_request?
+    request.format.turbo_stream? && params[:append] == "rows" && @layout_mode == "rows"
   end
 
   def cache_key_for(event)
