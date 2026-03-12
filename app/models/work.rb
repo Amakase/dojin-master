@@ -7,7 +7,7 @@ class Work < ApplicationRecord
   has_one_attached :image
 
   validates :title, presence: true
-  validates :title_reading, format: { with: /\A[ァ-ヿ]+\z/, message: "must be full-width katakana" }
+  # validates :title_reading, format: { with: /\A[ァ-ヿ]+\z/, message: "must be full-width katakana" }
   # validates :version
   validates :description, presence: true, allow_blank: true
   validates :published_on, presence: true
