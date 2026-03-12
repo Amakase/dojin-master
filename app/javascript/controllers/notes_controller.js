@@ -55,6 +55,18 @@ export default class extends Controller {
     }
   }
 
+  handleKeydown(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault()
+      const input = event.currentTarget
+      const form = input.closest("form")
+      if (this.timeOut) clearTimeout(this.timeOut)
+      form.requestSubmit()
+      this.showTick(form)
+      this.closeEditor()
+    }
+  }
+
   autoSaveBlur(event) {
     const input = event.currentTarget
     const form = input.closest("form")
