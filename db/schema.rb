@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_045232) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_12_122936) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -148,6 +148,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_045232) do
     t.bigint "user_id", null: false
     t.boolean "visited", default: false, null: false
     t.index ["booth_id"], name: "index_favorites_on_booth_id"
+    t.index ["user_id", "booth_id"], name: "index_favorites_on_user_id_and_booth_id"
+    t.index ["user_id", "priority", "booth_id"], name: "index_favorites_on_user_priority_booth"
     t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
@@ -167,6 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_045232) do
     t.string "source"
     t.datetime "updated_at", null: false
     t.string "url"
+    t.index ["booth_id", "read"], name: "index_notifications_on_booth_id_and_read"
     t.index ["booth_id"], name: "index_notifications_on_booth_id"
   end
 

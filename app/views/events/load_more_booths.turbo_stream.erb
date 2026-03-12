@@ -1,5 +1,9 @@
-<%= turbo_stream.append "booths_all_grid" do %>
-  <%= render partial: "booth_card", collection: @booths, as: :booth %>
+<%= turbo_stream.append(@layout_mode == "all" ? "booths_all_grid" : "booth_rows_container") do %>
+  <% if @layout_mode == "all" %>
+    <%= render partial: "booth_card", collection: @booths, as: :booth %>
+  <% else %>
+    <%= render partial: "booth_row_section", collection: @booth_rows, as: :row %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.replace "booths_load_more" do %>

@@ -6,7 +6,6 @@
                      elsif booth.circle.image.attached?
                        booth.circle.image
                      end
-  image_src = image_attachment ? url_for(image_attachment) : asset_path("blank_circle_cut.png")
 %>
 
 <div class="netflix-card">
@@ -17,7 +16,7 @@
   </div>
 
   <%= link_to booth_path(booth.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
-    <div class="netflix-image position-relative" style="--booth-image: url('<%= image_src %>')">
+    <div class="netflix-image position-relative">
       <% cache [booth, booth.circle, booth.image.attachment&.blob_id, booth.circle.image.attachment&.blob_id, "event-booth-card-image-v3"] do %>
         <% if image_attachment.present? %>
           <%= image_tag image_attachment,

@@ -10,6 +10,15 @@ export default class extends Controller {
     if (!this.hasUrlValue) return
 
     this.loading = false
+    this.observe()
+  }
+
+  disconnect() {
+    this.observer?.disconnect()
+  }
+
+  observe() {
+    this.observer?.disconnect()
     this.observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return
@@ -19,10 +28,6 @@ export default class extends Controller {
     )
 
     this.observer.observe(this.element)
-  }
-
-  disconnect() {
-    this.observer?.disconnect()
   }
 
   async loadNextPage() {
@@ -40,10 +45,11 @@ export default class extends Controller {
 
     if (!response.ok) {
       this.loading = false
-      this.observer?.observe(this.element)
+      this.observe()
       return
     }
 
     Turbo.renderStreamMessage(await response.text())
+    this.loading = false
   }
 }
