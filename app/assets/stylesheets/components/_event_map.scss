@@ -65,3 +65,27 @@
   &--priority-8 { fill: rgba($comiket-light-green, 0.2); stroke: rgba($comiket-light-green, 0.4); }
   &--priority-9 { fill: rgba($comiket-red,         0.2); stroke: rgba($comiket-red,         0.4); }
 }
+
+// Route overlay — all units are in the 0–100 SVG viewBox coordinate space.
+// stroke/fill are set per-segment via inline style in route_viewer_controller.js.
+.route-line {
+  fill: none;
+  stroke-width: 0.35;
+  stroke-dasharray: 1.2 0.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.route-waypoint {
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 0.15;
+}
+
+.route-waypoint-label {
+  font-size: 1.2px;
+  fill: #000;
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-weight: bold;
+  pointer-events: none;
+}
