@@ -81,6 +81,43 @@ export default class extends Controller {
     this.closeEditor()
   }
 
+  autoSaveTypeOpen(event) {
+    const input = event.currentTarget
+    const form = input.closest("form")
+
+    this.autoResize(input)
+    this.timeOut && clearTimeout(this.timeOut);
+
+    this.timeOut = setTimeout(() => {
+      // console.log(form);
+      form.requestSubmit();
+      this.showTick(form)
+    }, 1500);
+  }
+
+  handleKeydownOpen(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault()
+      const input = event.currentTarget
+      const form = input.closest("form")
+      if (this.timeOut) clearTimeout(this.timeOut)
+      form.requestSubmit()
+      this.showTick(form)
+    }
+  }
+
+  autoSaveBlurOpen(event) {
+    const input = event.currentTarget
+    const form = input.closest("form")
+
+    if (this.timeOut) {
+      // console.log(form);
+      clearTimeout(this.timeOut);
+      form.requestSubmit();
+      this.showTick(form);
+    }
+  }
+
   showTick(form) {
     form.appendChild(this.saveTick)
 
