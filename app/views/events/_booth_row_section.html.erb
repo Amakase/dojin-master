@@ -1,0 +1,21 @@
+<% return if row[:booths].blank? %>
+
+<section class="booth-row-section">
+  <div class="booth-row-header">
+    <h3 class="booth-row-title"><%= row[:title] %></h3>
+  </div>
+
+  <div class="netflix-wrapper">
+    <button class="netflix-arrow left" onclick="scrollRow(this,-1)">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <div class="netflix-row">
+      <%= render partial: "booth_card", collection: row[:booths], as: :booth %>
+    </div>
+
+    <button class="netflix-arrow right" onclick="scrollRow(this,1)">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </div>
+</section>

@@ -72,59 +72,7 @@
       <%= @booths_total_count %> <%= "booth".pluralize(@booths_total_count) %>
     </span>
 
-    <%= form_with url: event_path(@event), method: :get, data: { turbo_frame: "booths_frame" }, class: "booths-filter-form" do %>
-      <%= hidden_field_tag :query, params[:query] %>
-      <%= hidden_field_tag :layout, current_layout %>
-      <%= hidden_field_tag :quick_filter, @quick_filter %>
-      <%= select_tag :filter_by,
-        grouped_options_for_select(
-          [
-            ["Booth Space", [
-              ["一展", "space:一展"],
-              ["二展", "space:二展"]
-            ]],
-            ["My Collection", [
-              ["Owned Works", "inventory"]
-            ]],
-            ["アニメ・ゲーム", [
-              ["PC・ネットゲーム", "［アニメ・ゲーム］PC・ネットゲーム"],
-              ["VOCALOID", "［アニメ・ゲーム］VOCALOID"],
-              ["アニメソング", "［アニメ・ゲーム］アニメソング"],
-              ["コンシューマ・アーケード", "［アニメ・ゲーム］コンシューマ・アーケード"],
-              ["レトロゲーム", "［アニメ・ゲーム］レトロゲーム"],
-              ["東方 Project", "［アニメ・ゲーム］東方 Project"],
-              ["音ゲー", "［アニメ・ゲーム］音ゲー"]
-            ]],
-            ["マルチメディア", [
-              ["YouTuber/VTuber", "［マルチメディア］YouTuber/VTuber"],
-              ["その他ノンジャンル", "［マルチメディア］その他ノンジャンル"],
-              ["ソフトウエア・ゲームソフト", "［マルチメディア］ソフトウエア・ゲームソフト"],
-              ["ハードウエア・楽譜・書籍", "［マルチメディア］ハードウエア・楽譜・書籍"]
-            ]],
-            ["映像", [
-              ["アニメ（セル・CG 等）", "［映像］アニメ（セル・CG 等）"],
-              ["その他（実験映像等）", "［映像］その他（実験映像等）"],
-              ["静止画（2D・3D データ等）", "［映像］静止画（2D・3D データ等）"]
-            ]],
-            ["音楽", [
-              ["クラシック・ジャズ・環境音楽等", "［音楽］クラシック・ジャズ・環境音楽等"],
-              ["テクノ・クラブ", "［音楽］テクノ・クラブ"],
-              ["ポップス", "［音楽］ポップス"],
-              ["ロック", "［音楽］ロック"]
-            ]],
-            ["音響", [
-              ["その他", "［音響］その他"],
-              ["ドラマ・トーク（放送劇・声優等）", "［音響］ドラマ・トーク（放送劇・声優等）"]
-            ]]
-          ],
-          params[:filter_by]
-        ),
-        include_blank: "-- Filter --",
-        class: "form-select form-select-sm bg-white rounded-5",
-        style: "min-width: 200px;",
-        aria: { label: "Filter booths" },
-        onchange: "this.form.requestSubmit()" %>
-    <% end %>
+    <div class="booths-filter-form booths-filter-form--placeholder" aria-hidden="true"></div>
   </div>
 
   <% if current_layout == "all" %>
@@ -134,28 +82,10 @@
 
     <%= render "booths_load_more" %>
   <% else %>
-    <% @booth_rows.to_a.each do |row| %>
-      <% next if row[:booths].blank? %>
+    <div id="booth_rows_container">
+      <%= render partial: "booth_row_section", collection: @booth_rows, as: :row %>
+    </div>
 
-      <section class="booth-row-section">
-        <div class="booth-row-header">
-          <h3 class="booth-row-title"><%= row[:title] %></h3>
-        </div>
-
-        <div class="netflix-wrapper">
-          <button class="netflix-arrow left" onclick="scrollRow(this,-1)">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-
-          <div class="netflix-row">
-            <%= render partial: "booth_card", collection: row[:booths], as: :booth %>
-          </div>
-
-          <button class="netflix-arrow right" onclick="scrollRow(this,1)">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-    <% end %>
+    <%= render "booths_load_more" %>
   <% end %>
 </div>
