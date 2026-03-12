@@ -49,21 +49,20 @@
 
   // Favorited but no priority set
   &--no-priority {
-    fill:   rgba(255, 200, 0, 0.2);
-    stroke: rgba(255, 200, 0, 0.4);
+    fill:   rgba(255, 200, 0, 0.4);
+    stroke: rgba(255, 200, 0, 0.7);
   }
 
-  // Priority 1–9: fill at 20% opacity so booth numbers are clearly readable;
-  // stroke at 40% for a subtle but identifiable border.
-  &--priority-1 { fill: rgba($comiket-orange,     0.2); stroke: rgba($comiket-orange,     0.4); }
-  &--priority-2 { fill: rgba($comiket-pink,        0.2); stroke: rgba($comiket-pink,        0.4); }
-  &--priority-3 { fill: rgba($comiket-yellow,      0.2); stroke: rgba($comiket-yellow,      0.4); }
-  &--priority-4 { fill: rgba($comiket-green,       0.2); stroke: rgba($comiket-green,       0.4); }
-  &--priority-5 { fill: rgba($comiket-light-blue,  0.2); stroke: rgba($comiket-light-blue,  0.4); }
-  &--priority-6 { fill: rgba($comiket-purple,      0.2); stroke: rgba($comiket-purple,      0.4); }
-  &--priority-7 { fill: rgba($comiket-blue,        0.2); stroke: rgba($comiket-blue,        0.4); }
-  &--priority-8 { fill: rgba($comiket-light-green, 0.2); stroke: rgba($comiket-light-green, 0.4); }
-  &--priority-9 { fill: rgba($comiket-red,         0.2); stroke: rgba($comiket-red,         0.4); }
+  // Priority 1–9
+  &--priority-1 { fill: rgba($comiket-orange,     0.4); stroke: rgba($comiket-orange,     0.7); }
+  &--priority-2 { fill: rgba($comiket-pink,        0.4); stroke: rgba($comiket-pink,        0.7); }
+  &--priority-3 { fill: rgba($comiket-yellow,      0.4); stroke: rgba($comiket-yellow,      0.7); }
+  &--priority-4 { fill: rgba($comiket-green,       0.4); stroke: rgba($comiket-green,       0.7); }
+  &--priority-5 { fill: rgba($comiket-light-blue,  0.4); stroke: rgba($comiket-light-blue,  0.7); }
+  &--priority-6 { fill: rgba($comiket-purple,      0.4); stroke: rgba($comiket-purple,      0.7); }
+  &--priority-7 { fill: rgba($comiket-blue,        0.4); stroke: rgba($comiket-blue,        0.7); }
+  &--priority-8 { fill: rgba($comiket-light-green, 0.4); stroke: rgba($comiket-light-green, 0.7); }
+  &--priority-9 { fill: rgba($comiket-red,         0.4); stroke: rgba($comiket-red,         0.7); }
 }
 
 // Route overlay — all units are in the 0–100 SVG viewBox coordinate space.
