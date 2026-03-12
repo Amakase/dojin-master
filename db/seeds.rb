@@ -101,7 +101,7 @@ puts "Clearing Events DB..."
 Event.destroy_all
 
 
-puts "Creating M3-2025 Spring circles..."
+puts "Creating M3-2026 Spring circles..."
 
 m3_circles.each do |circle|
   Circle.create!(
@@ -234,7 +234,7 @@ events.each do |this_event|
   event.image = File.open(Rails.root.join(file_path)) if File.exist?(file_path)
   event.save!
   puts "...“#{event.name}” event created"
-  if event.name == "M3-2025春" || rand(0..1) == 0
+  if event.name == "M3-2026春" || rand(0..1) == 0
     User.all.each do |user|
       bookmarked_event = BookmarkedEvent.new
       bookmarked_event.user = user
@@ -242,7 +242,7 @@ events.each do |this_event|
       bookmarked_event.save!
     end
   end
-  if event.name == "M3-2025春"
+  if event.name == "M3-2026春"
     seed_circles = m3_circles
   elsif event.name == "Comic Market 107"
     seed_circles = c107_circles
@@ -258,7 +258,7 @@ events.each do |this_event|
     )
     booth.event = event
     booth.circle = Circle.find_by(name: circle[:name])
-    if event.name == "M3-2025春"
+    if event.name == "M3-2026春"
       file_path = "app/assets/images/m3_circle_cuts/★_#{booth.booth_space.split.last}.jpeg"
     elsif event.name == "Comic Market 107"
       file_path = "app/assets/images/circle_cuts/#{circle[:name]}.webp"
@@ -283,7 +283,6 @@ events.each do |this_event|
     elsif rand(0..4) == 0 && booth.circle.name != UNFAVORITED_CIRCLE
       favorite = Favorite.new(
         priority: rand(1..9),
-        notes: Faker::Lorem.paragraph
       )
       favorite.booth = booth
       favorite.user = User.all.sample
