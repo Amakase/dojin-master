@@ -1,8 +1,25 @@
 <%# ─── Hero ──────────────────────────────────────────────────────────────── %>
 <section class="home-hero">
   <div class="home-hero__noise"></div>
+  <div class="home-hero__speed-lines"></div>
   <div class="home-hero__accent-line home-hero__accent-line--left"></div>
   <div class="home-hero__accent-line home-hero__accent-line--right"></div>
+
+  <%# Bird's-eye convention floor plan — screen reader hidden %>
+  <div class="home-hero__floor-art" aria-hidden="true">
+    <%= render "pages/floor_art" %>
+  </div>
+
+  <%# Decorative convention atmosphere — screen reader hidden (4 tags, was 8) %>
+  <div class="home-hero__bg-deco" aria-hidden="true">
+    <span class="home-hero__bg-kanji home-hero__bg-kanji--1">即売会</span>
+    <span class="home-hero__bg-kanji home-hero__bg-kanji--2">同人</span>
+    <span class="home-hero__bg-kanji home-hero__bg-kanji--3">コミケ</span>
+    <span class="home-hero__bg-tag home-hero__bg-tag--1">A-01a</span>
+    <span class="home-hero__bg-tag home-hero__bg-tag--3">C107</span>
+    <span class="home-hero__bg-tag home-hero__bg-tag--5">B-34b</span>
+    <span class="home-hero__bg-tag home-hero__bg-tag--7">D-08a</span>
+  </div>
 
   <div class="container home-hero__inner">
 
@@ -40,35 +57,75 @@
       </div>
     </div>
 
-    <%# ── Right: upcoming events panel ────────────────────────────────── %>
-    <% if @upcoming_events.any? %>
-      <aside class="home-events-panel" aria-label="Upcoming events">
-        <p class="home-events-panel__label">
-          <i class="fa-solid fa-calendar-days me-2"></i>Upcoming Events
-        </p>
+    <%# ── Right: circle-cut showcase + upcoming events ───────────────────── %>
+    <div class="home-hero__right">
 
-        <div class="home-events-panel__scroll">
-          <% @upcoming_events.each do |event| %>
-            <div class="home-event-card">
-              <div class="home-event-card__dates">
-                <i class="fa-solid fa-calendar-day"></i>
-                <%= event.dates %>
-              </div>
-              <h3 class="home-event-card__name"><%= event.name %></h3>
-              <p class="home-event-card__venue">
-                <i class="fa-solid fa-location-dot me-1"></i><%= event.venue %>
-              </p>
-              <% if user_signed_in? %>
-                <%= link_to event_path(event), class: "home-event-card__link stretched-link",
-                      data: { turbo_frame: "_top" }, aria: { label: "View #{event.name}" } do %>
-                  View <i class="fa-solid fa-arrow-right ms-1"></i>
-                <% end %>
-              <% end %>
-            </div>
-          <% end %>
+      <%# Circle-cut image cross-fade carousel — one cover at a time %>
+      <div class="home-circle-cuts" aria-hidden="true">
+        <%# Ghost cards behind the active card for a "stack of covers" feel %>
+        <div class="home-circle-cuts__ghost home-circle-cuts__ghost--back"></div>
+        <div class="home-circle-cuts__ghost home-circle-cuts__ghost--mid"></div>
+        <%# The six circle-cut cards (CSS cross-fades between them) %>
+        <div class="home-circle-cuts__card">
+          <%= image_tag "m3_circle_cuts/★_A-07a.jpeg", alt: "", draggable: "false" %>
+          <span class="home-circle-cuts__label">A-07a</span>
         </div>
-      </aside>
-    <% end %>
+        <div class="home-circle-cuts__card">
+          <%= image_tag "m3_circle_cuts/★_B-02b.jpeg", alt: "", draggable: "false" %>
+          <span class="home-circle-cuts__label">B-02b</span>
+        </div>
+        <div class="home-circle-cuts__card">
+          <%= image_tag "m3_circle_cuts/★_C-08a.jpeg", alt: "", draggable: "false" %>
+          <span class="home-circle-cuts__label">C-08a</span>
+        </div>
+        <div class="home-circle-cuts__card">
+          <%= image_tag "m3_circle_cuts/★_C-21a.jpeg", alt: "", draggable: "false" %>
+          <span class="home-circle-cuts__label">C-21a</span>
+        </div>
+        <div class="home-circle-cuts__card">
+          <%= image_tag "m3_circle_cuts/★_G-04a.jpeg", alt: "", draggable: "false" %>
+          <span class="home-circle-cuts__label">G-04a</span>
+        </div>
+        <div class="home-circle-cuts__card">
+          <%= image_tag "m3_circle_cuts/★_J-08b.jpeg", alt: "", draggable: "false" %>
+          <span class="home-circle-cuts__label">J-08b</span>
+        </div>
+        <p class="home-circle-cuts__caption">
+          <i class="fa-solid fa-images me-1"></i>Circle-cut art from recent events
+        </p>
+      </div>
+
+      <%# Upcoming events panel %>
+      <% if @upcoming_events.any? %>
+        <aside class="home-events-panel" aria-label="Upcoming events">
+          <p class="home-events-panel__label">
+            <i class="fa-solid fa-calendar-days me-2"></i>Upcoming Events
+          </p>
+
+          <div class="home-events-panel__scroll">
+            <% @upcoming_events.each do |event| %>
+              <div class="home-event-card">
+                <div class="home-event-card__dates">
+                  <i class="fa-solid fa-calendar-day"></i>
+                  <%= event.dates %>
+                </div>
+                <h3 class="home-event-card__name"><%= event.name %></h3>
+                <p class="home-event-card__venue">
+                  <i class="fa-solid fa-location-dot me-1"></i><%= event.venue %>
+                </p>
+                <% if user_signed_in? %>
+                  <%= link_to event_path(event), class: "home-event-card__link stretched-link",
+                        data: { turbo_frame: "_top" }, aria: { label: "View #{event.name}" } do %>
+                    View <i class="fa-solid fa-arrow-right ms-1"></i>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </aside>
+      <% end %>
+
+    </div>
 
   </div>
 

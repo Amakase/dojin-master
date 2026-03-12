@@ -17,7 +17,7 @@ html {
 
   // Layered gradient: base navy + diagonal burgundy shard + radial goldenrod glow
   background:
-    radial-gradient(ellipse 60% 55% at 72% 40%, rgba($dark-goldenrod, 0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 50% at 30% 45%, rgba($dark-goldenrod, 0.11) 0%, transparent 70%),
     linear-gradient(135deg, rgba($burgundy, 0.55) 0%, transparent 45%),
     $deep-navy;
 
@@ -35,8 +35,128 @@ html {
     z-index: 0;
   }
 
+  // Manga screen-tone: fine halftone dot grid across the full hero
   &__noise {
-    // placeholder for noise overlay element (currently no styles needed)
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // Radiating speed lines from the left focal area — manga energy burst
+  &__speed-lines {
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(
+      from 0deg at 28% 48%,
+      transparent 0deg,
+      transparent 11deg,
+      rgba(255, 255, 255, 0.012) 11deg,
+      rgba(255, 255, 255, 0.012) 12deg
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // ── Convention floor-plan illustration ───────────────────────────────────────
+  &__floor-art {
+    position: absolute;
+    bottom: 1rem;
+    left: 7%;
+    width: clamp(380px, 46vw, 640px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.68;
+
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 82%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 82%, transparent 100%);
+
+    // Mobile: centred watermark in the lower half of the hero, above the fade overlay
+    @media (max-width: 991px) {
+      left: 50%;
+      bottom: auto;
+      top: 52%;
+      transform: translateX(-50%);
+      width: clamp(260px, 80vw, 360px);
+      opacity: 0.45;
+      z-index: 1;
+    }
+  }
+
+  // ── Convention atmosphere decorations ────────────────────────────────────────
+
+  &__bg-deco {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+  }
+
+  // Large ghosted kanji — convention vocabulary as subtle watermarks
+  // All positioned in the left half so they never overlap the events panel (right column)
+  &__bg-kanji {
+    position: absolute;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+
+    // 即売会 — "doujin fair/sales event" — large watermark behind the hero headline
+    &--1 {
+      font-size: clamp(6rem, 18vw, 15rem);
+      top: -5%;
+      left: -2%;
+      color: rgba(255, 255, 255, 0.025);
+    }
+
+    // 同人 — "doujin" — anchors the bottom-left
+    &--2 {
+      font-size: clamp(4rem, 11vw, 9rem);
+      bottom: 5%;
+      left: -1%;
+      color: rgba($dark-goldenrod, 0.055);
+    }
+
+    // コミケ — "Comiket" — left side, below the CTA area
+    &--3 {
+      font-size: clamp(2rem, 5vw, 4.2rem);
+      top: 58%;
+      left: 2%;
+      color: rgba(255, 255, 255, 0.04);
+      letter-spacing: 0.08em;
+    }
+  }
+
+  // Floating booth-code tags — evoke the numbered grid of a convention floor
+  // All kept within the left 48% so they stay clear of the events panel
+  &__bg-tag {
+    position: absolute;
+    font-size: 0.58rem;
+    font-weight: 700;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 0.14em;
+    padding: 0.16rem 0.42rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    color: rgba(255, 255, 255, 0.12);
+
+    &--1 { top:  8%;  left:  5%; }
+    &--2 { top: 18%;  left: 20%; }
+    &--3 { top: 30%;  left:  3%; }
+    &--4 { top: 45%;  left: 28%; }
+    &--5 { top: 70%;  left:  7%; }
+    &--6 { top: 78%;  left: 22%; }
+    &--7 { top: 88%;  left:  4%; }
+    &--8 { top: 12%;  left: 38%; }
+  }
+
+  @media (max-width: 767px) {
+    &__bg-tag       { display: none; }
+    &__bg-kanji--3  { display: none; }
+    &__speed-lines  { opacity: 0.5; }
   }
 
   // Decorative vertical accent lines (geometric / manga panel feel)
@@ -329,7 +449,7 @@ html {
   align-items: start;
 
   @media (min-width: 992px) {
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr 300px;
   }
 }
 
@@ -337,13 +457,148 @@ html {
   padding-top: 2rem;
 }
 
-// ── Upcoming events panel ─────────────────────────────────────────────────────
+// Right column wrapper — stacks image carousel above events panel
+.home-hero__right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0; // Prevent grid item from expanding beyond its allocated column track
 
-.home-events-panel {
   @media (min-width: 992px) {
     position: sticky;
     top: 5rem;
   }
+}
+
+// ── Circle-cut image cross-fade carousel ─────────────────────────────────────
+
+.home-circle-cuts {
+  // Desktop: stacked card carousel, one image at a time
+  @media (min-width: 992px) {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    flex-shrink: 0;
+  }
+
+  // Mobile: horizontal scroll strip showing all covers at once
+  @media (max-width: 991px) {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 0 0.75rem;
+    width: 100%;
+    min-width: 0;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+// Ghost cards (depth effect — only desktop)
+.home-circle-cuts__ghost {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  border: 1px solid rgba($dark-goldenrod, 0.28);
+  background: rgba(#ffffff, 0.03);
+  pointer-events: none;
+
+  &--back { transform: rotate(5.5deg)  translate(12px, 8px);  opacity: 0.45; }
+  &--mid  { transform: rotate(-3.5deg) translate(-9px, 5px); opacity: 0.65; }
+
+  @media (max-width: 991px) { display: none; }
+}
+
+// Individual cover cards
+.home-circle-cuts__card {
+  border-radius: 10px;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  // Desktop: absolute cross-fade animation
+  @media (min-width: 992px) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba($dark-goldenrod, 0.35);
+    animation: circle-cut-fade 27s infinite backwards;
+
+    // Stagger each of the 6 cards (children 3–8 after the 2 ghost divs)
+    &:nth-child(3) { animation-delay: 0s;    }
+    &:nth-child(4) { animation-delay: 4.5s;  }
+    &:nth-child(5) { animation-delay: 9s;    }
+    &:nth-child(6) { animation-delay: 13.5s; }
+    &:nth-child(7) { animation-delay: 18s;   }
+    &:nth-child(8) { animation-delay: 22.5s; }
+  }
+
+  // Mobile: static thumbnail in horizontal strip
+  @media (max-width: 991px) {
+    flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    border: 1px solid rgba($dark-goldenrod, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    // Alternate slight tilts for a scattered feel
+    &:nth-child(odd)  { transform: rotate(2deg);  }
+    &:nth-child(even) { transform: rotate(-2deg); }
+  }
+}
+
+// Booth-code label overlay (desktop only)
+.home-circle-cuts__label {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.12em;
+  color: rgba(#ffffff, 0.8);
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+
+  @media (max-width: 991px) { display: none; }
+}
+
+// Caption below the carousel stack (desktop only)
+.home-circle-cuts__caption {
+  position: absolute;
+  bottom: -1.6rem;
+  left: 0;
+  right: 0;
+  font-size: 0.6rem;
+  text-align: center;
+  color: rgba(#ffffff, 0.28);
+  letter-spacing: 0.07em;
+  pointer-events: none;
+
+  @media (max-width: 991px) { display: none; }
+}
+
+@keyframes circle-cut-fade {
+  0%     { opacity: 0; transform: scale(0.93); }
+  3.7%   { opacity: 1; transform: scale(1);    }
+  13%    { opacity: 1; transform: scale(1);    }
+  16.67% { opacity: 0; transform: scale(0.96); }
+  100%   { opacity: 0; transform: scale(0.96); }
+}
+
+// ── Upcoming events panel ─────────────────────────────────────────────────────
+
+.home-events-panel {
+  // Sticky positioning is now handled by .home-hero__right parent
 
   &__label {
     font-size: 0.72rem;
@@ -358,7 +613,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    max-height: 62vh;
+    max-height: 36vh;
     overflow-y: auto;
     padding-right: 0.25rem;
 
@@ -435,6 +690,7 @@ html {
 
 // ── Responsive tweaks ─────────────────────────────────────────────────────────
 
+// Tablet (≤991px): events panel flips to horizontal scroll
 @media (max-width: 991px) {
   .home-events-panel__scroll {
     max-height: none;
@@ -444,12 +700,8 @@ html {
     overflow-x: auto;
     overflow-y: visible;
     padding-bottom: 0.5rem;
-
-    // Firefox scrollbar
     scrollbar-width: thin;
     scrollbar-color: rgba($dark-goldenrod, 0.35) transparent;
-
-    // WebKit/Blink scrollbar
     &::-webkit-scrollbar { height: 3px; }
   }
 
@@ -460,19 +712,41 @@ html {
   }
 }
 
+// Mobile (≤767px): clean single-column layout
 @media (max-width: 767px) {
   .home-hero {
-    min-height: 85vh;
+    min-height: unset;
+    padding-bottom: 3rem;
   }
 
-  .home-hero__accent-line {
-    display: none;
-  }
+  .home-hero__accent-line { display: none; }
 
   .home-hero__inner {
-    padding-top: 3.5rem;
-    padding-bottom: 4rem;
+    padding-top: 3rem;
+    padding-bottom: 1.5rem;
+    gap: 2rem;
   }
+
+  // All decorative text/kanji hidden on mobile — keep it clean
+  .home-hero__bg-deco { display: none; }
+
+  // Right column: vertical stack, no sticky
+  .home-hero__right {
+    gap: 1.25rem;
+  }
+
+  // Image strip: compact, no caption
+  .home-circle-cuts {
+    padding-left: 0.25rem; // So the first card isn't edge-flush
+  }
+
+  // Events panel: horizontal strip, no max-height
+  .home-events-panel__scroll {
+    padding-bottom: 0.75rem;
+  }
+
+  // Scroll hint hidden on mobile (content is below the fold naturally)
+  .home-hero__scroll-hint { display: none !important; }
 
   .home-features {
     padding: 4rem 0 5rem;
