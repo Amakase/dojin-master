@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Dojin Master" %></title>
+    <title><%= content_for(:title) || "Dōjin Master" %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Dojin Master">
+    <meta name="application-name" content="Dōjin Master">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -15,9 +15,9 @@
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <%= favicon_link_tag %>
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <%# <link rel="icon" href="/icon.png" type="image/png"> %>
+    <%# <link rel="icon" href="/icon.svg" type="image/svg+xml"> %>
+    <%# <link rel="apple-touch-icon" href="/icon.png"> %>
     <link rel="manifest" href="<%= asset_path 'manifest.json' %>">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
