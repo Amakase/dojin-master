@@ -4,7 +4,8 @@
      data-map-editor-coords-value="<%= @existing_coords.to_json %>"
      data-map-editor-booth-spaces-value="<%= @booth_spaces.to_json %>"
      data-map-editor-save-url-value="<%= admin_event_map_editor_path(@event) %>"
-     data-map-editor-image-url-value="<%= @event.floor_plan.attached? ? url_for(@event.floor_plan) : '' %>">
+     data-map-editor-image-url-value="<%= @event.floor_plan.attached? ? url_for(@event.floor_plan) : '' %>"
+     data-map-editor-walls-value="<%= (@event.wall_rects || []).to_json %>">
 
   <%# Header %>
   <div class="d-flex align-items-center justify-content-between me-header">
@@ -90,6 +91,7 @@
     <div class="flex-grow-1">
       <div class="me-toolbar">
         <button class="btn-me-add" data-action="click->map-editor#addRect">+ Add Rect</button>
+        <button class="btn-me-wall" data-action="click->map-editor#drawWall">+ Draw Wall</button>
         <button class="btn-me-delete" data-action="click->map-editor#deleteSelected">Delete Selected</button>
         <button class="btn-me-reset" data-action="click->map-editor#resetZoom">Reset Zoom</button>
         <span class="me-toolbar__hint">Scroll or pinch to zoom · Alt + drag to pan</span>
@@ -103,5 +105,6 @@
       <% end %>
     </div>
   </div>
+
 
 </div>

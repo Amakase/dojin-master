@@ -1,5 +1,34 @@
-<%# Renders the event floor plan with favorited booths highlighted in their priority color.
-    Include this partial from favorites/index.html.erb once the teammate's branch is merged. %>
-<%= render "shared/event_map",
-      event: @event,
-      booth_space_priorities: @favorites.each_with_object({}) { |f, h| h[f.booth.booth_space] = f.priority } %>
+<%# Renders the event floor plan with favorited booths highlighted and a suggested route overlay. %>
+<% coords_json = @event.event_map_coordinates.each_with_object({}) { |c, h|
+     h[c.booth_space] = { cx: (c.x + c.width / 2).round(3), cy: (c.y + c.height / 2).round(3) }
+   }.to_json %>
+<% priorities_json = @map_priorities.compact.to_json %>
+
+<div data-controller="route-viewer"
+     data-route-viewer-coords-value="<%= coords_json %>"
+     data-route-viewer-priorities-value="<%= priorities_json %>"
+     data-route-viewer-image-url-value="<%= @event.floor_plan.attached? ? url_for(@event.floor_plan) : '' %>"
+     data-route-viewer-walls-value="<%= (@event.wall_rects || []).to_json %>">
+  <%= render "shared/event_map",
+        event: @event,
+        booth_space_priorities: @map_priorities,
+        show_route_layer: true %>
+  <%# Coordinate readout — hover over the map to see x/y values for defining wall_rects %>
+  <div data-route-viewer-target="coordDisplay"
+       style="display:none; font-family:monospace; font-size:0.75rem; color:#666; margin-top:2px; height:1rem;">
+  </div>
+  <div class="d-flex gap-2 mt-2">
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary"
+            data-route-viewer-target="generateBtn"
+            data-action="click->route-viewer#generate">
+      Suggest Route
+    </button>
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary d-none"
+            data-route-viewer-target="toggleBtn"
+            data-action="click->route-viewer#toggle">
+      Hide Route
+    </button>
+  </div>
+</div>

@@ -1,35 +1,49 @@
-<% @events.each_with_index do |event, index| %>
-  <div class="card-product mx-auto">
-    <% if user_signed_in? %>
-      <%= render "shared/bookmark_button", event: event, bookmarked_events_by_event_id: @bookmarked_events_by_event_id %>
-    <% end %>
-  <% if index == 0 || index == 1  %>
-    <% if event.image.attached? %>
-      <%= image_tag event.image,
-            alt: "Event Image",
-            class: "object-fit-contain border h-100",
-            width: 288
-      %>
-    <% else %>
-      <%= image_tag "default_event.jpg",
-            alt: "Default Image",
-            class: "object-fit-contain border h-100",
-            width: 228
-      %>
-    <% end %>
-  <% else %>
-    <img src='https://picsum.photos/id/<%= event.id * 4 %>/200' alt="<%= event.name %>" />
-  <% end %>
-
-    <div class="card-product-infos">
-      <%= link_to event_path(event.id), class: "text-decoration-none", data: { turbo_frame: "_top" } do %>
-        <div>
-          <h2 class="card-title text-black"><%= event.name %></h2>
-          <h3 class="card-title text-black"><i class="fa-solid fa-location-dot"></i><%= event.venue %></h3>
-          <p class="card-title text-black"><i class="fa-solid fa-calendar-day"></i> <%= event.dates %></p>
-          <p class="card-title text-black"><%= event.description %></p>
+<div class="events-index-list">
+  <% @events.each do |event| %>
+    <article class="event-item card-product">
+      <% if user_signed_in? %>
+        <div class="event-item__bookmark">
+          <%= render "shared/bookmark_button", event: event, bookmarked_events_by_event_id: @bookmarked_events_by_event_id %>
         </div>
       <% end %>
-    </div>
-  </div>
-<% end %>
+
+      <%= link_to event_path(event.id), class: "event-item__link text-decoration-none", data: { turbo_frame: "_top" } do %>
+        <div class="event-item__media">
+          <% if event.image.attached? %>
+            <%= image_tag event.image,
+                  alt: "#{event.name} image",
+                  class: "event-item__image object-fit-cover",
+                  width: 96,
+                  height: 96,
+                  loading: "lazy",
+                  decoding: "async" %>
+          <% else %>
+            <%= image_tag "default_event.jpg",
+                  alt: "Default event image",
+                  class: "event-item__image object-fit-cover",
+                  width: 96,
+                  height: 96,
+                  loading: "lazy",
+                  decoding: "async" %>
+          <% end %>
+        </div>
+
+        <div class="event-item__body">
+          <h2 class="event-item__title"><%= event.name %></h2>
+          <p class="event-item__venue">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <span><%= event.venue %></span>
+          </p>
+          <p class="event-item__description"><%= truncate(event.description.to_s, length: 92) %></p>
+        </div>
+
+        <div class="event-item__side">
+          <span class="event-item__date-badge">
+            <i class="fa-solid fa-calendar-day" aria-hidden="true"></i>
+            <span><%= event.dates %></span>
+          </span>
+        </div>
+      <% end %>
+    </article>
+  <% end %>
+</div>

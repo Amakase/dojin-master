@@ -37,6 +37,9 @@
                 height="<%= coord.height %>"
                 class="map-rect map-rect--<%= modifier %>" />
         <% end %>
+        <% if local_assigns[:show_route_layer] %>
+          <g data-route-viewer-target="routeLayer" style="display: none;"></g>
+        <% end %>
       </svg>
     </div>
     <button class="event-map-reset-btn"
