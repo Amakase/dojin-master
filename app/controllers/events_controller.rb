@@ -70,8 +70,7 @@ class EventsController < ApplicationController
     @booths_total_count = sorted_booths.size
     @unread_notifications_total = if user_signed_in?
                                     prioritized_booth_ids = current_user.favorites
-                                                                        .where.not(priority: nil)
-                                                                        .where(booth_id: booths_scope.select(:id))
+                                                                        .where(priority: 1..9, booth_id: event_booth_ids)
                                                                         .select(:booth_id)
 
                                     Notification.where(booth_id: prioritized_booth_ids, read: false).count
@@ -227,7 +226,7 @@ class EventsController < ApplicationController
 
     visible_favorites = @favorites_by_booth_id.slice(*visible_booth_ids)
     @prioritized_booth_ids = visible_favorites.each_with_object({}) do |(booth_id, favorite), prioritized|
-      prioritized[booth_id] = true if favorite.priority.present?
+      prioritized[booth_id] = true if favorite.priority.to_i.between?(1, 9)
     end
     @notification_counts = Notification
                            .where(booth_id: visible_booth_ids, read: false)
