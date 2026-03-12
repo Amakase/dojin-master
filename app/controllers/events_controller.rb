@@ -1,5 +1,6 @@
 class EventsController < ApplicationController
   ALL_LAYOUT_PAGE_SIZE = 75
+  FIXED_RECOMMENDED_CIRCLE_NAME = "Neotopia Sounds"
 
   def index
     @filter = params[:filter].presence
@@ -67,6 +68,16 @@ class EventsController < ApplicationController
 
     sorted_booths = sort_booths(booths_scope.load)
     @booths_total_count = sorted_booths.size
+    @unread_notifications_total = if user_signed_in?
+                                    prioritized_booth_ids = current_user.favorites
+                                                                        .where.not(priority: nil)
+                                                                        .where(booth_id: booths_scope.select(:id))
+                                                                        .select(:booth_id)
+
+                                    Notification.where(booth_id: prioritized_booth_ids, read: false).count
+                                  else
+                                    0
+                                  end
 
     if @layout_mode == "rows"
       prepare_row_layout(sorted_booths)
@@ -234,13 +245,20 @@ class EventsController < ApplicationController
     seen_ids = [].to_set
     random_row = -> { take_row_booths(all_booths.shuffle, fallback: all_booths, seen_ids: seen_ids) }
 
+    recommended_row_booths = if user_favorited_genres.any?
+                               take_row_booths(recommended_booths(all_booths, user_favorited_genres),
+                                               fallback: all_booths,
+                                               seen_ids: seen_ids)
+                             else
+                               random_row.call
+                             end
+
+    recommended_row_booths = with_fixed_recommended_booth(recommended_row_booths, all_booths, seen_ids)
+
     rows = []
+    rows << { title: "Recommended For You", booths: recommended_row_booths }
+
     if user_favorited_genres.any?
-      rows << {
-        title: "Recommended For You",
-        booths: take_row_booths(recommended_booths(all_booths, user_favorited_genres), fallback: all_booths,
-                                                                                       seen_ids: seen_ids)
-      }
       rows << {
         title: "Because You Favorited",
         booths: take_row_booths(similar_genre_booths(all_booths, user_favorited_genres, user_favorited_ids),
@@ -251,7 +269,6 @@ class EventsController < ApplicationController
         booths: take_row_booths(trending_booths(all_booths), fallback: all_booths, seen_ids: seen_ids)
       }
     else
-      rows << { title: "Recommended For You", booths: random_row.call }
       rows << { title: "Because You Favorited", booths: random_row.call }
       rows << { title: "Trending Now", booths: random_row.call }
     end
@@ -295,6 +312,16 @@ class EventsController < ApplicationController
                 ])
 
     rows
+  end
+
+  def with_fixed_recommended_booth(recommended_row_booths, all_booths, seen_ids)
+    fixed_booth = all_booths.find { |booth| booth.circle&.name == FIXED_RECOMMENDED_CIRCLE_NAME }
+    return recommended_row_booths unless fixed_booth
+
+    updated_booths = recommended_row_booths.reject { |booth| booth.id == fixed_booth.id }
+    updated_booths << fixed_booth
+    seen_ids.add(fixed_booth.id)
+    updated_booths
   end
 
   def take_row_booths(primary_pool, fallback:, seen_ids:, count: 20)
