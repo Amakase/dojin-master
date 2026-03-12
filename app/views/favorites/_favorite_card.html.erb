@@ -86,7 +86,7 @@
         input_html: {
           id: dom_id(favorite, :notes),
           class: "favorite-notes-input w-100",
-          data: { action: "input->notes#autoSaveType blur->notes#autoSaveBlur",
+          data: { action: "input->notes#autoSaveType blur->notes#autoSaveBlur keydown->notes#handleKeydown",
                   notes_target: "input" },
           "data-turbo-permanent": true }
         %>
