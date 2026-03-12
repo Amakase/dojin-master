@@ -294,7 +294,7 @@ class EventsController < ApplicationController
     favorites_digest = if user_signed_in?
                          digest_source = @favorites_by_booth_id.values
                                                                .sort_by(&:booth_id)
-                                                               .map { |favorite| "#{favorite.booth_id}:#{favorite.priority}:#{favorite.updated_at.to_i}" }
+                                                               .map { |favorite| "#{favorite.booth_id}:#{favorite.priority}:#{favorite.updated_at.to_f}" }
                                                                .join("|")
                          Digest::SHA256.hexdigest(digest_source)
                        else

@@ -29,7 +29,13 @@ export default class extends Controller {
     const formData = new FormData(this.formTarget)
     const query = (formData.get("query") || "").toString().trim()
 
-    if (query.length === 1) return
+      if (query.length === 1) {
+
+      this.abortController?.abort()
+      this.abortController = null
+      this.lastParams = null
+      return
+    }
 
     const params = new URLSearchParams(formData).toString()
     if (this.lastParams === params) return

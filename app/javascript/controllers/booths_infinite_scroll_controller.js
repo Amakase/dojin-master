@@ -36,20 +36,24 @@ export default class extends Controller {
     this.loading = true
     this.observer?.disconnect()
 
-    const response = await fetch(this.urlValue, {
-      headers: {
-        Accept: "text/vnd.turbo-stream.html, text/html, application/xhtml+xml",
-      },
-      credentials: "same-origin",
-    })
+    try {
+      const response = await fetch(this.urlValue, {
+        headers: {
+          Accept: "text/vnd.turbo-stream.html, text/html, application/xhtml+xml",
+        },
+        credentials: "same-origin",
+      })
 
-    if (!response.ok) {
-      this.loading = false
+      if (!response.ok) {
+        throw new Error(`Infinite scroll request failed with status ${response.status}`)
+      }
+
+      Turbo.renderStreamMessage(await response.text())
+    } catch (error) {
+      console.error(error)
       this.observe()
-      return
+    } finally {
+      this.loading = false
     }
-
-    Turbo.renderStreamMessage(await response.text())
-    this.loading = false
   }
 }
