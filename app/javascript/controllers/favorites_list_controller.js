@@ -67,7 +67,13 @@ export default class extends Controller {
   }
 
   sort() {
+    const seen = new Set()
     const cards = [...this.element.querySelectorAll("[data-favorites-list-target='card']")]
+      .filter(card => {
+        if (seen.has(card.id)) { card.remove(); return false }
+        seen.add(card.id)
+        return true
+      })
 
     cards.sort((a, b) => {
       const aVisited = a.querySelector("input[id^='visited_favorite_']")?.checked ? 1 : 0

@@ -1,7 +1,8 @@
 <% booth = favorite.booth %>
 <% circle = favorite.booth.circle %>
 
-<div class="favorite-card-category d-flex flex-column mb-2 rounded-5"
+<div id="favorite-card-booth-<%= booth.id %>"
+     class="favorite-card-category d-flex flex-column mb-2 rounded-5"
      data-favorites-list-target="card"
      data-name-reading="<%= circle.name_reading %>"
      data-booth-space="<%= booth.booth_space %>">
