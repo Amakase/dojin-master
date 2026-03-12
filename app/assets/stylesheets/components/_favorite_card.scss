@@ -5,10 +5,10 @@
 }
 
 .favorite-card-category {
-  background: linear-gradient(180deg, #3B3F4A 0%, #242731 100%);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
   color: #ffffff;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   width: 100%;
   // overflow: hidden;
@@ -20,8 +20,8 @@
     border-radius: inherit;
     pointer-events: none;
     background:
-      linear-gradient(180deg, rgba(80, 110, 255, 0.07), rgba(80, 110, 255, 0) 40%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 50%);
+      linear-gradient(180deg, rgba(80, 110, 255, 0.09), rgba(80, 110, 255, 0) 40%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 50%);
   }
 }
 

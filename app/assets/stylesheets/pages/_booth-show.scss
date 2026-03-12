@@ -76,21 +76,29 @@
 // ── Booth Show — Info Hero ────────────────────────────────────────────────────
 
 .booth-info-card {
-  background: $custom-card-bg;
-  border: 1px solid rgba($deep-navy, 0.12);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.25rem;
-  box-shadow:
-    0 10px 20px rgba(9, 11, 36, 0.12),
-    0 4px 10px rgba(9, 11, 36, 0.08);
-  // temporary fix to the priority dropdown overflow issue
-  // overflow: hidden;
-  color: $deep-navy;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(80, 110, 255, 0.09), rgba(80, 110, 255, 0) 40%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 50%);
+  }
 }
 
 .booth-circle-name {
   font-size: clamp(1.4rem, 3vw, 2rem);
   font-weight: 700;
-  color: $deep-navy;
+  color: #ffffff;
   line-height: 1.2;
 }
 
@@ -98,25 +106,25 @@
   width: 180px;
   height: 256px;
   object-fit: contain;
-  border: 1px solid rgba($deep-navy, 0.15);
-  background: rgba($deep-navy, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .booth-badge {
   display: inline-flex;
   align-items: center;
   padding: 0.3rem 0.75rem;
-  background: rgba($dark-goldenrod, 0.18);
-  border: 1px solid rgba($dark-goldenrod, 0.45);
+  background: rgba($dark-goldenrod, 0.2);
+  border: 1px solid rgba($dark-goldenrod, 0.5);
   border-radius: 999px;
   font-size: 0.8rem;
-  color: darken($dark-goldenrod, 8%);
+  color: lighten($dark-goldenrod, 10%);
   font-weight: 500;
 }
 
 .booth-description {
   font-size: 0.9rem;
-  color: rgba($deep-navy, 0.65);
+  color: rgba(255, 255, 255, 0.78);
   line-height: 1.6;
 }
 
@@ -126,23 +134,23 @@
 
 .booth-meta-text {
   font-size: 0.82rem;
-  color: rgba($deep-navy, 0.5);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .booth-notes {
   font-size: 0.82rem;
-  color: rgba($deep-navy, 0.6);
+  color: rgba(255, 255, 255, 0.72);
   text-align: center;
   max-width: 160px;
   line-height: 1.5;
 }
 
 .booth-info-sidebar {
-  border-top: 1px solid rgba($deep-navy, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
 
   @media (min-width: 768px) {
     border-top: none;
-    border-left: 1px solid rgba($deep-navy, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.14);
     min-width: 160px;
   }
 }
@@ -180,22 +188,33 @@
 // ── Panel Cards (notifications, works, inventory) ─────────────────────────────
 
 .booth-panel-card {
-  background: $custom-card-bg;
-  border: 1px solid rgba($deep-navy, 0.12);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.4rem;
   padding: 1rem 1.25rem;
-  color: $deep-navy;
-  box-shadow:
-    0 10px 20px rgba(9, 11, 36, 0.12),
-    0 4px 10px rgba(9, 11, 36, 0.08);
-  transition: transform 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(80, 110, 255, 0.09), rgba(80, 110, 255, 0) 40%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 50%);
+  }
 
   &:hover {
-    background-color: $custom-card-bg-hover;
+    background: linear-gradient(180deg, #525769 0%, #3C4058 100%);
     transform: translateY(-4px);
+    border-color: rgba(192, 138, 51, 0.5);
     box-shadow:
-      0 16px 30px rgba(9, 11, 36, 0.16),
-      0 8px 16px rgba(9, 11, 36, 0.1);
+      0 24px 40px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(192, 138, 51, 0.4);
   }
 }
 
@@ -210,7 +229,7 @@
   background: rgba($dark-goldenrod, 0.18);
   border: 1px solid rgba($dark-goldenrod, 0.4);
   border-radius: 50%;
-  color: darken($dark-goldenrod, 10%);
+  color: lighten($dark-goldenrod, 10%);
 }
 
 // ── Inventory icon ────────────────────────────────────────────────────────────
@@ -224,7 +243,28 @@
   background: rgba($green, 0.15);
   border: 1px solid rgba($green, 0.3);
   border-radius: 50%;
-  color: darken($green, 15%);
+  color: $green;
+}
+
+// ── Notification "View" link button ──────────────────────────────────────────
+
+.booth-view-btn {
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.8rem;
+
+  &:hover {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.14);
+  }
+}
+
+// ── Limit warning (booth works) ───────────────────────────────────────────────
+
+.booth-panel-card .text-danger {
+  color: #ff7070 !important;
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────
@@ -235,9 +275,9 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 1rem;
-  background: $custom-card-bg;
-  border: 1px solid rgba($deep-navy, 0.12);
+  background: linear-gradient(180deg, #474C59 0%, #303447 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.4rem;
-  color: rgba($deep-navy, 0.45);
+  color: rgba(255, 255, 255, 0.55);
   text-align: center;
 }

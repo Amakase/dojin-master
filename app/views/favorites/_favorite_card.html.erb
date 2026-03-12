@@ -3,7 +3,8 @@
 
 <div class="favorite-card-category d-flex flex-column mb-2 rounded-5"
      data-favorites-list-target="card"
-     data-name-reading="<%= circle.name_reading %>">
+     data-name-reading="<%= circle.name_reading %>"
+     data-booth-space="<%= booth.booth_space %>">
 
   <%# === Main info row === %>
   <div class="d-flex align-items-center ps-1 pt-2 pb-1 pe-3">
@@ -85,7 +86,7 @@
         input_html: {
           id: dom_id(favorite, :notes),
           class: "favorite-notes-input w-100",
-          data: { action: "input->notes#autoSaveType blur->notes#autoSaveBlur",
+          data: { action: "input->notes#autoSaveType blur->notes#autoSaveBlur keydown->notes#handleKeydown",
                   notes_target: "input" },
           "data-turbo-permanent": true }
         %>
@@ -101,9 +102,9 @@
         <i class="fa-solid fa-box-archive"></i>
       <% end %>
       <%# TODO: replace "#" with the map link once map functionality is implemented %>
-      <%= link_to "#", class: "favorite-tab-link", title: "Map", data: { turbo: false } do %>
-        <i class="fa-solid fa-map"></i>
-      <% end %>
+      <%# <%= link_to "#", class: "favorite-tab-link", title: "Map", data: { turbo: false } do %>
+        <%# <i class="fa-solid fa-map"></i> %>
+      <%# <% end %>
     </div>
   </div>
 

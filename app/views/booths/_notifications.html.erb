@@ -16,7 +16,7 @@
                 <p class="mt-1 mb-0 booth-description booth-description-white-space-pre"><%= notification.content %></p>
               <% end %>
               <% if notification.url.present? %>
-                <%= link_to notification.url, target: "_blank", rel: "noopener", class: "btn btn-sm btn-outline-secondary mt-2" do %>
+                <%= link_to notification.url, target: "_blank", rel: "noopener", class: "btn btn-sm booth-view-btn mt-2" do %>
                   <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>View
                 <% end %>
               <% end %>

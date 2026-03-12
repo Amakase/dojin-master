@@ -3,10 +3,11 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   // Data passed from the view via data-map-editor-*-value attributes
   static values = {
-    coords: Array,       // existing saved coordinates (percentages)
+    coords: Array,       // existing saved booth coordinates (percentages)
     boothSpaces: Array,  // all booth_spaces for this event (from Booth records)
     saveUrl: String,     // PATCH endpoint for saving coordinates
-    imageUrl: String     // URL of the floor plan image
+    imageUrl: String,    // URL of the floor plan image
+    walls: Array         // existing wall_rects [{x,y,w,h}] for route obstacle avoidance
   }
 
   // Stimulus targets used by the section placement panel
@@ -198,7 +199,7 @@ export default class extends Controller {
   }
 
   async save() {
-    // Serialize all labeled canvas objects to percentage-based coordinate objects.
+    // Serialize booth rects (have boothSpace) to percentage-based coordinate objects.
     // Percentages are used so coordinates survive floor plan image rescaling —
     // if the image is swapped for a higher-resolution version the rects stay in place.
     const coords = this.canvas.getObjects().filter(obj => obj.boothSpace).map(obj => ({
@@ -211,14 +212,22 @@ export default class extends Controller {
       height: (obj.height * obj.scaleY / this.canvas.height) * 100
     }))
 
-    // PATCH the full coordinate set — server replaces all existing records for this event
+    // Serialize wall rects (have wallRect: true) — used by the route planner as obstacles.
+    const wallRects = this.canvas.getObjects().filter(obj => obj.wallRect).map(obj => ({
+      x: (obj.left / this.canvas.width) * 100,
+      y: (obj.top / this.canvas.height) * 100,
+      w: (obj.width  * obj.scaleX / this.canvas.width)  * 100,
+      h: (obj.height * obj.scaleY / this.canvas.height) * 100
+    }))
+
+    // PATCH the full coordinate set and wall rects — server replaces all existing records
     const response = await fetch(this.saveUrlValue, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
       },
-      body: JSON.stringify({ coordinates: coords })
+      body: JSON.stringify({ coordinates: coords, wall_rects: wallRects })
     })
 
     const status = this.element.querySelector("[data-map-editor-status]")
@@ -337,6 +346,70 @@ export default class extends Controller {
     this.canvas.on("mouse:down", this._onMouseDown)
     this.canvas.on("mouse:move", this._onMouseMove)
     this.canvas.on("mouse:up", this._onMouseUp)
+  }
+
+  // Enters draw mode for a wall rect (route obstacle). Same drag-to-draw pattern as
+  // addRect() but uses a red dashed style and sets obj.wallRect = true instead of boothSpace.
+  // Wall rects are saved to event.wall_rects and used by the route planner's A* grid.
+  drawWall() {
+    // Toggle: clicking while already drawing cancels
+    if (this.isDrawing) { this.cancelDrawing(); return }
+
+    this.isDrawing = true
+    const { Rect } = this.fabricClasses
+
+    this.canvas.isDrawingMode = false
+    this.canvas.defaultCursor = "crosshair"
+    this.canvas.hoverCursor = "crosshair"
+
+    let startX, startY, drawingRect
+
+    this._onMouseDown = (opt) => {
+      if (opt.e.altKey) return
+      const pointer = this.canvas.getScenePoint(opt.e)
+      startX = pointer.x
+      startY = pointer.y
+      drawingRect = new Rect({
+        left: startX, top: startY, width: 0, height: 0,
+        fill: "rgba(220,50,50,0.2)",
+        stroke: "#dc3232",
+        strokeWidth: 1,
+        strokeDashArray: [4, 3]
+      })
+      this.canvas.add(drawingRect)
+    }
+
+    this._onMouseMove = (opt) => {
+      if (!drawingRect) return
+      const pointer = this.canvas.getScenePoint(opt.e)
+      drawingRect.set({
+        width:  Math.abs(pointer.x - startX),
+        height: Math.abs(pointer.y - startY),
+        left:   Math.min(pointer.x, startX),
+        top:    Math.min(pointer.y, startY)
+      })
+      this.canvas.renderAll()
+    }
+
+    this._onMouseUp = () => {
+      if (!drawingRect) return
+      const rect = drawingRect
+      drawingRect = null
+      this.cancelDrawing()
+      // Ignore accidental tiny clicks
+      if (rect.width < 3 || rect.height < 3) {
+        this.canvas.remove(rect)
+        this.canvas.renderAll()
+        return
+      }
+      rect.wallRect = true
+      this.canvas.setActiveObject(rect)
+      this.canvas.renderAll()
+    }
+
+    this.canvas.on("mouse:down", this._onMouseDown)
+    this.canvas.on("mouse:move", this._onMouseMove)
+    this.canvas.on("mouse:up",   this._onMouseUp)
   }
 
   // ── Section Placement ─────────────────────────────────────────────────────
@@ -796,16 +869,31 @@ export default class extends Controller {
     // canvas.width/height converts the 0–100 range back to pixel positions.
     this.coordsValue.forEach(coord => {
       const rect = new Rect({
-        left: (coord.x / 100) * this.canvas.width,
-        top:  (coord.y / 100) * this.canvas.height,
-        width: (coord.width  / 100) * this.canvas.width,
+        left:   (coord.x      / 100) * this.canvas.width,
+        top:    (coord.y      / 100) * this.canvas.height,
+        width:  (coord.width  / 100) * this.canvas.width,
         height: (coord.height / 100) * this.canvas.height,
         fill: "rgba(255,200,0,0.3)",
         stroke: "gold",
         strokeWidth: 1
       })
       rect.boothSpace = coord.booth_space
+      this.canvas.add(rect)
+    })
 
+    // Render existing wall rects in red/dashed so they're visually distinct from booth rects.
+    this.wallsValue.forEach(wall => {
+      const rect = new Rect({
+        left:   (wall.x / 100) * this.canvas.width,
+        top:    (wall.y / 100) * this.canvas.height,
+        width:  (wall.w / 100) * this.canvas.width,
+        height: (wall.h / 100) * this.canvas.height,
+        fill: "rgba(220,50,50,0.2)",
+        stroke: "#dc3232",
+        strokeWidth: 1,
+        strokeDashArray: [4, 3]
+      })
+      rect.wallRect = true
       this.canvas.add(rect)
     })
 
