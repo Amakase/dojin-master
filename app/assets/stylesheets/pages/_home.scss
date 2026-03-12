@@ -362,10 +362,16 @@ html {
     overflow-y: auto;
     padding-right: 0.25rem;
 
+    // Firefox scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: rgba($dark-goldenrod, 0.35) transparent;
+
+    // WebKit/Blink scrollbar
     &::-webkit-scrollbar        { width: 3px; }
     &::-webkit-scrollbar-track  { background: transparent; }
     &::-webkit-scrollbar-thumb  { background: rgba($dark-goldenrod, 0.35); border-radius: 2px; }
 
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   }
 }
@@ -439,6 +445,11 @@ html {
     overflow-y: visible;
     padding-bottom: 0.5rem;
 
+    // Firefox scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: rgba($dark-goldenrod, 0.35) transparent;
+
+    // WebKit/Blink scrollbar
     &::-webkit-scrollbar { height: 3px; }
   }
 
