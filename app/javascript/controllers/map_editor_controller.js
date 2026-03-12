@@ -555,20 +555,23 @@ export default class extends Controller {
       height: (boundaryRect.height * (boundaryRect.scaleY || 1) / H) * 100
     }
     const anchor = {
-      x:      (anchorObj.left                            / W) * 100,
-      y:      (anchorObj.top                             / H) * 100,
-      width:  (anchorObj.width  * (anchorObj.scaleX || 1) / W) * 100,
-      height: (anchorObj.height * (anchorObj.scaleY || 1) / H) * 100
+      x:          (anchorObj.left                            / W) * 100,
+      y:          (anchorObj.top                             / H) * 100,
+      width:      (anchorObj.width  * (anchorObj.scaleX || 1) / W) * 100,
+      height:     (anchorObj.height * (anchorObj.scaleY || 1) / H) * 100,
+      boothSpace: anchorObj.boothSpace
     }
 
     // Remove the boundary rect — it was only for visual feedback while drawing
     this.canvas.remove(boundaryRect)
 
-    // Read range inputs
-    const rangeStart = parseInt(this.hasSectionRangeStartTarget
+    // Read range inputs — normalise so rangeStart ≤ rangeEnd regardless of how the user entered them
+    const rangeStartRaw = parseInt(this.hasSectionRangeStartTarget
       ? this.sectionRangeStartTarget.value : "1", 10) || 1
-    const rangeEnd   = parseInt(this.hasSectionRangeEndTarget
-      ? this.sectionRangeEndTarget.value   : rangeStart.toString(), 10) || rangeStart
+    const rangeEndRaw   = parseInt(this.hasSectionRangeEndTarget
+      ? this.sectionRangeEndTarget.value   : rangeStartRaw.toString(), 10) || rangeStartRaw
+    const rangeStart = Math.min(rangeStartRaw, rangeEndRaw)
+    const rangeEnd   = Math.max(rangeStartRaw, rangeEndRaw)
 
     // Derive the section prefix from the anchor booth space (everything before the first "-").
     // e.g. anchor "あ-01a" → prefix "あ", so we only place booths in section "あ".
@@ -654,6 +657,8 @@ export default class extends Controller {
     const N = sortedNums.length
     if (N === 0) return []
 
+    const anchorNum = parseInt((anchor.boothSpace ?? "").match(/-(\d+)/)?.[1] ?? "0", 10)
+
     // Detect horizontal direction: if the anchor's center is right of the section midpoint,
     // numbers increase going left (RTL, like あ which has 01 at the far right).
     const anchorMidX = anchor.x + anchor.width / 2
@@ -664,57 +669,85 @@ export default class extends Controller {
     if (layout === "side-by-side") {
       // Each number occupies one "pair column" spanning the full section height.
       // Within each pair column the a and b booths sit side by side horizontally.
-      const colWidth   = sectionRect.width / N
-      const boothWidth = colWidth / 2
+      const colWidth    = sectionRect.width / N
       const boothHeight = sectionRect.height
 
-      // Determine which half of the pair column "a" occupies by comparing the anchor
-      // rect's left edge to the midpoint of its own column.
-      // anchorColStartX is where the anchor's column begins (in percentage coords).
-      const anchorColStartX = isRTL
-        ? sectionRect.x + (N - 1) * colWidth   // RTL: anchor's column is the rightmost
-        : sectionRect.x                          // LTR: anchor's column is the leftmost
-      const isARight = (anchor.x - anchorColStartX) > colWidth / 2
+      // directedNums[0] is always the number closest to the anchor.
+      // Use distance comparison rather than a simple ">" check so it also handles the case
+      // where the anchor's partner half (e.g. B-15b) is still unplaced — in that case
+      // anchorNum === sortedNums[last] and ">" would wrongly not reverse.
+      // sortedNums itself is left ascending so the stacked branch below is unaffected.
+      const distToLow  = Math.abs(anchorNum - sortedNums[0])
+      const distToHigh = Math.abs(anchorNum - sortedNums[N - 1])
+      const directedNums = distToHigh < distToLow ? [...sortedNums].reverse() : sortedNums
 
-      sortedNums.forEach((num, stepIdx) => {
+      // anchorInSection: true when the anchor's own number is still in the layout
+      // (its partner half is being placed now). The anchor's column is then the first
+      // column INSIDE sectionRect; otherwise the anchor sits one column beyond the edge.
+      const anchorInSection = directedNums[0] === anchorNum
+      const anchorColStartX = isRTL
+        ? anchorInSection
+          ? sectionRect.x + (N - 1) * colWidth   // anchor's col = rightmost inside section
+          : sectionRect.x + N * colWidth          // anchor is one column past the right edge
+        : anchorInSection
+          ? sectionRect.x                         // anchor's col = leftmost inside section
+          : sectionRect.x - colWidth              // anchor is one column before the left edge
+      const isARight = (anchor.x - anchorColStartX) >= colWidth / 2
+
+      directedNums.forEach((num, stepIdx) => {
         // stepIdx = 0 is the anchor's number; stepIdx grows with num.
         // colFromLeft translates stepIdx to a physical column index counting from the left
         // edge of the section, accounting for RTL reversal.
         const colFromLeft = isRTL ? (N - 1 - stepIdx) : stepIdx
         const colStartX   = sectionRect.x + colFromLeft * colWidth
 
-        for (const { boothSpace, row } of byNum.get(num)) {
-          if (row === "ab") {
-            // Combined booth spans the full pair column
-            results.push({ boothSpace, x: colStartX, y: sectionRect.y, width: colWidth, height: boothHeight })
-          } else if (row === "a" || row === "") {
-            const x = isARight ? colStartX + boothWidth : colStartX
-            results.push({ boothSpace, x, y: sectionRect.y, width: boothWidth, height: boothHeight })
-          } else if (row === "b") {
-            // b is always opposite to a within the pair column
-            const x = isARight ? colStartX : colStartX + boothWidth
-            results.push({ boothSpace, x, y: sectionRect.y, width: boothWidth, height: boothHeight })
-          }
+        const entries = byNum.get(num)
+        const combined = entries.find(e => e.row === "ab")
+        if (combined) {
+          // "ab" spans the full pair column
+          results.push({ boothSpace: combined.boothSpace, x: colStartX, y: sectionRect.y, width: colWidth, height: boothHeight })
+        } else {
+          // Sort variants alphabetically ("" normalised to "a" so it sorts first)
+          const sorted = entries.slice().sort((ea, eb) => {
+            const ra = ea.row === "" ? "a" : ea.row
+            const rb = eb.row === "" ? "a" : eb.row
+            return ra.localeCompare(rb)
+          })
+          const vCount = sorted.length
+          const vWidth = colWidth / vCount
+          sorted.forEach((entry, vi) => {
+            // isARight=true → first variant (a/x) is rightmost; false → leftmost
+            const vFromLeft = isARight ? (vCount - 1 - vi) : vi
+            results.push({
+              boothSpace: entry.boothSpace,
+              x:      colStartX + vFromLeft * vWidth,
+              y:      sectionRect.y,
+              width:  vWidth,
+              height: boothHeight
+            })
+          })
         }
       })
     } else {
       // Stacked: every booth gets its own full-width row — pure vertical stack.
       // No side-by-side splitting at all; a and b are also stacked on top of each other.
-      // Numbers run top-to-bottom or bottom-to-top based on anchor y position.
+      // Numbers run top-to-bottom (stacked-ttb) or bottom-to-top (stacked-btt)
+      // based on the explicit layout button the user selected — no geometric detection.
       // Within each number: a (or "") always precedes b.
       // "ab" combined booths span double the slot height (they replace both a and b).
 
-      const anchorMidY = anchor.y + anchor.height / 2
-      const isBTT = anchorMidY > sectionRect.y + sectionRect.height / 2
+      const isBTT = layout === "stacked-btt"
 
       // Build a flat ordered list: numbers in direction order, a before b within each number
       const numsInOrder = isBTT ? [...sortedNums].reverse() : sortedNums
       const orderedBooths = []
       for (const num of numsInOrder) {
-        const entries = byNum.get(num).slice().sort((x, y) => {
-          // "a"/"" → 0, "b" → 1, "ab" → 2
-          const rank = r => (r === "a" || r === "") ? 0 : r === "b" ? 1 : 2
-          return rank(x.row) - rank(y.row)
+        const entries = byNum.get(num).slice().sort((ea, eb) => {
+          const ra = ea.row === "" ? "a" : ea.row
+          const rb = eb.row === "" ? "a" : eb.row
+          if (ra === "ab") return 1   // "ab" combined always last
+          if (rb === "ab") return -1
+          return isBTT ? rb.localeCompare(ra) : ra.localeCompare(rb) // reversed for btt
         })
         orderedBooths.push(...entries)
       }
