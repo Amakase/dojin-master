@@ -24,9 +24,11 @@
         <h1 class="booth-circle-name mb-2"><%= circle.name %></h1>
 
         <div class="d-flex flex-wrap gap-2 mb-3">
+          <% if !booth.event.single_day? %>
           <span class="booth-badge">
             <i class="fa-solid fa-calendar-day me-1"></i>Day <%= booth.day_number %>
           </span>
+          <% end %>
           <span class="booth-badge">
             <i class="fa-solid fa-location-dot me-1"></i><%= booth.booth_space %>
           </span>
@@ -35,9 +37,6 @@
               <i class="fa-solid fa-tag me-1"></i><%= booth.genre %>
             </span>
           <% end %>
-          <span class="booth-badge">
-            <i class="fa-regular fa-calendar me-1"></i><%= booth.booth_day.strftime("%b %-d, %Y") %>
-          </span>
         </div>
 
         <% if booth.description.present? %>
