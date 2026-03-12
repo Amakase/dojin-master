@@ -5,41 +5,77 @@
   <div class="home-hero__accent-line home-hero__accent-line--right"></div>
 
   <div class="container home-hero__inner">
-    <p class="home-hero__eyebrow d-flex align-items-center gap-3">
-      <span class="home-hero__eyebrow-jp">同人マスター</span>
-      <span class="home-hero__eyebrow-divider">|</span>
-      <span class="home-hero__eyebrow-en">Dōjin Master</span>
-    </p>
 
-    <h1 class="home-hero__title">
-      Plan your <span class="home-hero__title-accent">perfect</span><br>
-      convention experience.
-    </h1>
+    <%# ── Left: hero copy ──────────────────────────────────────────────── %>
+    <div class="home-hero__content">
+      <p class="home-hero__eyebrow d-flex align-items-center gap-3">
+        <span class="home-hero__eyebrow-jp">同人マスター</span>
+        <span class="home-hero__eyebrow-divider">|</span>
+        <span class="home-hero__eyebrow-en">Dōjin Master</span>
+      </p>
 
-    <p class="home-hero__subtitle">
-      Track your favorite booths, prioritize what matters, and never miss a circle again —
-      built for dōjin fans who show up prepared.
-    </p>
+      <h1 class="home-hero__title">
+        Plan your <span class="home-hero__title-accent">perfect</span><br>
+        convention experience.
+      </h1>
 
-    <div class="home-hero__cta d-flex flex-wrap gap-3 align-items-center">
-      <% if user_signed_in? %>
-        <%= link_to events_path, class: "btn home-hero__btn-primary text-decoration-none" do %>
-          <i class="fa-solid fa-calendar-days me-2"></i>Browse Events
+      <p class="home-hero__subtitle">
+        Track your favorite booths, prioritize what matters, and never miss a circle again —
+        built for dōjin fans who show up prepared.
+      </p>
+
+      <div class="home-hero__cta d-flex flex-wrap gap-3 align-items-center">
+        <% if user_signed_in? %>
+          <%= link_to events_path, class: "btn home-hero__btn-primary text-decoration-none" do %>
+            <i class="fa-solid fa-calendar-days me-2"></i>Browse Events
+          <% end %>
+        <% else %>
+          <%= link_to new_user_registration_path, class: "btn home-hero__btn-primary text-decoration-none" do %>
+            <i class="fa-solid fa-rocket me-2"></i>Get Started
+          <% end %>
+          <%= link_to new_user_session_path, class: "btn home-hero__btn-ghost text-decoration-none" do %>
+            Sign In
+          <% end %>
         <% end %>
-      <% else %>
-        <%= link_to new_user_registration_path, class: "btn home-hero__btn-primary text-decoration-none" do %>
-          <i class="fa-solid fa-rocket me-2"></i>Get Started
-        <% end %>
-        <%= link_to new_user_session_path, class: "btn home-hero__btn-ghost text-decoration-none" do %>
-          Sign In
-        <% end %>
-      <% end %>
+      </div>
     </div>
 
-    <a href="#home-features" class="home-hero__scroll-hint d-flex flex-column align-items-center gap-2" aria-label="Scroll to features">
-      <i class="fa-solid fa-chevron-down"></i>
-    </a>
+    <%# ── Right: upcoming events panel ────────────────────────────────── %>
+    <% if @upcoming_events.any? %>
+      <aside class="home-events-panel" aria-label="Upcoming events">
+        <p class="home-events-panel__label">
+          <i class="fa-solid fa-calendar-days me-2"></i>Upcoming Events
+        </p>
+
+        <div class="home-events-panel__scroll">
+          <% @upcoming_events.each do |event| %>
+            <div class="home-event-card">
+              <div class="home-event-card__dates">
+                <i class="fa-solid fa-calendar-day"></i>
+                <%= event.dates %>
+              </div>
+              <h3 class="home-event-card__name"><%= event.name %></h3>
+              <p class="home-event-card__venue">
+                <i class="fa-solid fa-location-dot me-1"></i><%= event.venue %>
+              </p>
+              <% if user_signed_in? %>
+                <%= link_to event_path(event), class: "home-event-card__link stretched-link",
+                      data: { turbo_frame: "_top" }, aria: { label: "View #{event.name}" } do %>
+                  View <i class="fa-solid fa-arrow-right ms-1"></i>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </aside>
+    <% end %>
+
   </div>
+
+  <a href="#home-features" class="home-hero__scroll-hint d-flex flex-column align-items-center gap-2"
+     aria-label="Scroll to features">
+    <i class="fa-solid fa-chevron-down"></i>
+  </a>
 </section>
 
 <%# ─── Features ──────────────────────────────────────────────────────────── %>
@@ -51,7 +87,7 @@
     <p class="home-features__description">
       Dōjin (同人) are self-published works, including manga, novels, art books, and games that are created
       and sold by independent artists and circles at events like Comic Market. Dōjin Master helps you
-      plan every visit so you never leave a favorite circle’s table empty-handed.
+      plan every visit so you never leave a favorite circle's table empty-handed.
     </p>
 
     <div class="row g-4 mt-2">
