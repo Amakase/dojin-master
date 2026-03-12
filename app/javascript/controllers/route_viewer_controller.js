@@ -22,12 +22,7 @@ import { Controller } from "@hotwired/stimulus"
 // favorites_list_controller) so the route redraws when a booth is marked visited.
 
 const GRID_SIZE = 300
-const SEGMENT_COLORS = [
-  'rgba(255,80,80,0.9)',
-  'rgba(255,180,0,0.9)',
-  'rgba(0,160,255,0.9)',
-  'rgba(80,200,80,0.9)',
-]
+const ROUTE_COLOR = 'rgba(255,148,74,0.9)'
 
 export default class extends Controller {
   // coords:     { "A1": { cx: 25.0, cy: 30.0 }, ... }  — center of each booth rect
@@ -229,6 +224,7 @@ export default class extends Controller {
     // Build: region → priority → [stops]
     const regionTiers = {}
     for (const [boothSpace, priority] of Object.entries(this.prioritiesValue)) {
+      if (priority !== 1) continue
       if (!this.coordsValue[boothSpace]) continue
       if (visitedBoothSpaces.has(boothSpace)) continue
       const stop = { boothSpace, ...this.coordsValue[boothSpace] }
@@ -484,23 +480,35 @@ export default class extends Controller {
     const ns = "http://www.w3.org/2000/svg"
 
     segments.forEach((seg, segIdx) => {
-      const color = SEGMENT_COLORS[segIdx % SEGMENT_COLORS.length]
-
       // Dashed polyline
       const polyline = document.createElementNS(ns, "polyline")
       polyline.setAttribute("points", seg.polyline.map(p => `${p.x},${p.y}`).join(" "))
       polyline.setAttribute("class", "route-line")
-      polyline.style.stroke = color
+      polyline.style.stroke = ROUTE_COLOR
       layer.appendChild(polyline)
 
       // Numbered waypoint markers (restart at 1 per segment)
       seg.stops.forEach((stop, i) => {
+        const isStart = segIdx === 0 && i === 0
+
+        // First stop: outer concentric ring marks it as the starting point
+        if (isStart) {
+          const ring = document.createElementNS(ns, "circle")
+          ring.setAttribute("cx", stop.cx)
+          ring.setAttribute("cy", stop.cy)
+          ring.setAttribute("r", "1.6")
+          ring.setAttribute("fill", "none")
+          ring.setAttribute("stroke", ROUTE_COLOR)
+          ring.setAttribute("stroke-width", "0.25")
+          layer.appendChild(ring)
+        }
+
         const circle = document.createElementNS(ns, "circle")
         circle.setAttribute("cx", stop.cx)
         circle.setAttribute("cy", stop.cy)
-        circle.setAttribute("r", "0.8")
+        circle.setAttribute("r", isStart ? "0.9" : "0.8")
         circle.setAttribute("class", "route-waypoint")
-        circle.style.fill = color
+        circle.style.fill = ROUTE_COLOR
         layer.appendChild(circle)
 
         const text = document.createElementNS(ns, "text")
