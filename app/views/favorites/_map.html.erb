@@ -12,7 +12,8 @@
   <%= render "shared/event_map",
         event: @event,
         booth_space_priorities: @map_priorities,
-        show_route_layer: true %>
+        show_route_layer: true,
+        min_scale: 1 %>
   <%# Coordinate readout — hover over the map to see x/y values for defining wall_rects %>
   <div data-route-viewer-target="coordDisplay"
        style="display:none; font-family:monospace; font-size:0.75rem; color:#666; margin-top:2px; height:1rem;">

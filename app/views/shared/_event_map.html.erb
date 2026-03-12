@@ -13,7 +13,8 @@
       .event-map-wrapper is the CSS-transformed layer (translate + scale).
       transform-origin: 0 0 means all transforms are anchored to the top-left corner,
       which is required for the zoom-toward-cursor math in map_viewer_controller.js. %>
-  <div class="event-map-viewport" data-controller="map-viewer">
+  <div class="event-map-viewport" data-controller="map-viewer"
+       data-map-viewer-min-scale-value="<%= local_assigns.fetch(:min_scale, 0.3) %>">
     <div class="event-map-wrapper" data-map-viewer-target="content"
          style="position: relative; display: inline-block; width: 100%; transform-origin: 0 0;">
       <%= image_tag event.floor_plan, style: "width: 100%; display: block;", draggable: false %>

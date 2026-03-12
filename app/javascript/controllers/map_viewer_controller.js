@@ -24,6 +24,10 @@ export default class extends Controller {
   // and exposes it as this.contentTarget.
   static targets = ["content"]
 
+  // minScale: the lowest zoom level allowed. Defaults to 0.3 (30%). Set to 1
+  // on the favorites map so users cannot zoom out past the map's native size.
+  static values = { minScale: { type: Number, default: 0.3 } }
+
   connect() {
     // The three numbers that fully describe the current view.
     // scale=1 means 100% (original size). tx/ty are pixel offsets from the origin.
@@ -122,7 +126,7 @@ export default class extends Controller {
     // 0.999 ** deltaY gives smooth exponential scaling:
     // large wheel deltas produce a bigger jump; trackpad micro-deltas are barely
     // noticeable per event but add up smoothly. Math.min/max clamps zoom to 30%–800%.
-    const newScale = Math.min(Math.max(this.scale * (0.999 ** e.deltaY), 0.3), 8)
+    const newScale = Math.min(Math.max(this.scale * (0.999 ** e.deltaY), this.minScaleValue), 8)
     const f = newScale / this.scale
 
     // Zoom toward cursor: we want the map pixel currently under the cursor to
@@ -204,7 +208,7 @@ export default class extends Controller {
       const cy = midY - rect.top
 
       // Scale proportional to how much finger distance changed (same clamp as wheel).
-      const newScale = Math.min(Math.max(this.scale * (dist / this._lastPinchDist), 0.3), 8)
+      const newScale = Math.min(Math.max(this.scale * (dist / this._lastPinchDist), this.minScaleValue), 8)
       const f = newScale / this.scale
 
       // Zoom toward the pinch midpoint (same math as _handleWheel), then add
