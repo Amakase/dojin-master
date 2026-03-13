@@ -5,3 +5,7 @@
     <%= render "shared/favorite_button", booth: @booth %>
   <% end %>
 <% end %>
+
+<%= turbo_stream.update "notes-panel" do %>
+  <%= render "booths/notes_panel", favorite: @favorite %>
+<% end %>
