@@ -1,0 +1,31 @@
+<% if favorite %>
+  <div class="booth-panel-card">
+    <div class="d-flex align-items-start gap-3">
+      <div class="booth-notif-icon flex-shrink-0">
+        <i class="fa-solid fa-note-sticky"></i>
+      </div>
+      <div class="flex-grow-1 me-5">
+        <p class="mb-1 fw-semibold booth-meta-text">Your notes for this booth</p>
+          <%= simple_form_for favorite, html: { class: "favorite-notes-form", data: { notes_target: "editor" } } do |f| %>
+          <%= f.input :notes,
+            as: :text,
+            label: false,
+            wrapper: false,
+            placeholder: "Add notes...",
+            input_html: {
+              id: dom_id(favorite, :notes),
+              class: "favorite-notes-input w-100 my-3",
+              data: { action: "input->notes#autoSaveTypeOpen blur->notes#autoSaveBlurOpen keydown->notes#handleKeydownOpen",
+                      notes_target: "input" },
+              "data-turbo-permanent": true }
+            %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="booth-empty-state">
+    <i class="fa-solid fa-heart fa-2x mb-3"></i>
+    <p class="mb-0">Favorite this booth to add personal notes.</p>
+  </div>
+<% end %>
