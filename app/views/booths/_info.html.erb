@@ -48,7 +48,7 @@
       <div class="col-12 col-md-auto d-flex flex-column align-items-center justify-content-center p-3 booth-info-sidebar">
         <p class="booth-notes mb-2">Your Priority</p>
         <%= turbo_frame_tag dom_id(booth, :favorite) do %>
-          <%= render "shared/favorite_button", booth: booth, favorite: favorite %>
+          <%= render "shared/favorite_button", booth: booth, favorite: favorite, button_class: "text-white" %>
         <% end %>
       </div>
 

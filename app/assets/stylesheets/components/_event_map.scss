@@ -43,26 +43,61 @@
 
   // Unselected / not favorited
   &--unselected {
-    fill:   rgba(255, 255, 255, 0.05);
+    fill: rgba(255, 255, 255, 0.05);
     stroke: rgba(255, 255, 255, 0.15);
   }
 
   // Favorited but no priority set
   &--no-priority {
-    fill:   rgba(255, 200, 0, 0.4);
+    fill: rgba(255, 200, 0, 0.4);
     stroke: rgba(255, 200, 0, 0.7);
   }
 
   // Priority 1–9
-  &--priority-1 { fill: rgba($comiket-orange,     0.4); stroke: rgba($comiket-orange,     0.7); }
-  &--priority-2 { fill: rgba($comiket-pink,        0.4); stroke: rgba($comiket-pink,        0.7); }
-  &--priority-3 { fill: rgba($comiket-yellow,      0.4); stroke: rgba($comiket-yellow,      0.7); }
-  &--priority-4 { fill: rgba($comiket-green,       0.4); stroke: rgba($comiket-green,       0.7); }
-  &--priority-5 { fill: rgba($comiket-light-blue,  0.4); stroke: rgba($comiket-light-blue,  0.7); }
-  &--priority-6 { fill: rgba($comiket-purple,      0.4); stroke: rgba($comiket-purple,      0.7); }
-  &--priority-7 { fill: rgba($comiket-blue,        0.4); stroke: rgba($comiket-blue,        0.7); }
-  &--priority-8 { fill: rgba($comiket-light-green, 0.4); stroke: rgba($comiket-light-green, 0.7); }
-  &--priority-9 { fill: rgba($comiket-red,         0.4); stroke: rgba($comiket-red,         0.7); }
+  &--priority-1 {
+    fill: rgba($comiket-orange, 0.4);
+    stroke: rgba($comiket-orange, 0.7);
+  }
+
+  &--priority-2 {
+    fill: rgba($comiket-pink, 0.4);
+    stroke: rgba($comiket-pink, 0.7);
+  }
+
+  &--priority-3 {
+    fill: rgba($comiket-yellow, 0.4);
+    stroke: rgba($comiket-yellow, 0.7);
+  }
+
+  &--priority-4 {
+    fill: rgba($comiket-green, 0.4);
+    stroke: rgba($comiket-green, 0.7);
+  }
+
+  &--priority-5 {
+    fill: rgba($comiket-light-blue, 0.4);
+    stroke: rgba($comiket-light-blue, 0.7);
+  }
+
+  &--priority-6 {
+    fill: rgba($comiket-purple, 0.4);
+    stroke: rgba($comiket-purple, 0.7);
+  }
+
+  &--priority-7 {
+    fill: rgba($comiket-blue, 0.4);
+    stroke: rgba($comiket-blue, 0.7);
+  }
+
+  &--priority-8 {
+    fill: rgba($comiket-light-green, 0.4);
+    stroke: rgba($comiket-light-green, 0.7);
+  }
+
+  &--priority-9 {
+    fill: rgba($comiket-red, 0.4);
+    stroke: rgba($comiket-red, 0.7);
+  }
 }
 
 // Route overlay — all units are in the 0–100 SVG viewBox coordinate space.
@@ -87,4 +122,28 @@
   dominant-baseline: central;
   font-weight: bold;
   pointer-events: none;
+}
+
+// Make route actions feel more tactile without changing Bootstrap theme colors.
+[data-controller="route-viewer"] {
+  .btn.btn-outline-secondary[data-route-viewer-target] {
+    border-width: 1.5px;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 0.32rem 0.78rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18);
+    }
+  }
 }

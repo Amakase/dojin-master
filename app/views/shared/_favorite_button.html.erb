@@ -1,7 +1,9 @@
 <% favorite = local_assigns.fetch(:favorite) { current_user.favorites.find_by(booth: booth) } %>
+<% base_state_class = favorite ? "fav-btn--active priority-btn-#{favorite.priority}" : "fav-btn--idle" %>
+<% button_classes = ["btn", "fav-btn", base_state_class, local_assigns[:button_class]].compact.join(" ") %>
 
 <div class="dropdown fav-dropdown">
-  <button class="btn fav-btn <%= favorite ? "fav-btn--active priority-btn-#{favorite.priority}" : "fav-btn--idle" %>"
+  <button class="<%= button_classes %>"
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
