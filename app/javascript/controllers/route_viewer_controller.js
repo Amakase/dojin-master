@@ -53,7 +53,7 @@ export default class extends Controller {
       const originalRender = event.detail.render
       event.detail.render = (streamElement) => {
         originalRender(streamElement)
-        if (this._generated) this._redraw()
+        if (this._generated) { this._redraw(); this._dispatchRouteOrder() }
       }
     }
     document.addEventListener("turbo:before-stream-render", this._streamHandler)
@@ -88,6 +88,7 @@ export default class extends Controller {
     this.generateBtnTarget.textContent = "Regenerate Route"
     this.toggleBtnTarget.classList.remove("d-none")
     this.toggleBtnTarget.textContent = "Hide Route"
+    this._dispatchRouteOrder()
   }
 
   // Wired to the "Hide/Show Route" button.
@@ -95,6 +96,11 @@ export default class extends Controller {
     this._visible = !this._visible
     this.routeLayerTarget.style.display = this._visible ? "" : "none"
     this.toggleBtnTarget.textContent = this._visible ? "Hide Route" : "Show Route"
+    if (this._visible) {
+      this._dispatchRouteOrder()
+    } else {
+      document.dispatchEvent(new CustomEvent("route-order:cleared"))
+    }
   }
 
   // ── Grid Building ──────────────────────────────────────────────────────────
@@ -201,9 +207,16 @@ export default class extends Controller {
   _redraw() {
     const visited = this._getVisitedBoothSpaces()
     const stops = this._computeRoute(visited)
+    this._lastRouteStops = stops
     const segments = this._computePaths(stops)
     this._renderSegments(segments)
     if (!this._visible) this.routeLayerTarget.style.display = "none"
+  }
+
+  _dispatchRouteOrder() {
+    if (!this._visible) return
+    const boothSpaces = (this._lastRouteStops || []).map(s => s.boothSpace)
+    document.dispatchEvent(new CustomEvent("route-order:updated", { detail: { boothSpaces } }))
   }
 
   // Returns a Set of booth_space strings whose visited checkbox is checked.

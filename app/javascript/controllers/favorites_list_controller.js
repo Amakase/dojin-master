@@ -2,12 +2,14 @@ import { Controller } from "@hotwired/stimulus"
 
 // Sorts favorite cards in-place after any turbo stream update (priority or visited change).
 // Mirrors the server-side order: visited ASC, priority ASC, name_reading ASC.
+// When a route is active (route-order:updated), cards are sorted by route path order first.
 export default class extends Controller {
   static targets = ["card"]
 
   connect() {
     history.scrollRestoration = "manual"
     window.scrollTo(0, 0)
+    this._routeOrder = null
 
     this.streamHandler = (event) => {
       const originalRender = event.detail.render
@@ -37,11 +39,24 @@ export default class extends Controller {
       }
     }
     document.addEventListener("turbo:before-stream-render", this.streamHandler)
+
+    this._routeOrderHandler = (e) => {
+      this._routeOrder = e.detail.boothSpaces.length > 0 ? e.detail.boothSpaces : null
+      this.sort()
+    }
+    this._routeOrderClearedHandler = () => {
+      this._routeOrder = null
+      this.sort()
+    }
+    document.addEventListener("route-order:updated", this._routeOrderHandler)
+    document.addEventListener("route-order:cleared", this._routeOrderClearedHandler)
   }
 
   disconnect() {
     history.scrollRestoration = "auto"
     document.removeEventListener("turbo:before-stream-render", this.streamHandler)
+    document.removeEventListener("route-order:updated", this._routeOrderHandler)
+    document.removeEventListener("route-order:cleared", this._routeOrderClearedHandler)
   }
 
   visitedChanged(event) {
@@ -75,19 +90,17 @@ export default class extends Controller {
         return true
       })
 
-    cards.sort((a, b) => {
-      const aVisited = a.querySelector("input[id^='visited_favorite_']")?.checked ? 1 : 0
-      const bVisited = b.querySelector("input[id^='visited_favorite_']")?.checked ? 1 : 0
-      if (aVisited !== bVisited) return aVisited - bVisited
-
-      const aPriority = this.#getPriority(a)
-      const bPriority = this.#getPriority(b)
-      if (aPriority !== bPriority) return aPriority - bPriority
-
-      const aName = a.dataset.nameReading || ""
-      const bName = b.dataset.nameReading || ""
-      return aName.localeCompare(bName, "ja")
-    })
+    if (this._routeOrder) {
+      const routeIndex = new Map(this._routeOrder.map((bs, i) => [bs, i]))
+      cards.sort((a, b) => {
+        const ai = routeIndex.get(a.dataset.boothSpace) ?? Infinity
+        const bi = routeIndex.get(b.dataset.boothSpace) ?? Infinity
+        if (ai !== bi) return ai - bi
+        return this.#normalCompare(a, b)
+      })
+    } else {
+      cards.sort((a, b) => this.#normalCompare(a, b))
+    }
 
     const sentinel = this.element.querySelector("#favorites_load_more")
     const hasMore = sentinel && sentinel.children.length > 0
@@ -101,6 +114,20 @@ export default class extends Controller {
     })
 
     if (sentinel) this.element.appendChild(sentinel)
+  }
+
+  #normalCompare(a, b) {
+    const aVisited = a.querySelector("input[id^='visited_favorite_']")?.checked ? 1 : 0
+    const bVisited = b.querySelector("input[id^='visited_favorite_']")?.checked ? 1 : 0
+    if (aVisited !== bVisited) return aVisited - bVisited
+
+    const aPriority = this.#getPriority(a)
+    const bPriority = this.#getPriority(b)
+    if (aPriority !== bPriority) return aPriority - bPriority
+
+    const aName = a.dataset.nameReading || ""
+    const bName = b.dataset.nameReading || ""
+    return aName.localeCompare(bName, "ja")
   }
 
   #getPriority(card) {
