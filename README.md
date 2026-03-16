@@ -49,6 +49,7 @@ event.images.attach(io: File.open("/app/assets/images/floor_plans/Screenshot 202
 - Log in as the admin
 - Navigate to the Map Editor page (/admin/events/:event_id/map_editor) (where :event_id is 1 for M3-2026)
 - Use the Map editor to add rectangles for the booth spaces
+  - CAUTION: DO NOT USE THE AI AUTO-PLACE
   - Can place an anchor in each section and use the Draw Section in the upper right to fill out the rest
 - Use the map editor to draw in walls
 
