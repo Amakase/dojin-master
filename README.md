@@ -3,8 +3,6 @@
 A Ruby on Rails web app that helps users browse and prioritize booths to visit at dōjin market events and can provide guidance on best routes to visit the booths at the event.
 Created as a final group project for the Le Wagon AI Software Development bootcamp.
 
-_DROP SCREENSHOT HERE_
-<br>
 App home: https://dojin-master-0ad16a019c35.herokuapp.com/
    
 ## Getting Started
