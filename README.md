@@ -1,4 +1,4 @@
-# 📚 Dōjin Master
+# Dōjin Master
 
 A Ruby on Rails web app that helps users browse and prioritize booths to visit at dōjin market events and can provide guidance on best routes to visit the booths at the event.
 Created as a final group project for the Le Wagon AI Software Development bootcamp.
@@ -52,13 +52,13 @@ event.images.attach(io: File.open("/app/assets/images/floor_plans/Screenshot 202
 - Use the map editor to draw in walls
 
 ## Built With
-- [Rails 8.1](https://guides.rubyonrails.org/) - Backend / Front-end
+- [Rails 8.1](https://guides.rubyonrails.org/) - Back-end / Front-end
 - [Hotwire (Turbo + Stimulus JS)](https://hotwired.dev/) - Front-end JS
 - [Heroku](https://heroku.com/) - Deployment
 - [PostgreSQL](https://www.postgresql.org/) - Database
-- [Bootstrap](https://getbootstrap.com/) — Styling
-- [SASS](https://sass-lang.com/) — Styling
-- [Figma](https://www.figma.com) — Prototyping
+- [Bootstrap](https://getbootstrap.com/) - Styling
+- [SASS](https://sass-lang.com/) - Styling
+- [Figma](https://www.figma.com) - Prototyping
 
 ## Team Members
 - [Steven V. Sawadisavi](https://github.com/Amakase)
